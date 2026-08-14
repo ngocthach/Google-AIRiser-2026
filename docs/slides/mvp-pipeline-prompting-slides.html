@@ -70,7 +70,16 @@ tr.hl td{background:var(--tint)}
 table.sm{font-size:14.5px}
 table.sm th,table.sm td{padding:8px 12px}
 code,.mono{font-family:var(--mono);font-size:.93em;background:var(--tint);padding:2px 7px;border-radius:5px;color:var(--ink-2)}
-pre{background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+pre{position:relative;background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+/* Copy button. Slides often show an abridged prompt — the button copies the
+   FULL text so nobody transcribes from a projector. */
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
 pre.sm{font-size:12px;line-height:1.5;padding:18px 22px}
 pre .k{color:var(--cyan);font-weight:600}
 pre .c{color:#8FA5BC}
@@ -292,7 +301,88 @@ Never invent statistics, market sizes, or company names.</pre>
   </div>
 </section>
 
-<!-- 9 THỰC HÀNH 1 -->
+<!-- 9 ví dụ điền cho Ươm Mầm -->
+<section class="slide" data-notes="Đây là prompt slide trước, điền thật. Nói: bước 1–6 y nguyên, chỉ phần bối cảnh đổi. Rồi chỉ vào câu 7 và 8 — hai câu này có thể giết ý tưởng, nên hỏi trước khi build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="eyebrow">Worked example — Ươm Mầm</div>
+  <h2>The same prompt, filled in</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-research-uommam">
+You are a product researcher who is skeptical by default.
+
+Goal: decide whether this problem is real and worth building for,
+before I write any code.
+
+  PROBLEM: Students have project ideas but never build them. They
+  can't find teammates with complementary skills, they have no way
+  to show the idea to anyone outside their class, and nobody funds
+  or supports a student project that has no track record. So the
+  idea stays in a notebook and dies.
+
+  The product I'm considering: "Ươm Mầm" — students post an idea,
+  others ask to join, a team forms, the team posts progress, and
+  when ready the team opens a campaign where the community pledges
+  support (money, materials, mentoring, or hours — pledges only,
+  no payment processing).
+
+Context: MVP for students in Vietnam, ages 6 to 22, spanning primary
+school through university. Market: Vietnam. I have roughly 15-25
+hours total across evenings, deadline 30/08/2026, working solo.
+
+Do this:
+1. Restate the problem in one sentence, as a USER would say it —
+   not as I said it. Give me two versions: one as a 10-year-old
+   would say it, one as a 20-year-old would say it.
+2. Split who has it into 3 segments. Say which segment feels it
+   most acutely, and why.
+3. For each segment: what do they do today instead?
+   (the status quo is the real competitor, not other apps)
+   Be specific about Vietnam — school clubs, Facebook groups,
+   Zalo, doan/hoi activities, existing school programs.
+4. List 5 existing solutions. For each: what it does well, and
+   the specific gap it leaves. Include non-app answers — a teacher
+   running a club, a school science fair, a Facebook group.
+5. List the 3 assumptions that, if wrong, kill this idea.
+6. The cheapest way to test the riskiest one this week, without
+   building anything.
+
+Then two more, specific to this product:
+7. I have written "ages 6 to 22" as one audience. Argue that this
+   is wrong. What breaks if a 7-year-old and a 21-year-old use the
+   same product? If you think I should narrow it, name the single
+   age band you'd keep and what I lose by cutting the rest.
+8. Who actually has to say yes for this to reach users — the
+   student, the parent, the teacher, or the school? Whoever it is,
+   what do they need to see before they say yes?
+
+Rules: mark anything you are unsure about as [UNVERIFIED].
+Never invent statistics, market sizes, or company names.
+Before you answer, ask me the 3 questions whose answers would most
+change your response. Wait for my answers.
+</script>
+    <pre class="sm" data-full="#full-research-uommam"><span class="c">PROBLEM:</span> Students have project ideas but never build them. They can't
+find teammates, can't show the idea outside their class, and nobody backs
+a project with no track record. The idea dies in a notebook.
+
+<span class="c">PRODUCT:</span> "Ươm Mầm" — post an idea → others ask to join → team forms →
+team posts progress → community pledges support (money, materials,
+mentoring, hours. Pledges only, no payment processing).
+
+<span class="c">CONTEXT:</span> students in Vietnam, ages 6–22. Solo, ~20h, deadline 30/08.
+
+[ steps 1–6 unchanged ] · 3. …grounded in Vietnam: school clubs, Zalo, đoàn/hội
+
+<span class="k">Then two more, specific to this product:</span>
+<span class="k">7.</span> I wrote "ages 6 to 22" as ONE audience. <span class="k">Argue that this is wrong.</span>
+   What breaks if a 7-year-old and a 21-year-old use the same product?
+   Name the single age band you would keep, and what I lose.
+<span class="k">8.</span> Who actually has to say yes — student, parent, teacher, or school?
+   What do they need to see before they say yes?</pre>
+    <div class="callout red"><p>Both added questions could kill the idea — which is exactly why they go in <em>before</em> you build.</p></div>
+  </div>
+</section>
+
+<!-- 10 THỰC HÀNH 1 -->
 <section class="slide turn" data-notes="10 phút. Đi vòng quanh phòng. Ai chưa có ý tưởng thì cho họ mượn một cái — quan trọng là chạy được prompt.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
   <div class="eyebrow">Thực hành 01</div>
@@ -386,7 +476,7 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   <div class="eyebrow">Thực hành 02</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Dán problem brief vừa có vào prompt <strong>diverge</strong>. Đọc hết 8 ý tưởng. Rồi mới chạy prompt <strong>converge</strong>.</p>
-  <div class="done"><b>Xong khi:</b> bạn viết được 5 dòng — <b>CHỌN / CHO AI / VÌ / CHẾT NẾU / KHÔNG LÀM</b>.</div>
+  <div class="done"><b>Xong khi:</b> bạn viết được 5 dòng — <b>CHỌN / CHO AI / VÌ / FAIL NẾU / KHÔNG LÀM</b>.</div>
   <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
 </section>
 
@@ -719,7 +809,7 @@ a 6/10 I can fix tonight.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 32</span></div>
+  <div><span id="counter">1 / 33</span></div>
 </div>
 
 <script>
@@ -752,6 +842,46 @@ a 6/10 I can fix tonight.</pre>
   // No click-to-advance: the whole point of this deck is that people copy the
   // prompts off the slides, and a stage click handler breaks drag-select.
   // Clickers still work — they emit PageUp/PageDown or arrow keys.
+  // ---- copy buttons on every code block -------------------------------
+  // A slide may show an abridged prompt; data-full points at a hidden full
+  // version, so what lands on the clipboard is always the complete thing.
+  function flash(btn){
+    var o=btn.dataset.label; btn.textContent='ĐÃ COPY ✓'; btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=o;btn.classList.remove('ok')},1400);
+  }
+  function writeClipboard(txt,btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){flash(btn)},function(){legacy(txt,btn)});
+    } else { legacy(txt,btn); }   // file:// is not a secure context — needs this
+  }
+  function legacy(txt,btn){
+    var ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); flash(btn); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref=pre.getAttribute('data-full'), src=ref&&document.querySelector(ref);
+    // capture BEFORE inserting the button, or the button's own text joins the copy
+    var txt=(src?src.textContent.replace(/^\n/,'').replace(/\s+$/,''):pre.innerText).trim();
+    var b=document.createElement('button');
+    b.type='button'; b.className='copybtn';
+    b.dataset.label = src ? 'COPY FULL' : 'COPY';
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label','Copy prompt to clipboard');
+    b.onclick=function(e){ e.stopPropagation(); writeClipboard(txt,b); };
+    pre.appendChild(b);
+    pre._copy=function(){ writeClipboard(txt,b); };
+  });
+  // C copies the current slide's prompt without reaching for the mouse
+  document.addEventListener('keydown',function(e){
+    if((e.key==='c'||e.key==='C') && !e.metaKey && !e.ctrlKey){
+      var p=slides[i].querySelector('pre'); if(p&&p._copy) p._copy();
+    }
+  });
+
   window.addEventListener('resize',fit);
   window.addEventListener('hashchange',function(){
     var n=parseInt((location.hash||'#1').slice(1),10)-1;

@@ -210,6 +210,17 @@ pre .c{color:#8FA5BC}
     height:720px;border:none;box-shadow:none}
   #hud,#bar{display:none}
 }
+
+/* Copy button on code blocks. A slide may show an abridged prompt — the button
+   copies the FULL text (via data-full) so nobody transcribes from a projector. */
+pre{position:relative}
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
 </style>
 </head>
 <body>
@@ -692,6 +703,46 @@ users on different devices see the same ideas.
   // No click-to-advance: slides contain prompts and commands people need to
   // select and copy, and a stage click handler turns drag-select into a slide
   // change. Clickers still work — they emit PageUp/PageDown or arrow keys.
+
+  // ---- copy buttons on every code block -------------------------------
+  // A slide may show an abridged prompt; data-full points at a hidden full
+  // version, so what lands on the clipboard is always the complete thing.
+  function flash(btn){
+    var o=btn.dataset.label; btn.textContent='COPIED \u2713'; btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=o;btn.classList.remove('ok')},1400);
+  }
+  function writeClipboard(txt,btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){flash(btn)},function(){legacy(txt,btn)});
+    } else { legacy(txt,btn); }   // file:// may not be a secure context
+  }
+  function legacy(txt,btn){
+    var ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); flash(btn); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref=pre.getAttribute('data-full'), src=ref&&document.querySelector(ref);
+    // capture BEFORE inserting the button, or its own label joins the copy
+    var txt=(src?src.textContent.replace(/^\n/,''):pre.innerText).trim();
+    var b=document.createElement('button');
+    b.type='button'; b.className='copybtn';
+    b.dataset.label = src ? 'COPY FULL' : 'COPY';
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label','Copy prompt to clipboard');
+    b.onclick=function(e){ e.stopPropagation(); writeClipboard(txt,b); };
+    pre.appendChild(b);
+    pre._copy=function(){ writeClipboard(txt,b); };
+  });
+  // C copies the current slide's prompt without reaching for the mouse
+  document.addEventListener('keydown',function(e){
+    if((e.key==='c'||e.key==='C') && !e.metaKey && !e.ctrlKey){
+      var p=slides[i].querySelector('pre'); if(p&&p._copy) p._copy();
+    }
+  });
 
   window.addEventListener('resize',fit);
   // Keep deep links and browser back/forward working, not just the initial load.
