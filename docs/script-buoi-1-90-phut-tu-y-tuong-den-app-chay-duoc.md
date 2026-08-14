@@ -1,6 +1,6 @@
 # Script buổi 1 — 90 phút: "Từ ý tưởng đến app chạy được"
 
-Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (33 slide)
+Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (34 slide)
 Khán giả: sinh viên / fresher / junior, có mang laptop
 Kết quả mong muốn: mỗi người rời phòng với **một app chạy được trên điện thoại của chính mình**, và 3 artifact viết ra giấy (problem brief, quyết định, bộ token).
 
@@ -35,14 +35,35 @@ App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-ide
 | 00:33–00:42 | 15 | **THỰC HÀNH 2** | Làm (9′) |
 | 00:42–00:50 | 16–19 | Design system | Nói |
 | 00:50–00:59 | 20 | **THỰC HÀNH 3** | Làm (9′) |
-| 00:59–01:04 | 21–22 | Code | Nói |
-| 01:04–01:17 | 23 | **THỰC HÀNH 4** | Làm (13′) |
-| 01:17–01:19 | 24–27 | Lướt nhanh: test & đánh giá → buổi sau | Nói |
-| 01:19–01:24 | 28 | Publish + publish tại chỗ | Làm |
-| 01:24–01:28 | 31–32 | Tổng kết | Nói |
-| 01:28–01:30 | 33 | Đóng + Q&A | Nói |
+| 00:59–01:04 | 21–23 | Code + ví dụ điền build prompt | Nói |
+| 01:04–01:17 | 24 | **THỰC HÀNH 4** | Làm (13′) |
+| 01:17–01:19 | 25–28 | Lướt nhanh: test & đánh giá → buổi sau | Nói |
+| 01:19–01:24 | 29 | Publish + publish tại chỗ | Làm |
+| 01:24–01:28 | 32–33 | Tổng kết | Nói |
+| 01:28–01:30 | 34 | Đóng + Q&A | Nói |
 
 Tổng nói ≈ 45′ · tổng làm ≈ 45′.
+
+---
+
+## Hai tool, đừng để khán giả mở nhầm
+
+| Tool | Chặng | Slide |
+|---|---|---|
+| **Gemini chat** — `gemini.google.com` | 01 Research · 02 Brainstorm · 03 Design | 7, 9, **10** · 12, 13, **15** · 18, 19, **20** |
+| **AI Studio** — `ai.dev` → Build | 04 Code · 07 Deploy | 21, 22, 23, **24** · 29 |
+
+Mỗi slide có việc phải làm đều mang **badge tool ở góc phải trên**. Khi chuyển tool thì chỉ tay lên đó, đừng chỉ nói.
+
+**Quy tắc một câu để khán giả nhớ:**
+
+> "Output là chữ để đọc → Gemini. Output là app để nhìn → AI Studio."
+
+**Nói rõ ở đầu buổi** (slide 6, khi mở chặng Research):
+
+> "Ba chặng đầu chúng ta làm trong Gemini chat, không phải AI Studio. Vì AI Studio Build mode gắn với việc *dựng app* — dán prompt research vào đó thì nó dựng cho bạn một cái app research, chứ không phân tích. Mở sẵn hai tab, đến lúc nào dùng cái nào thì trên slide có ghi."
+
+*(AI Studio có Playground mode là chat thuần, dùng được — nhưng bắt người mới đổi qua lại giữa hai mode giữa buổi thì rối hơn là mở hai tab.)*
 
 ---
 
@@ -270,7 +291,7 @@ Chỉ callout xanh:
 
 ---
 
-## 00:59–01:04 — Code (slide 21–22)
+## 00:59–01:04 — Code (slide 21–23)
 
 **Slide 21 — xây theo lớp.**
 
@@ -284,9 +305,23 @@ Chỉ dòng scope:
 
 > "Và dòng này giữ mạng cho bạn: **không routing, không đăng nhập, không database**. Bỏ dòng này ra, model sẽ dựng cho bạn một cái dashboard có sidebar và bạn hết giờ."
 
+**Slide 23 — ví dụ điền thật, từ một lần chạy có thật.**
+
+> "Đây là prompt build đó, điền bằng kết quả thật của chặng 1 đến 3."
+
+Chỉ vào tên sản phẩm:
+
+> "Để ý: sản phẩm không còn tên 'Ươm Mầm cho 6–22 tuổi' nữa. Sau chặng Research nó thành **The Proof-of-Work Protocol**, chỉ cho sinh viên 18–22. Vì Gemini chỉ ra Nghị định 13/2023 bắt buộc xác thực tuổi và xin phép cha mẹ cho trẻ dưới 16 — một người làm solo trong 25 giờ không thể làm nổi."
+
+> "Đó **không phải đi lạc. Đó là pipeline đang làm việc.** Thà đổi hướng ở chặng 1 khi chưa viết dòng code nào, còn hơn phát hiện ra sau khi đã build xong."
+
+Chỉ nút COPY FULL:
+
+> "Trên màn hình tôi chỉ để phần rút gọn cho dễ đọc. Bấm nút này là copy đủ cả bộ token — đừng ngồi chép tay từ máy chiếu."
+
 ---
 
-## 01:04–01:17 — THỰC HÀNH 4 (slide 23, 13 phút)
+## 01:04–01:17 — THỰC HÀNH 4 (slide 24, 13 phút)
 
 > "Mười ba phút — khối dài nhất. Mở ai.dev, vào Build, dán prompt build kèm bộ token của bạn."
 
@@ -296,7 +331,7 @@ Chỉ dòng scope:
 
 ---
 
-## 01:17–01:19 — Lướt nhanh test & đánh giá (slide 24–27)
+## 01:17–01:19 — Lướt nhanh test & đánh giá (slide 25–28)
 
 Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
@@ -306,7 +341,7 @@ Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
 ---
 
-## 01:19–01:24 — Publish (slide 28)
+## 01:19–01:24 — Publish (slide 29)
 
 > "Bây giờ lấy link thật. Miễn phí, không cần thẻ."
 
@@ -320,23 +355,23 @@ Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
 > "Bốn phút, mọi người làm y hệt. Có link rồi thì gửi vào nhóm chat."
 
-**Lưu ý điều hướng:** slide 29–30 (nộp bài + video demo) là nội dung **buổi 2**. Bấm lướt qua trong 10 giây — "hai cái này buổi sau" — rồi vào slide 31. Đừng dừng lại giảng, sẽ hụt giờ tổng kết.
+**Lưu ý điều hướng:** slide 30–31 (nộp bài + video demo) là nội dung **buổi 2**. Bấm lướt qua trong 10 giây — "hai cái này buổi sau" — rồi vào slide 31. Đừng dừng lại giảng, sẽ hụt giờ tổng kết.
 
 ---
 
-## 01:24–01:28 — Tổng kết (slide 31–32)
+## 01:24–01:28 — Tổng kết (slide 32–33)
 
-**Slide 31 — ngân sách giờ.**
+**Slide 32 — ngân sách giờ.**
 
 > "Nếu bạn có một cuối tuần, đây là chỗ giờ thực sự đi. Để ý ba chặng đầu: một phần tư thời gian, không có dòng code nào."
 
-**Slide 32 — bỏ chặng.**
+**Slide 33 — bỏ chặng.**
 
 > "Và đây là phần thật lòng. Bỏ chặng không tiết kiệm được thời gian — nó quay lại dưới dạng làm lại, vào lúc tệ hơn, khi bạn còn ít thời gian hơn."
 
 ---
 
-## 01:28–01:30 — Đóng (slide 33)
+## 01:28–01:30 — Đóng (slide 34)
 
 > "Buổi sau chúng ta lấy chính app này, tìm chỗ nó vỡ, chấm điểm nó theo thang thật, rồi nộp — nộp ngay trong phòng, không phải 'về nhà rồi nộp'."
 
@@ -348,8 +383,8 @@ Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
 Cắt theo đúng thứ tự này:
 
-1. Slide 24–27 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
-2. Slide 32 (bỏ chặng) — gộp một câu vào slide 31
+1. Slide 25–28 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
+2. Slide 33 (bỏ chặng) — gộp một câu vào slide 31
 3. THỰC HÀNH 3 từ 9′ → 6′, bảo họ chỉ lấy phần màu và chữ
 4. Slide 14 (artifact brainstorm) — nói miệng thay vì chiếu
 

@@ -38,6 +38,15 @@ Buổi này tái dùng toàn bộ kết quả buổi 1: problem brief, quyết �
 
 Nói ≈ 15′ · làm ≈ 15′.
 
+**Hai tool** — mỗi slide có việc làm đều có badge ở góc phải trên:
+
+| Tool | Slide |
+|---|---|
+| **Gemini chat** — `gemini.google.com` | 5, **6** (test) · 8, **9** (đánh giá) |
+| **AI Studio** — `ai.dev` | 10, **11** (publish) · **14** (lấy link để nộp) |
+
+Nhắc lại quy tắc từ buổi 1: *output là chữ để đọc → Gemini; output là app để nhìn → AI Studio.*
+
 ---
 
 ## 00:00–00:03 — Mở + nhắc lại (slide 1–3)

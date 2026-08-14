@@ -141,6 +141,14 @@ pre{position:relative}
 .copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
 .copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
 .copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
+
+/* Tool badge in the folio. A workshop that switches between tools loses people
+   silently — showing the current tool on every actionable slide fixes that.
+   White fill + border so it reads on both white slides and tinted .turn slides. */
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
 </style>
 </head>
 <body>
@@ -208,7 +216,7 @@ pre{position:relative}
 
 <!-- 5 test prompt -->
 <section class="slide" data-notes="Chỉ vào dòng 'sắp xếp theo khả năng xảy ra khi demo' — đó là thứ khiến danh sách này dùng được.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy — prompt test</div>
   <h2>Tìm chỗ sẽ vỡ trên sân khấu</h2><div class="rule"></div>
   <div class="body">
@@ -233,7 +241,7 @@ ngay trước khi demo.</pre>
 
 <!-- 6 THUC HANH 1 -->
 <section class="slide turn" data-notes="5 phút. Bảo họ sửa NGAY 2 lỗi đầu danh sách, đừng sửa hết.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 01</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Chạy prompt test trên app của bạn. Đọc danh sách. <strong>Sửa đúng 2 lỗi đầu tiên</strong> — bỏ qua phần còn lại.</p>
@@ -259,7 +267,7 @@ ngay trước khi demo.</pre>
 
 <!-- 8 eval prompt -->
 <section class="slide" data-notes="Dòng cuối là dòng biến báo cáo thành hành động.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Đánh giá</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Đánh giá <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy — prompt đánh giá</div>
   <h2>Bắt nó chấm bạn thật lòng</h2><div class="rule"></div>
   <div class="body">
@@ -284,7 +292,7 @@ khảo thì tệ hơn điểm 6 mà tối nay tôi sửa được.</pre>
 
 <!-- 9 THUC HANH 2 -->
 <section class="slide turn" data-notes="5 phút. Nhấn: chỉ làm việc số 1, đừng làm cả danh sách.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Đánh giá</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Đánh giá <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 02</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Chạy prompt đánh giá. Nhìn danh sách việc theo thứ tự. <strong>Làm đúng việc số 1.</strong></p>
@@ -294,7 +302,7 @@ khảo thì tệ hơn điểm 6 mà tối nay tôi sửa được.</pre>
 
 <!-- 10 deploy -->
 <section class="slide" data-notes="Cảnh báo thẻ tín dụng TRƯỚC khi họ bấm. Nói trước thì thành bước dự kiến, nói sau thì thành sự cố.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Stage 07</div>
   <h2>Link chạy thật, miễn phí, không cần thẻ</h2><div class="rule"></div>
   <div class="body">
@@ -314,7 +322,7 @@ khảo thì tệ hơn điểm 6 mà tối nay tôi sửa được.</pre>
 
 <!-- 11 THUC HANH 3 -->
 <section class="slide turn" data-notes="4 phút. Đây là khoảnh khắc cả phòng có link thật. Bảo họ mở trên điện thoại.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Thực hành 03</div>
   <h2>Publish ngay bây giờ</h2><div class="rule"></div>
   <p class="task">Bấm Publish. Lấy link. <strong>Mở link đó trên điện thoại của bạn</strong>, rồi gửi vào nhóm chat.</p>
@@ -357,7 +365,7 @@ khảo thì tệ hơn điểm 6 mà tối nay tôi sửa được.</pre>
 
 <!-- 14 THUC HANH 4 -->
 <section class="slide turn" data-notes="6 phút. Mục tiêu là họ NỘP luôn trong phòng, không phải về nhà nộp.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Nộp bài</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Nộp bài <span class="tool ai">AI Studio</span><span class="tool">Form</span></div>
   <div class="eyebrow">Thực hành 04 — cuối cùng</div>
   <h2>Nộp ngay trong phòng này</h2><div class="rule"></div>
   <p class="task">Đặt sharing thành Public. Copy cả hai link. Mở form. <strong>Bấm nộp.</strong> Video quay sau cũng được — nhưng link thì nộp ngay bây giờ.</p>

@@ -139,6 +139,14 @@ pre .c{color:#8FA5BC}
   .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
   #hud,#bar,#notes{display:none}
 }
+
+/* Tool badge in the folio. A workshop that switches between tools loses people
+   silently — showing the current tool on every actionable slide fixes that.
+   White fill + border so it reads on both white slides and tinted .turn slides. */
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
 </style>
 </head>
 <body>
@@ -249,7 +257,7 @@ most change your response. Wait for my answers.</pre>
 
 <!-- 7 research prompt -->
 <section class="slide" data-notes="Point at line 3 — 'what do they do today instead'. The status quo is the real competitor, not other apps.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — research prompt</div>
   <h2>Interrogate the problem</h2><div class="rule"></div>
   <div class="body">
@@ -303,7 +311,7 @@ Never invent statistics, market sizes, or company names.</pre>
 
 <!-- 9 ví dụ điền cho Ươm Mầm -->
 <section class="slide" data-notes="Đây là prompt slide trước, điền thật. Nói: bước 1–6 y nguyên, chỉ phần bối cảnh đổi. Rồi chỉ vào câu 7 và 8 — hai câu này có thể giết ý tưởng, nên hỏi trước khi build.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Worked example — Ươm Mầm</div>
   <h2>The same prompt, filled in</h2><div class="rule"></div>
   <div class="body">
@@ -384,7 +392,7 @@ mentoring, hours. Pledges only, no payment processing).
 
 <!-- 10 THỰC HÀNH 1 -->
 <section class="slide turn" data-notes="10 phút. Đi vòng quanh phòng. Ai chưa có ý tưởng thì cho họ mượn một cái — quan trọng là chạy được prompt.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 01</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Mở Gemini. Dán prompt Research, điền ý tưởng của <em>chính bạn</em> vào <code>[PROBLEM]</code> và <code>[AUDIENCE]</code>. Chạy.</p>
@@ -406,7 +414,7 @@ mentoring, hours. Pledges only, no payment processing).
 
 <!-- 10 diverge prompt -->
 <section class="slide" data-notes="The forced variety buckets are what stop all 8 ideas being the same idea in different clothes.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — diverge prompt</div>
   <h2>Force variety, forbid ranking</h2><div class="rule"></div>
   <div class="body">
@@ -430,7 +438,7 @@ why it might fail.
 
 <!-- 11 converge prompt -->
 <section class="slide" data-notes="Line about emotional attachment — this is the one that saves people from building the wrong thing.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — converge prompt</div>
   <h2>Now be brutal</h2><div class="rule"></div>
   <div class="body">
@@ -472,7 +480,7 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
 
 <!-- THỰC HÀNH 2 -->
 <section class="slide turn" data-notes="9 phút. Nhắc: chạy prompt diverge TRƯỚC, đọc hết 8 ý tưởng, rồi mới chạy prompt converge. Đừng gộp.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 02</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Dán problem brief vừa có vào prompt <strong>diverge</strong>. Đọc hết 8 ý tưởng. Rồi mới chạy prompt <strong>converge</strong>.</p>
@@ -508,7 +516,7 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
 
 <!-- 15 design system prompt -->
 <section class="slide" data-notes="Point at the WCAG line — it forces accessibility, which is usually a scored criterion.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — design system prompt</div>
   <h2>Generate the system, not a screen</h2><div class="rule"></div>
   <div class="body">
@@ -537,7 +545,7 @@ you chose the brand colour.</pre>
 
 <!-- 16 screens prompt -->
 <section class="slide" data-notes="'Only these tokens' is the constraint doing the work. And the last line stops silent drift.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — screens prompt</div>
   <h2>Screens, constrained by the system</h2><div class="rule"></div>
   <div class="body">
@@ -559,7 +567,7 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 
 <!-- THỰC HÀNH 3 -->
 <section class="slide turn" data-notes="9 phút. Nhấn: giữ lại bộ token — lát nữa dán thẳng vào prompt build.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 03</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Chạy prompt design system. <strong>Lưu lại bộ CSS variables</strong> — lát nữa dán thẳng vào prompt build.</p>
@@ -569,7 +577,7 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 
 <!-- CODE -->
 <section class="slide" data-notes="Stage 4. Now the build prompt is easy, because it inherits three artifacts.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Stage 04 — Code</div>
   <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
   <div class="body">
@@ -588,7 +596,7 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 
 <!-- 18 code prompt -->
 <section class="slide" data-notes="The scope line — no routing, no login, no database — is what keeps the model from building a dashboard.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Copy this — build prompt</div>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
@@ -609,13 +617,120 @@ Output complete working code. No placeholders, no "add logic here".</pre>
   </div>
 </section>
 
+<!-- ví dụ điền thật — build prompt -->
+<section class="slide" data-notes="Nhấn hai điều. Một: prompt này ngắn vì nó THỪA HƯỞNG — token và spec đã có sẵn. Hai: sản phẩm đã đổi tên và đổi đối tượng sau chặng Research. Đó là pipeline đang làm việc, không phải đi lạc.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Worked example — from a real run</div>
+  <h2>The same build prompt, filled in</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-thegate">
+Build "The Gate" screen of The Proof-of-Work Protocol as a React
+single-page app, Tailwind.
+
+Use exactly these design tokens — introduce no colours, sizes, or
+spacing outside this set:
+
+  --color-bg:#FAFAFA;            --color-surface:#FFFFFF;
+  --color-text-primary:#111827;  --color-text-secondary:#4B5563;
+  --color-border:#E5E7EB;        --color-brand:#4F46E5;
+  --color-success:#10B981;  --color-warning:#F59E0B;  --color-danger:#EF4444;
+
+  --font-stack:"Inter", system-ui, -apple-system, sans-serif;
+  --font-weight-regular:400;  --font-weight-bold:600;
+  --text-display:48px;   --lh-display:1.1;
+  --text-title:32px;     --lh-title:1.2;
+  --text-subtitle:20px;  --lh-subtitle:1.4;
+  --text-body:16px;      --lh-body:1.5;
+  --text-small:14px;     --lh-small:1.5;
+  --text-micro:12px;     --lh-micro:1.5;
+
+  --space-1:8px; --space-2:16px; --space-3:24px;
+  --space-4:32px; --space-5:48px; --space-6:64px;
+  --radius:12px; --border-width:1px;
+  --shadow:0 4px 12px rgba(17,24,39,0.05);
+
+  --btn-default-bg:var(--color-brand);  --btn-default-text:#FFFFFF;
+  --btn-default-radius:var(--radius);
+  --btn-default-padding:var(--space-2) var(--space-3);
+  --btn-hover-bg:#4338CA;  --btn-hover-transform:translateY(-1px);
+  --btn-disabled-bg:#D1D5DB; --btn-disabled-text:#9CA3AF;
+  --input-bg:var(--color-bg);
+  --input-border:var(--border-width) solid var(--color-border);
+  --input-radius:var(--radius);  --input-padding:var(--space-2);
+  --input-focus-outline:2px solid var(--color-brand);
+  --card-bg:var(--color-surface);
+  --card-border:var(--border-width) solid var(--color-border);
+  --card-radius:var(--radius);  --card-padding:var(--space-3);
+  --card-shadow:var(--shadow);
+
+  /* the three gaps the design stage flagged */
+  --size-icon:24px;  --size-avatar:40px;
+  --color-overlay:rgba(17,24,39,0.4);
+  --focus-ring:2px solid var(--color-brand);
+
+This screen's job: force the user to submit verifiable proof of past
+work before they can view the network.
+
+Layout, top to bottom:
+- Background --color-bg, centered container, padding --space-5
+- Title --text-display / bold / --color-text-primary: "Prove Your Work."
+- Subtitle --text-subtitle / --color-text-secondary, margin-bottom
+  --space-3: "Upload a Figma link, GitHub repo, or slide deck to
+  unlock the network."
+- Upload card: --card-bg / --card-border / --card-radius / --card-shadow
+  / padding --card-padding, containing:
+    Label --text-small / bold: "Portfolio URL"
+    Input --input-bg / --input-border / --input-radius / --input-padding
+    Helper --text-micro / --color-text-secondary:
+      "We verify this link before granting access."
+    Button --btn-default-* / bold / --text-body: "Submit Proof"
+
+Primary action: click "Submit Proof" → loading state → verify the link
+structure → reveal the network view.
+
+Empty state: this is the default; the user cannot proceed without input.
+Error state: input border becomes --color-danger and the helper text
+becomes --color-danger, reading "Invalid URL format or repository is
+private."
+
+Scope: single screen. No routing, no login, no database.
+Seed with 8 realistic verified-peer entries so the revealed network is
+never empty.
+Accessibility: keyboard reachable, --focus-ring on every focusable
+element, WCAG AA contrast, tap targets at least 44px.
+
+Output complete working code. No placeholders, no "add logic here".
+</script>
+    <pre class="sm" data-full="#full-build-thegate">Build <span class="k">"The Gate"</span> screen of <span class="k">The Proof-of-Work Protocol</span> — React SPA,
+Tailwind.
+
+Use exactly these design tokens — no colours, sizes, or spacing
+outside this set:
+  --color-bg:#FAFAFA;   --color-surface:#FFFFFF;
+  --color-text-primary:#111827;   --color-brand:#4F46E5;
+  --text-display:48px/1.1;   --text-body:16px/1.5;
+  --space-3:24px;   --radius:12px;   <span class="c">← full set in COPY FULL</span>
+
+<span class="c">Job:</span> force the user to submit verifiable proof of past work before
+they can view the network.
+<span class="c">Primary action:</span> "Submit Proof" → loading → verify link → reveal network.
+<span class="c">Empty state:</span> default; the user cannot proceed without input.
+<span class="c">Error state:</span> input border --color-danger, "Invalid URL format or
+repository is private."
+
+<span class="k">Scope: single screen. No routing, no login, no database.</span>
+Seed with 8 verified-peer entries. Output complete working code.</pre>
+    <div class="callout green"><p>Notice the product changed name and audience after Research. <strong>That is the pipeline working</strong> — not drifting.</p></div>
+  </div>
+</section>
+
 <!-- THỰC HÀNH 4 -->
 <section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Ai xong sớm thì bảo publish luôn.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Thực hành 04 — dài nhất</div>
   <h2>Build đi</h2><div class="rule"></div>
   <p class="task">Mở <code>ai.dev</code> → Build. Dán prompt build kèm bộ token của bạn. Chạy. Rồi sửa từng lớp một.</p>
-  <div class="done"><b>Xong khi:</b> app chạy được trên <b>điện thoại của bạn</b> — không phải trên laptop. Xong sớm thì bấm Publish luôn.</div>
+  <div class="done"><b>Xong khi:</b> app chạy được trên <b>máy của bạn</b>. Xong sớm thì bấm Publish luôn.</div>
   <div class="clock"><div class="n">13</div><div class="u">phút</div></div>
 </section>
 
@@ -636,7 +751,7 @@ Output complete working code. No placeholders, no "add logic here".</pre>
 
 <!-- 20 test prompt -->
 <section class="slide" data-notes="Ordering by 'likely to happen during a live demo' is what makes this list actionable.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — test prompt</div>
   <h2>Find what breaks on stage</h2><div class="rule"></div>
   <div class="body">
@@ -677,7 +792,7 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
 
 <!-- 22 eval prompt -->
 <section class="slide" data-notes="The last line is the one that produces action instead of a report.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — evaluation prompt</div>
   <h2>Make it grade you honestly</h2><div class="rule"></div>
   <div class="body">
@@ -702,7 +817,7 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 23 deploy -->
 <section class="slide" data-notes="Starter Tier: free, no card. The condition is a never-published account. This trips up most of the room.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Stage 07 — Deploy</div>
   <h2>A live URL, free, no credit card</h2><div class="rule"></div>
   <div class="body">
@@ -809,7 +924,7 @@ a 6/10 I can fix tonight.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 33</span></div>
+  <div><span id="counter">1 / 34</span></div>
 </div>
 
 <script>
