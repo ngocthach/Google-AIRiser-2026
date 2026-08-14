@@ -520,7 +520,54 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   <div class="eyebrow">Copy this — design system prompt</div>
   <h2>Generate the system, not a screen</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm">You are a product designer who builds design systems before screens.
+    <script type="text/plain" id="full-design-system">
+You are a product designer who builds design systems before screens.
+
+Product: The Proof-of-Work Protocol — university students aged 18-22
+must upload verifiable proof of past work (a GitHub repo, a Figma
+file, a slide deck) before the network of other students and their
+projects is revealed to them.
+Users: students entering a competitive job market, building a
+portfolio under time pressure.
+Should feel: serious, dense, earned — not playful, not corporate.
+Platform: web first, mobile-first layout.
+
+Reference aesthetic — follow these PRINCIPLES, do not copy any brand:
+- Content-first darkness: the interface recedes into near-black so
+  the users' actual work is the only source of colour on the screen.
+- A surface ladder, not one flat background: a near-black page, a
+  slightly lighter card, a lighter still interactive surface.
+- ONE functional accent colour, reserved for actions and state only.
+  Never decorative. If it appears somewhere you cannot click or that
+  is not telling me something, it is wrong.
+- Pill and circle geometry on every button.
+- Binary type weights — bold or regular, with one mid weight used
+  sparingly for secondary hierarchy.
+- A compact scale, roughly 10-24px. Density over breathing room.
+- Shadows carry elevation, because 1px borders disappear on dark.
+
+Give me tokens, not prose:
+
+- Colour: page, surface, surface-raised, surface-interactive,
+  text-primary, text-secondary, border, accent, plus semantic
+  success / warning / danger. Hex values.
+  State the contrast ratio for every text-on-background pair and
+  confirm each passes WCAG AA. Dark themes fail this far more often
+  than light ones — compute it, do not assume it.
+- Type: one font stack with a real fallback chain, and exactly 6
+  sizes in px with their use and their line-heights.
+- Spacing: an 8px-based scale, 6 steps.
+- Radius: 5 steps, including a pill value and a circle value.
+- Shadows: 2 levels, tuned for a dark surface.
+- Component rules for: button (3 states, pill geometry), input,
+  card, list row.
+
+Constraints: no gradients, max 2 font weights, ONE accent colour.
+
+Output as CSS custom properties I can paste straight into a build
+prompt, then one line on why you chose that accent colour.
+</script>
+    <pre class="sm" data-full="#full-design-system">You are a product designer who builds design systems before screens.
 
 Product: [one line]. Users: [who]. Should feel: [3 adjectives].
 Platform: mobile-first web.
@@ -755,11 +802,50 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
   <div class="eyebrow">Copy this — test prompt</div>
   <h2>Find what breaks on stage</h2><div class="rule"></div>
   <div class="body">
-    <pre>You are a QA engineer who finds the bugs that embarrass people
+    <script type="text/plain" id="full-test-thegate">
+You are a QA engineer who finds the bugs that embarrass people in
+live demos.
+
+My app, in three lines:
+- What it does: "The Gate" — the entry screen of The Proof-of-Work
+  Protocol. A university student must submit a link to real work
+  (GitHub repo, Figma file, slide deck) before the network of other
+  students and their projects is revealed to them.
+- The one input the user gives: a portfolio URL, typed into a single
+  text field.
+- The one output they get: either the network unlocks, or an inline
+  error explaining why the link was rejected.
+
+Built with: React single-page app, Tailwind, running in Google AI
+Studio. One screen. No login, no database, no routing.
+
+What I will demo, step by step:
+1. Open the published .ai.studio link on my phone, on venue wifi.
+2. Paste a real GitHub repo URL into the field.
+3. Press "Submit Proof".
+4. Show the loading state, then the unlocked network view.
+5. Go back and paste a broken link to show the error state.
+
+List 12 things that could break, ordered by how likely they are to
+happen during that exact demo. For each: the trigger, what the user
+sees, and the one-line fix.
+
+Cover at least: empty input · very long input · wrong-language input
+· no network · slow model response · double-click on Submit · mobile
+keyboard covering the button · the model returning something the UI
+does not know how to display.
+
+Then: a 6-item pre-demo checklist I can run in 3 minutes, in the
+order I should run it.
+</script>
+    <pre data-full="#full-test-thegate">You are a QA engineer who finds the bugs that embarrass people
 in live demos.
 
-My app: [paste code, or describe it]
-What I will demo: [the exact sequence, step by step]
+<span class="k">My app, in three lines</span> — no code needed:
+  what it does · the one input · the one output
+  <span class="c">(kèm ảnh chụp màn hình — Gemini đọc được ảnh)</span>
+
+What I will demo, step by step: 1… 2… 3…
 
 List 12 things that could break, <span class="k">ordered by how likely they
 are to happen during the demo</span>. For each: the trigger, what the
@@ -796,10 +882,48 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
   <div class="eyebrow">Copy this — evaluation prompt</div>
   <h2>Make it grade you honestly</h2><div class="rule"></div>
   <div class="body">
-    <pre>Score my MVP against the criteria it will actually be judged on.
+    <script type="text/plain" id="full-eval-thegate">
+Score my MVP against the criteria it will actually be judged on.
+
+Criteria (AI Riser Vietnam 2026):
+- Feasibility 40% — does it work as intended; is the UI intuitive and
+  accessible; are there considerations for disabilities
+- Impact 30% — problem-solution fit; could it become a real business
+  or social project with a stable group of users; scalability
+- Creativity 30% — originality, avoid templates; elegant use of AI
+  and Google technologies
+
+Product: "The Proof-of-Work Protocol" — university students aged 18-22
+must upload verifiable proof of past work (a GitHub repo, a Figma
+file, a slide deck) before they can see or recruit from the network of
+other students' projects. Built in Google AI Studio, React + Tailwind,
+one screen working end to end, published to a public .ai.studio URL.
+Screenshots attached.
+
+What I deliberately did NOT build, and why:
+- No payments — the community pledges support, it does not transact
+- No login, no database — one screen, seeded data, so it always works
+- No support for users under 18 — Decree 13/2023/ND-CP requires
+  verified parental consent, which a solo builder cannot implement in
+  25 hours
+
+For each criterion:
+- A score out of its weight, justified by something specific in the
+  product — not a general impression
+- The single change that would raise that score the most
+- Roughly how long that change takes
+
+Then: I have 8 hours left before the deadline. Give me the ordered
+list of what to do, and what to consciously not do.
+
+Be harsh. A 9/10 I cannot defend to a judge is worth less than a 6/10
+I can fix tonight.
+</script>
+    <pre data-full="#full-eval-thegate">Score my MVP against the criteria it will actually be judged on.
 
 Criteria: [paste the real rubric and its weights]
-Product: [describe it + paste the live link or screenshots]
+Product: [describe it + attach screenshots]
+Deliberately not built: [dòng KHÔNG LÀM từ chặng 2]
 
 For each criterion:
 - A score out of its weight, justified by something <span class="k">specific

@@ -37,12 +37,26 @@ App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-ide
 | 00:50–00:59 | 20 | **THỰC HÀNH 3** | Làm (9′) |
 | 00:59–01:04 | 21–23 | Code + ví dụ điền build prompt | Nói |
 | 01:04–01:17 | 24 | **THỰC HÀNH 4** | Làm (13′) |
-| 01:17–01:19 | 25–28 | Lướt nhanh: test & đánh giá → buổi sau | Nói |
-| 01:19–01:24 | 29 | Publish + publish tại chỗ | Làm |
-| 01:24–01:28 | 32–33 | Tổng kết | Nói |
-| 01:28–01:30 | 34 | Đóng + Q&A | Nói |
+| 01:17–01:22 | 25–26 | Test | Nói (5′) |
+| 01:22–01:27 | 27–28 | Đánh giá | Nói (5′) |
+| 01:27–01:33 | 29 | Publish + publish tại chỗ | Làm (6′) |
+| 01:33–01:39 | 30–31 | Nộp bài & video demo | Nói (6′) |
+| 01:39–01:43 | 32–33 | Tổng kết | Nói (4′) |
+| 01:43–01:45 | 34 | Đóng + Q&A | Nói (2′) |
 
-Tổng nói ≈ 45′ · tổng làm ≈ 45′.
+**Bảng trên là bản đầy đủ — 105 phút**, chạy hết cả 8 chặng.
+
+Đến 01:17 là khung cứng, không co giãn được: bốn slide THỰC HÀNH đều có đồng hồ đếm phút hiện trên màn hình, lệch là slide nói dối anh giữa buổi.
+
+**Từ 01:17 trở đi thì co được.** Nếu buổi 2 chắc chắn diễn ra, nén khối này lại để về 90 phút:
+
+| Cắt gì | Tiết kiệm | Còn lại |
+|---|---|---|
+| Test (25–26) → nói 1 phút thay vì 5 | 4′ | Để buổi 2 làm kỹ |
+| Đánh giá (27–28) → nói 1 phút thay vì 5 | 4′ | Để buổi 2 làm kỹ |
+| Nộp bài & video (30–31) → bỏ hẳn | 6′ | Toàn bộ là nội dung buổi 2 |
+
+Nén cả ba → **90 phút**. Đừng dạy trùng nội dung buổi 2 nếu hai buổi cách nhau gần.
 
 ---
 
@@ -271,7 +285,17 @@ Chỉ dòng in đậm:
 
 > "Làm token trước thì tính nhất quán là *cấu trúc*, không phải thứ bạn phải đi canh."
 
-**Slide 18 — prompt design system.** Chỉ dòng WCAG:
+**Slide 18 — prompt design system.**
+
+Bấm nút **COPY FULL** rồi nói:
+
+> "Bản đầy đủ trong nút này có thêm một khối mà slide không đủ chỗ hiện: **phong cách tham chiếu**. Thay vì viết 'làm cho đẹp', tôi mô tả *nguyên tắc* của một hệ design mà tôi thích — nền tối nhiều tầng, một màu nhấn duy nhất chỉ dùng cho hành động, nút bo tròn hết, chữ chỉ hai độ đậm."
+
+> "Mấy dòng đó lấy từ hệ design công khai của Spotify. Nhưng để ý dòng này: **'follow these principles, do not copy any brand'**. Học cách người ta *tổ chức* hệ design thì tốt. Bê nguyên màu và logo của người ta vào bài dự thi thì hỏng — originality chiếm 30% điểm, và bắt chước thương hiệu có thật là một vấn đề khác nữa."
+
+> "Chỗ tìm mấy tài liệu này: gõ 'awesome-design-md' trên GitHub. Có sẵn hệ design của nhiều sản phẩm lớn, viết ở dạng để dán vào prompt."
+
+Chỉ dòng WCAG:
 
 > "Dòng này bắt nó tự kiểm tra độ tương phản. Accessibility gần như luôn nằm trong tiêu chí chấm điểm, và gần như không ai làm. Một dòng prompt, ăn điểm thật."
 
@@ -331,17 +355,81 @@ Chỉ nút COPY FULL:
 
 ---
 
-## 01:17–01:19 — Lướt nhanh test & đánh giá (slide 25–28)
+## 01:17–01:22 — Test (slide 25–26)
 
-Bấm qua nhanh, khoảng 30 giây mỗi cặp:
+**Slide 25 — test để sống sót, không phải để đủ coverage.**
 
-> "Còn hai chặng nữa: test và đánh giá. Test thì không phải test cho đủ coverage — test để app sống sót bốn phút trước mặt người lạ. Đánh giá thì là chấm app của mình theo đúng thang điểm sẽ bị chấm."
+> "Đổi lại cách nghĩ về test. App của bạn không cần 80% coverage. Nó cần sống sót bốn phút trước mặt **một người không phải bạn** — người không biết chỗ nào nên tránh bấm."
 
-> "Hai cái này ta làm kỹ ở buổi sau, khi mọi người đã có app trong tay."
+Chỉ ba thẻ, trái sang phải:
+
+> "Test kỹ đúng con đường bạn sẽ demo — trên wifi hội trường, trên điện thoại, không phải trên laptop ở nhà. Test qua loa vài biên hiển nhiên: bỏ trống, nhập rất dài, sai ngôn ngữ, bấm hai lần. Còn lại thì bỏ — đống code này tuần sau bạn viết lại hết, viết unit test cho nó là phí giờ."
+
+Câu chốt của slide:
+
+> "Người dựng app luôn bấm đúng chỗ mình đã quen. Người lạ thì không. Toàn bộ việc test ở giai đoạn này là đi tìm những chỗ mà chỉ người lạ mới bấm vào."
+
+**Slide 26 — prompt test.**
+
+Chỉ vào dòng "no code needed" trước tiên — đây là chỗ nhiều người vướng:
+
+> "Để ý: **không cần dán code.** Code của bạn nằm trong AI Studio, lôi sang Gemini vừa mất công vừa không giúp gì. Mô tả ba dòng là đủ: app làm gì, người dùng nhập gì, họ nhận lại gì."
+
+> "Và Gemini **đọc được ảnh**. Chụp màn hình cái app đang chạy rồi kéo vào khung chat — nó nhìn được layout, nút nằm đâu, chữ có bị tràn không. Nhanh hơn và chính xác hơn dán code rất nhiều."
+
+*(Nếu có người hỏi 'em chạy luôn trong AI Studio được không?' — được, vì ở đó model đã thấy code. Nhưng nhớ ghi rõ 'chỉ nhận xét, đừng sửa code', không thì Build mode sẽ tự động sửa app của họ giữa lúc chỉ định hỏi.)*
+
+Chỉ vào dòng "sắp theo khả năng xảy ra ngay lúc demo":
+
+> "Dòng này là thứ biến danh sách thành cái dùng được. Không phải sắp theo mức nghiêm trọng lý thuyết — sắp theo **cái sắp cắn bạn**. Một lỗi làm sập cả app nhưng cần 20 bước mới chạm tới thì không nguy hiểm bằng một lỗi xuất hiện ngay ở thao tác thứ hai của phần demo."
+
+Chỉ danh sách bắt buộc phải cover:
+
+> "Tám tình huống này em ghi cứng vào prompt vì đây là những thứ luôn xảy ra và luôn bị quên. Đặc biệt hai cái cuối: **bàn phím điện thoại che mất nút bấm**, và **model trả về thứ không mong đợi**. Cái sau là đặc thù của app AI — code của bạn đúng, nhưng model trả về một thứ mà giao diện không biết hiển thị thế nào."
+
+Chỉ dòng cuối:
+
+> "Và checklist 6 mục — đó là thứ bạn chạy trong ba phút ngay trước khi lên sân khấu, không phải đọc lại toàn bộ danh sách 12 lỗi."
+
+**Cảnh báo quan trọng khi khán giả chạy prompt này:**
+
+> "Chạy xong đừng sửa cả mười hai lỗi. **Sửa hai cái đầu thôi.** Còn lại ghi vào ghi chú. Hôm nay không đủ giờ, và hai cái đầu là hai cái sẽ thật sự xảy ra."
 
 ---
 
-## 01:19–01:24 — Publish (slide 29)
+## 01:22–01:27 — Đánh giá (slide 27–28)
+
+**Slide 27 — chấm theo thang điểm thật.**
+
+> "'App em ổn chưa ạ?' là câu không ai trả lời được — kể cả AI. Đổi thành: 'nó có ăn điểm theo đúng tiêu chí sẽ bị chấm không?' Câu đó trả lời được, và quan trọng hơn, **sửa được**."
+
+Chỉ ô 40%:
+
+> "Để ý ô lớn nhất là feasibility — chạy được, dễ dùng, có nghĩ tới người khuyết tật. Nó vừa lớn nhất **vừa dễ ăn nhất**, vì nó nằm hoàn toàn trong tay bạn. Không phụ thuộc ý tưởng của bạn hay ho tới đâu."
+
+> "Và đây là chỗ nhiều người tính sai: một app nhỏ mà mọi nút đều chạy **thắng** một app tham vọng mà vỡ giữa lúc demo. Giám khảo chấm cái họ thấy chạy, không chấm cái bạn định làm."
+
+Chỉ callout:
+
+> "Lấy thang điểm thật **trước khi build**, không phải sau. Nó cho bạn biết công sức bỏ vào đâu thì ra điểm — và quan trọng không kém, chỗ nào bỏ công vào cũng không ra điểm."
+
+**Slide 28 — prompt đánh giá.**
+
+Chỉ cụm "specific in the product":
+
+> "Bắt nó chứng minh bằng thứ **cụ thể trong sản phẩm**. Không có dòng này thì nó khen chung chung — 'giao diện trực quan, ý tưởng tiềm năng' — và lời khen chung chung thì không sửa được gì cả."
+
+Chỉ dòng gần cuối:
+
+> "Dòng này biến một bản báo cáo thành một danh sách việc: nếu tôi chỉ còn N giờ, làm gì trước, **và chủ động không làm gì**. Vế thứ hai quan trọng ngang vế thứ nhất — nó cho bạn phép được bỏ."
+
+Chỉ dòng cuối cùng:
+
+> "Và câu 'hãy khắt khe'. Mặc định model rất tử tế với bạn. Một điểm 9 mà bạn không bảo vệ được trước giám khảo thì tệ hơn điểm 6 mà tối nay bạn sửa được."
+
+---
+
+## 01:27–01:33 — Publish (slide 29)
 
 > "Bây giờ lấy link thật. Miễn phí, không cần thẻ."
 
@@ -355,11 +443,47 @@ Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
 > "Bốn phút, mọi người làm y hệt. Có link rồi thì gửi vào nhóm chat."
 
-**Lưu ý điều hướng:** slide 30–31 (nộp bài + video demo) là nội dung **buổi 2**. Bấm lướt qua trong 10 giây — "hai cái này buổi sau" — rồi vào slide 31. Đừng dừng lại giảng, sẽ hụt giờ tổng kết.
+---
+
+## 01:33–01:39 — Nộp bài & video demo (slide 30–31)
+
+**Slide 30 — hai cái link, và người ta nộp nhầm.**
+
+> "Chỗ này mất điểm oan nhiều nhất trong cả cuộc thi, và nó **không liên quan gì tới kỹ thuật**."
+
+Chỉ hai dòng đầu bảng:
+
+> "**Link project** là để giám khảo mở đúng dự án của bạn, xem được cả code lẫn prompt. Thường đây là cái bắt buộc. Nhớ đặt sharing thành Public trước — quên bước đó thì giám khảo bấm vào chỉ thấy 'bạn không có quyền truy cập'."
+
+> "**Link app đã publish** là để người ta dùng thử mà không thấy code. Thường là điểm cộng, không bắt buộc."
+
+> "Hai cái này là hai thứ khác nhau. Nộp nhầm cái này vào ô cần cái kia là cách mất điểm dễ nhất, và cũng là cách ức chế nhất — vì sản phẩm của bạn không hề có lỗi."
+
+Chỉ dòng cuối bảng:
+
+> "Và dòng cuối: **phạm vi đã viết ra**. Bạn làm gì, và chủ động không làm gì. Đây chính là dòng KHÔNG LÀM mà bạn viết ở chặng 2. Nó đi được tới tận đây."
+
+> "Đừng ngại viết ra những gì mình đã cắt. Một người viết 'tôi cố tình không làm phần thanh toán vì đối tượng là học sinh dưới 16 tuổi, và luật không cho' — người đó nghe như một người hiểu việc. Người viết một danh sách tính năng dài dằng dặc mà nửa số đó không chạy thì ngược lại."
+
+**Slide 31 — video 90 giây.**
+
+> "Đây là artifact duy nhất được xem hết từ đầu đến cuối. Bài viết thì người ta lướt, code thì người ta mở ra rồi đóng lại — video thì xem hết."
+
+Chỉ ô thứ hai (0:15–0:40):
+
+> "Đa số video demo mất bốn mươi giây đầu cho màn đăng nhập và giới thiệu bản thân, rồi mới tới phần hay. Đừng. **Khoảnh khắc hay ho phải xuất hiện trước giây 40.** Nếu người xem chưa thấy điều gì đáng ngạc nhiên ở giây 40, họ đã ngừng xem rồi."
+
+Chỉ thẻ đỏ:
+
+> "Và tuyệt đối không đưa vào: màn đăng nhập, sơ đồ kiến trúc, cấu trúc thư mục, và câu 'xin lỗi chỗ này còn bug'. Không ai bắt bạn xin lỗi cả — bạn đang khoe thứ mình làm được, không phải giải trình thứ mình chưa làm."
+
+Thêm một câu trấn an:
+
+> "Quay bằng điện thoại cũng được. Không cần micro xịn, không cần dựng. Nội dung quan trọng hơn chất lượng hình rất nhiều. Cái người ta nhớ là vấn đề bạn giải quyết, không phải độ nét."
 
 ---
 
-## 01:24–01:28 — Tổng kết (slide 32–33)
+## 01:39–01:43 — Tổng kết (slide 32–33)
 
 **Slide 32 — ngân sách giờ.**
 
@@ -371,7 +495,7 @@ Bấm qua nhanh, khoảng 30 giây mỗi cặp:
 
 ---
 
-## 01:28–01:30 — Đóng (slide 34)
+## 01:43–01:45 — Đóng (slide 34)
 
 > "Buổi sau chúng ta lấy chính app này, tìm chỗ nó vỡ, chấm điểm nó theo thang thật, rồi nộp — nộp ngay trong phòng, không phải 'về nhà rồi nộp'."
 
