@@ -92,6 +92,18 @@ pre .c{color:#8FA5BC}
 .cover h1{max-width:19ch}
 .cover .sub{font-size:22px;color:var(--ink-2);margin-top:20px;max-width:60ch;line-height:1.5}
 .meta{position:absolute;left:76px;bottom:60px;display:flex;gap:34px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+/* hands-on checkpoint — deliberately loud, so the room knows it has stopped
+   being a talk and started being a workshop */
+.slide.turn{background:var(--tint);justify-content:center}
+.turn .eyebrow{color:#1A62C9}
+.turn h2{font-size:52px}
+.turn .task{font-size:24px;line-height:1.5;color:var(--ink-2);max-width:60ch;margin-top:6px}
+.turn .clock{position:absolute;right:76px;top:50%;transform:translateY(-50%);text-align:center}
+.turn .clock .n{font-size:104px;font-weight:700;color:var(--blue);line-height:1}
+.turn .clock .u{font-family:var(--mono);font-size:14px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.turn .done{margin-top:22px;font-size:17px;color:var(--ink);background:#fff;border:1px solid #C9DDFB;border-radius:12px;padding:14px 20px;max-width:60ch}
+.turn .done b{color:#1A62C9}
+
 /* stage divider */
 .slide.divider{background:#16222E;justify-content:center}
 .divider h2{color:#fff;font-size:56px}
@@ -280,7 +292,17 @@ Never invent statistics, market sizes, or company names.</pre>
   </div>
 </section>
 
-<!-- 9 BRAINSTORM divider -->
+<!-- 9 THỰC HÀNH 1 -->
+<section class="slide turn" data-notes="10 phút. Đi vòng quanh phòng. Ai chưa có ý tưởng thì cho họ mượn một cái — quan trọng là chạy được prompt.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="eyebrow">Thực hành 01</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Mở Gemini. Dán prompt Research, điền ý tưởng của <em>chính bạn</em> vào <code>[PROBLEM]</code> và <code>[AUDIENCE]</code>. Chạy.</p>
+  <div class="done"><b>Xong khi:</b> bạn trả lời được — nhóm người dùng đau nhất là ai, và <b>hôm nay họ đang xoay xở bằng cách nào?</b></div>
+  <div class="clock"><div class="n">10</div><div class="u">phút</div></div>
+</section>
+
+<!-- 10 BRAINSTORM divider -->
 <section class="slide divider" data-notes="Stage 2. Two prompts: one to open up, one to cut down. Never in the same message.">
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow">Stage 02</div>
@@ -358,7 +380,17 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   </div>
 </section>
 
-<!-- 13 DESIGN divider -->
+<!-- THỰC HÀNH 2 -->
+<section class="slide turn" data-notes="9 phút. Nhắc: chạy prompt diverge TRƯỚC, đọc hết 8 ý tưởng, rồi mới chạy prompt converge. Đừng gộp.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="eyebrow">Thực hành 02</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Dán problem brief vừa có vào prompt <strong>diverge</strong>. Đọc hết 8 ý tưởng. Rồi mới chạy prompt <strong>converge</strong>.</p>
+  <div class="done"><b>Xong khi:</b> bạn viết được 5 dòng — <b>CHỌN / CHO AI / VÌ / CHẾT NẾU / KHÔNG LÀM</b>.</div>
+  <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
+</section>
+
+<!-- DESIGN divider -->
 <section class="slide divider" data-notes="Stage 3. The stage that most separates a good-looking MVP from a generic one.">
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow">Stage 03</div>
@@ -435,7 +467,17 @@ propose the smallest addition</span> rather than inventing freely.</pre>
   </div>
 </section>
 
-<!-- 17 CODE -->
+<!-- THỰC HÀNH 3 -->
+<section class="slide turn" data-notes="9 phút. Nhấn: giữ lại bộ token — lát nữa dán thẳng vào prompt build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="eyebrow">Thực hành 03</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Chạy prompt design system. <strong>Lưu lại bộ CSS variables</strong> — lát nữa dán thẳng vào prompt build.</p>
+  <div class="done"><b>Xong khi:</b> bạn có bộ token dán được, và spec cho màn hình đầu tiên — kèm <b>empty state</b> và <b>error state</b>.</div>
+  <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
+</section>
+
+<!-- CODE -->
 <section class="slide" data-notes="Stage 4. Now the build prompt is easy, because it inherits three artifacts.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
   <div class="eyebrow">Stage 04 — Code</div>
@@ -477,7 +519,17 @@ Output complete working code. No placeholders, no "add logic here".</pre>
   </div>
 </section>
 
-<!-- 19 test -->
+<!-- THỰC HÀNH 4 -->
+<section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Ai xong sớm thì bảo publish luôn.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="eyebrow">Thực hành 04 — dài nhất</div>
+  <h2>Build đi</h2><div class="rule"></div>
+  <p class="task">Mở <code>ai.dev</code> → Build. Dán prompt build kèm bộ token của bạn. Chạy. Rồi sửa từng lớp một.</p>
+  <div class="done"><b>Xong khi:</b> app chạy được trên <b>điện thoại của bạn</b> — không phải trên laptop. Xong sớm thì bấm Publish luôn.</div>
+  <div class="clock"><div class="n">13</div><div class="u">phút</div></div>
+</section>
+
+<!-- test -->
 <section class="slide" data-notes="Stage 5. Reframe: you're not testing for correctness, you're testing for demo survival.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
   <div class="eyebrow">Stage 05 — Test</div>
@@ -667,7 +719,7 @@ a 6/10 I can fix tonight.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 28</span></div>
+  <div><span id="counter">1 / 32</span></div>
 </div>
 
 <script>
