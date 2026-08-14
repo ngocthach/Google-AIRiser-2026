@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Idea → Shipped: the 8-stage MVP pipeline, and how to prompt each one</title>
+<style>
+/* ============================================================
+   Google deck — tokens measured from Vibe_Coding_Handbook.pptx
+   Self-contained: no webfonts, no CDN, no network requests.
+   ============================================================ */
+:root{
+  --ink:#20344B; --ink-2:#2F4C6F; --muted:#80868B; --line:#DFE3E8; --white:#fff;
+  --cyan:#57CAFF; --blue:#4285F4; --blue-2:#3186FF; --tint:#E8F0FE; --tint-2:#F0F4FA;
+  --red:#EA4335; --yellow:#FBBC04; --green:#34A853;
+  --sans:"Google Sans","Product Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0E1721;font-family:var(--sans);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#canvas{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--white);padding:64px 76px 72px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+.dots{position:absolute;top:34px;left:40px;display:flex;gap:7px}
+.dots i{width:9px;height:9px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:var(--blue)}
+.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}
+.dots i:nth-child(4){background:var(--green)}
+.folio{position:absolute;top:32px;right:44px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+h1{font-size:60px;line-height:1.06;letter-spacing:-.02em;font-weight:700}
+h2{font-size:40px;line-height:1.14;letter-spacing:-.015em;font-weight:700;margin-bottom:8px}
+h3{font-size:21px;font-weight:600;margin-bottom:6px}
+p{font-size:19px;line-height:1.55;color:var(--ink-2)}
+.lede{font-size:23px;line-height:1.5;color:var(--ink-2);max-width:64ch}
+.small{font-size:16px;color:var(--muted);line-height:1.5}
+.rule{height:4px;width:76px;background:var(--cyan);border-radius:2px;margin:18px 0 26px}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.body.top{justify-content:flex-start}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--tint-2);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+.card.accent{background:var(--tint);border-color:#C9DDFB}
+.card.warn{background:#FFF6E5;border-color:#F5D98A}
+.card.stop{background:#FDECEA;border-color:#F5B7B1}
+.card.go{background:#E9F7EF;border-color:#A9DFBF}
+.card h3{color:var(--ink)}
+.card p{font-size:16px;line-height:1.5}
+.card .n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;margin-bottom:8px;display:block}
+.card.sm{padding:16px 18px;border-radius:14px}
+.card.sm h3{font-size:17px;margin-bottom:3px}
+.card.sm p{font-size:14px;line-height:1.4}
+ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+ul li{position:relative;padding-left:26px;font-size:18px;line-height:1.5;color:var(--ink-2)}
+ul li::before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:50%;background:var(--cyan)}
+ul.check li::before{content:"✓";background:none;color:var(--green);font-weight:700;top:0;font-size:17px;width:auto;height:auto}
+ul.no li::before{content:"✕";background:none;color:var(--red);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.tight li{font-size:16px;gap:8px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:400;border-bottom:2px solid var(--line)}
+td{color:var(--ink-2);line-height:1.45}
+td strong{color:var(--ink)}
+tr.hl td{background:var(--tint)}
+table.sm{font-size:14.5px}
+table.sm th,table.sm td{padding:8px 12px}
+code,.mono{font-family:var(--mono);font-size:.93em;background:var(--tint);padding:2px 7px;border-radius:5px;color:var(--ink-2)}
+pre{background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+pre.sm{font-size:12px;line-height:1.5;padding:18px 22px}
+pre .k{color:var(--cyan);font-weight:600}
+pre .c{color:#8FA5BC}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--tint);color:var(--blue);margin-right:8px}
+.stat{font-size:52px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--blue)}
+.stat-lbl{font-size:15px;color:var(--muted);margin-top:6px}
+.flow{display:flex;align-items:stretch;gap:12px}
+.flow .step{flex:1;background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+.flow .step .n{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.12em}
+.flow .step h3{font-size:17px;margin:8px 0 4px}
+.flow .step p{font-size:14.5px;line-height:1.45}
+.flow .arw{display:grid;place-items:center;color:var(--cyan);font-size:22px;font-weight:700}
+.callout{border-left:5px solid var(--cyan);background:var(--tint-2);padding:16px 22px;border-radius:0 12px 12px 0}
+.callout.red{border-left-color:var(--red);background:#FDECEA}
+.callout.green{border-left-color:var(--green);background:#E9F7EF}
+.callout p{font-size:17px}
+.slide.cover{background:radial-gradient(900px 460px at 82% 12%,#EAF3FF 0%,rgba(234,243,255,0) 70%),var(--white);justify-content:center}
+.badge{display:inline-block;align-self:flex-start;padding:9px 20px;border-radius:999px;color:#fff;font-weight:600;font-size:14.5px;letter-spacing:.04em;margin-bottom:26px;background:linear-gradient(90deg,#4285F4,#57CAFF,#34A853,#FBBC04,#EA4335)}
+.cover h1{max-width:19ch}
+.cover .sub{font-size:22px;color:var(--ink-2);margin-top:20px;max-width:60ch;line-height:1.5}
+.meta{position:absolute;left:76px;bottom:60px;display:flex;gap:34px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+/* stage divider */
+.slide.divider{background:#16222E;justify-content:center}
+.divider h2{color:#fff;font-size:56px}
+.divider .eyebrow{color:var(--cyan)}
+.divider p{color:#A9BACB;font-size:21px;max-width:56ch;margin-top:14px}
+.divider .rule{background:var(--cyan)}
+.divider .dots i{opacity:.85}
+.stagerow{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.stagerow span{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border:1px solid #2B3E52;border-radius:999px;color:#7E93A8}
+.stagerow span.on{background:var(--cyan);color:#0E1721;border-color:var(--cyan);font-weight:700}
+#notes{position:fixed;right:16px;bottom:56px;width:340px;max-height:44vh;overflow:auto;background:#16222E;color:#C9D6E2;border:1px solid #2B3E52;border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.55;display:none;z-index:7}
+#notes.on{display:block}
+#notes b{color:var(--cyan);display:block;margin-bottom:6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+#hud{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#7C8FA6;font-family:var(--mono);font-size:12px;letter-spacing:.1em;pointer-events:none;z-index:5}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--cyan);width:0;z-index:6;transition:width .25s ease}
+#hud button{pointer-events:auto;background:none;border:1px solid #33475C;color:#7C8FA6;border-radius:7px;padding:5px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em}
+#hud button:hover{color:#DCE6F0;border-color:#5C7A96}
+#hud button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.hud-g{display:flex;gap:9px;align-items:center}
+@media print{
+  body{background:#fff;overflow:visible}
+  #stage{position:static;display:block}
+  #canvas{transform:none!important;width:100%;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
+  #hud,#bar,#notes{display:none}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"><div id="canvas">
+
+<!-- 1 cover -->
+<section class="slide cover active" data-notes="Hook: most people jump straight to 'build me an app'. That's why their MVP looks like everyone else's.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">#BuildwithGoogleAI · MVP Pipeline</span>
+  <h1>Idea → Shipped</h1>
+  <p class="sub">Eight stages, and the exact prompt that gets you through each one. The prompts are the deck — copy them.</p>
+  <div class="meta"><span>STEP-BY-STEP</span><span>8 STAGES</span><span>BEGINNER → INTERMEDIATE</span></div>
+</section>
+
+<!-- 2 the eight stages -->
+<section class="slide" data-notes="Don't read all eight. Point out that the first three are where people skip, and where this talk spends its time.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The pipeline</div>
+  <h2>Eight stages, in this order</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g4">
+      <div class="card sm accent"><span class="n">01</span><h3>Research</h3><p>Is the problem real?</p></div>
+      <div class="card sm accent"><span class="n">02</span><h3>Brainstorm</h3><p>Which solution?</p></div>
+      <div class="card sm accent"><span class="n">03</span><h3>Design system</h3><p>What does it look like?</p></div>
+      <div class="card sm"><span class="n">04</span><h3>Code</h3><p>Build the thing</p></div>
+    </div>
+    <div class="grid g4">
+      <div class="card sm"><span class="n">05</span><h3>Test</h3><p>What breaks?</p></div>
+      <div class="card sm"><span class="n">06</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
+      <div class="card sm"><span class="n">07</span><h3>Deploy</h3><p>Get a live URL</p></div>
+      <div class="card sm"><span class="n">08</span><h3>Publish</h3><p>Ship it to people</p></div>
+    </div>
+    <div class="callout"><p>Most people start at <strong>04</strong>. That is why their MVP looks like everyone else's — and why they can't answer "why this?"</p></div>
+  </div>
+</section>
+
+<!-- 3 artifact chain -->
+<section class="slide" data-notes="This is the most important slide in the deck. Every prompt eats the previous stage's artifact.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The spine</div>
+  <h2>Every stage produces an artifact</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Stage</th><th>What comes out</th><th>Feeds</th></tr>
+      <tr class="hl"><td><strong>Research</strong></td><td>A problem brief — segments, status quo, killer assumptions</td><td>Brainstorm</td></tr>
+      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Design</td></tr>
+      <tr class="hl"><td><strong>Design system</strong></td><td>Token set + screen specs</td><td>Code</td></tr>
+      <tr><td><strong>Code</strong></td><td>A working app</td><td>Test</td></tr>
+      <tr><td><strong>Test</strong></td><td>Ranked bug list + pre-demo checklist</td><td>Evaluation</td></tr>
+      <tr><td><strong>Evaluation</strong></td><td>Prioritised fix list against the real rubric</td><td>Deploy</td></tr>
+      <tr><td><strong>Deploy</strong></td><td>A live URL</td><td>Publish</td></tr>
+      <tr><td><strong>Publish</strong></td><td>Submission + demo video</td><td>—</td></tr>
+    </table>
+    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 4 output good — not a cleverer build prompt.</p></div>
+  </div>
+</section>
+
+<!-- 4 prompt anatomy -->
+<section class="slide" data-notes="Same skeleton every stage. Only the content changes.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The reusable skeleton</div>
+  <h2>Every prompt has the same six parts</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="c">[ROLE]</span>     You are a &lt;specific kind of expert, with an attitude&gt;
+
+<span class="c">[GOAL]</span>     I want to &lt;one outcome, not three&gt;
+
+<span class="c">[CONTEXT]</span>  Users, market, my time budget, solo or team
+
+<span class="c">[INPUT]</span>    &lt;paste the artifact from the previous stage&gt;
+
+<span class="c">[OUTPUT]</span>   Give me exactly: &lt;shape — a table, 8 items, CSS vars&gt;
+
+<span class="k">[QUALITY]  Push back if… / Mark guesses as [UNVERIFIED] /
+           Ask me 3 questions before you answer</span></pre>
+    <div class="callout"><p><strong>ROLE with an attitude</strong> beats a neutral role. "A researcher who is skeptical by default" produces different output than "a researcher".</p></div>
+  </div>
+</section>
+
+<!-- 5 the one line -->
+<section class="slide" data-notes="If they remember one technique from the whole talk, make it this one.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The highest-leverage line</div>
+  <h2>Make it interview you first</h2><div class="rule"></div>
+  <div class="body">
+    <pre>Before you answer, ask me the 3 questions whose answers would
+most change your response. Wait for my answers.</pre>
+    <div class="grid g2">
+      <div class="card stop"><h3>Without it</h3><p>The model fills your gaps with the most average assumption available, and you get the same output as everyone else who typed a similar prompt.</p></div>
+      <div class="card go"><h3>With it</h3><p>The gaps get filled with <em>your</em> specifics. The output stops being generic — because the input stopped being generic.</p></div>
+    </div>
+    <div class="callout green"><p>Works at every stage. Costs one extra round trip. It is the cheapest quality upgrade available to you.</p></div>
+  </div>
+</section>
+
+<!-- 6 RESEARCH divider -->
+<section class="slide divider" data-notes="Stage 1. The stage everyone skips.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 01</div>
+  <h2>Research</h2><div class="rule"></div>
+  <p>Decide whether the problem is real <em>before</em> you fall in love with a solution. Output: a problem brief you can hand to the next stage.</p>
+  <div class="stagerow">
+    <span class="on">Research</span><span>Brainstorm</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 7 research prompt -->
+<section class="slide" data-notes="Point at line 3 — 'what do they do today instead'. The status quo is the real competitor, not other apps.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="eyebrow">Copy this — research prompt</div>
+  <h2>Interrogate the problem</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">You are a product researcher who is <span class="k">skeptical by default</span>.
+
+Goal: decide whether [PROBLEM] is real and worth building for,
+before I write any code.
+
+Context: MVP for [AUDIENCE] in [MARKET]. I have [TIME], working
+[solo / team of N].
+
+Do this:
+1. Restate the problem in one sentence, as a USER would say it —
+   not as I said it.
+2. Split who has it into 3 segments. Say which segment feels it
+   most acutely, and why.
+3. <span class="k">For each segment: what do they do today instead?</span>
+   (the status quo is the real competitor, not other apps)
+4. List 5 existing solutions. For each: what it does well, and
+   the specific gap it leaves.
+5. List the 3 assumptions that, if wrong, kill this idea.
+6. The cheapest way to test the riskiest one this week.
+
+Rules: mark anything you are unsure about as [UNVERIFIED].
+Never invent statistics, market sizes, or company names.</pre>
+  </div>
+</section>
+
+<!-- 8 research verification -->
+<section class="slide" data-notes="Research is where hallucination does the most damage, because everything downstream inherits it.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="eyebrow">Before you trust the output</div>
+  <h2>Research is where hallucination hurts most</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">Everything downstream inherits a bad brief. Four minutes of checking here saves the whole project.</p>
+    <div class="grid g2">
+      <div class="card stop"><h3>Delete on sight</h3><ul class="no tight">
+        <li>A number with no source</li>
+        <li>"Studies show…" with no study</li>
+        <li>A market size in billions</li>
+        <li>A company you can't find on Google</li></ul></div>
+      <div class="card go"><h3>Keep and use</h3><ul class="check tight">
+        <li>Anything marked [UNVERIFIED] — it told you</li>
+        <li>The "what they do today" answers</li>
+        <li>The killer assumptions</li>
+        <li>The cheap test</li></ul></div>
+    </div>
+    <div class="callout red"><p>If the output agrees with everything you already believed, that is a red flag, not a green one. Ask: <em>"What would have to be true for this to be wrong?"</em></p></div>
+  </div>
+</section>
+
+<!-- 9 BRAINSTORM divider -->
+<section class="slide divider" data-notes="Stage 2. Two prompts: one to open up, one to cut down. Never in the same message.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 02</div>
+  <h2>Brainstorm</h2><div class="rule"></div>
+  <p>Two separate prompts: one to <em>diverge</em>, one to <em>converge</em>. Asking for both at once gets you three ideas and a premature favourite.</p>
+  <div class="stagerow">
+    <span>Research</span><span class="on">Brainstorm</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 10 diverge prompt -->
+<section class="slide" data-notes="The forced variety buckets are what stop all 8 ideas being the same idea in different clothes.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="eyebrow">Copy this — diverge prompt</div>
+  <h2>Force variety, forbid ranking</h2><div class="rule"></div>
+  <div class="body">
+    <pre>You are a product designer who is good at unusual angles.
+
+Input: [paste the problem brief from Research]
+
+Generate 8 solutions. <span class="k">Force variety — 2 from each bucket:</span>
+  A. The obvious approach, done unusually well
+  B. Solves it by REMOVING something, not adding
+  C. Changes WHO does the work (automate / delegate / community)
+  D. Only possible because of AI
+
+For each: name · one sentence · the user's first 60 seconds ·
+why it might fail.
+
+<span class="k">Do not rank them. Do not tell me which you prefer.</span></pre>
+    <div class="callout"><p>The buckets matter. Without them you get eight variations of the first idea.</p></div>
+  </div>
+</section>
+
+<!-- 11 converge prompt -->
+<section class="slide" data-notes="Line about emotional attachment — this is the one that saves people from building the wrong thing.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="eyebrow">Copy this — converge prompt</div>
+  <h2>Now be brutal</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Now be brutal. Score each of the 8 ideas 1–5 on:
+
+  1. Can ONE person build a working version in [N] hours?
+  2. Does it solve the acute pain for the segment we identified,
+     or a mild pain for everyone?
+  3. Would a user come back a second time unprompted?
+  4. Can I demo it in 60 seconds without explaining it first?
+
+Show the scores as a table with a total column. Then:
+- Name the 2 strongest, and what would kill each.
+- <span class="k">Name the idea I am most emotionally attached to,
+  and argue against it.</span>
+- Recommend one. State the assumption your recommendation
+  depends on, so I know what to watch.</pre>
+    <div class="callout red"><p>Criterion 4 is the one people fail. If it needs a paragraph of setup before the demo makes sense, it is the wrong MVP.</p></div>
+  </div>
+</section>
+
+<!-- 12 decision artifact -->
+<section class="slide" data-notes="Write the decision down. In two weeks you will not remember why you picked this.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="eyebrow">The artifact</div>
+  <h2>Write the decision down</h2><div class="rule"></div>
+  <div class="body">
+    <pre>CHOSEN:    &lt;idea name&gt;
+FOR:       &lt;the segment, specifically&gt;
+BECAUSE:   &lt;the one reason it beat the runner-up&gt;
+KILLS IT:  &lt;the assumption that must hold&gt;
+NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
+    <div class="grid g2">
+      <div class="card"><h3>Why bother</h3><p>In two weeks you will not remember why you chose this, and you will drift back toward the idea you cut.</p></div>
+      <div class="card accent"><h3>It pays off twice</h3><p>NOT DOING becomes your scope defence during coding — and the "what we deliberately left out" line in your submission.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 DESIGN divider -->
+<section class="slide divider" data-notes="Stage 3. The stage that most separates a good-looking MVP from a generic one.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 03</div>
+  <h2>Design system &amp; UI</h2><div class="rule"></div>
+  <p>Tokens before screens. This is the single biggest difference between an MVP that looks designed and one that looks generated.</p>
+  <div class="stagerow">
+    <span>Research</span><span>Brainstorm</span><span class="on">Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 14 why tokens -->
+<section class="slide" data-notes="Explain: 'make it look nice' has no memory. Tokens are the memory.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="eyebrow">Why this order</div>
+  <h2>"Make it look nice" has no memory</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>Screens first</h3><p>Each new screen invents its own blue, its own spacing, its own button. By screen four the app looks like four apps. Every fix is manual.</p></div>
+      <div class="card go"><h3>Tokens first</h3><p>One token list, then every screen references it. Consistency is structural, not something you police. Changing the brand colour is one line.</p></div>
+    </div>
+    <div class="callout"><p>A token set is also the thing you paste into the <em>code</em> prompt. Design and build stop drifting apart because they share one source.</p></div>
+  </div>
+</section>
+
+<!-- 15 design system prompt -->
+<section class="slide" data-notes="Point at the WCAG line — it forces accessibility, which is usually a scored criterion.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="eyebrow">Copy this — design system prompt</div>
+  <h2>Generate the system, not a screen</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">You are a product designer who builds design systems before screens.
+
+Product: [one line]. Users: [who]. Should feel: [3 adjectives].
+Platform: mobile-first web.
+
+<span class="k">Give me tokens, not prose:</span>
+- Colour: bg, surface, text-primary, text-secondary, border, brand,
+  + semantic success / warning / danger. Hex values.
+  <span class="k">State the contrast ratio for every text-on-background pair
+  and confirm each passes WCAG AA.</span>
+- Type: one font stack + exactly 6 sizes in px with their use
+  (display, title, subtitle, body, small, micro) and line-heights.
+- Spacing: an 8px-based scale, 6 steps.
+- Radius, border width, one shadow.
+- Rules for: button (3 states), input, card, list row.
+
+Constraints: no gradients, max 2 font weights, ONE accent colour.
+
+Output as CSS custom properties I can paste, then one line on why
+you chose the brand colour.</pre>
+  </div>
+</section>
+
+<!-- 16 screens prompt -->
+<section class="slide" data-notes="'Only these tokens' is the constraint doing the work. And the last line stops silent drift.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="eyebrow">Copy this — screens prompt</div>
+  <h2>Screens, constrained by the system</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="k">Using ONLY the tokens above</span> — no new colours, no new sizes —
+design the [N] screens of this MVP.
+
+For each screen:
+- Its single job, in one sentence
+- The layout as a text wireframe, top to bottom, naming which
+  token each block uses
+- The ONE primary action, and what happens after it
+- The empty state and the error state
+
+<span class="k">Then list every place the token set was not enough, and
+propose the smallest addition</span> rather than inventing freely.</pre>
+    <div class="callout green"><p>Empty and error states are where generated UIs fall apart — and where a judge or user lands first. Ask for them by name.</p></div>
+  </div>
+</section>
+
+<!-- 17 CODE -->
+<section class="slide" data-notes="Stage 4. Now the build prompt is easy, because it inherits three artifacts.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="eyebrow">Stage 04 — Code</div>
+  <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">L1</span><h3>Core logic</h3><p>The one thing the app does. Ugly is fine.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L2</span><h3>The system</h3><p>Apply the tokens. Now it looks designed.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L3</span><h3>AI features</h3><p>The part that needs the model.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L4</span><h3>States</h3><p>Empty, loading, error, accessibility.</p></div>
+    </div>
+    <div class="callout"><p>Test after each layer. When you ask for everything at once and it breaks, you have no idea which instruction caused it.</p></div>
+  </div>
+</section>
+
+<!-- 18 code prompt -->
+<section class="slide" data-notes="The scope line — no routing, no login, no database — is what keeps the model from building a dashboard.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="eyebrow">Copy this — build prompt</div>
+  <h2>The build prompt inherits everything</h2><div class="rule"></div>
+  <div class="body">
+    <pre>Build [screen 1] of [product] as a React single-page app, Tailwind.
+
+<span class="k">Use exactly these design tokens — introduce no colours, sizes,
+or spacing outside this set:</span>
+[paste the CSS custom properties from Stage 3]
+
+This screen's job: [one sentence from the screen spec]
+Primary action: [action] → [what happens]
+Include the empty state and the error state.
+
+<span class="k">Scope: single screen. No routing, no login, no database.</span>
+Seed with [N] realistic sample items so it is never empty.
+
+Output complete working code. No placeholders, no "add logic here".</pre>
+  </div>
+</section>
+
+<!-- 19 test -->
+<section class="slide" data-notes="Stage 5. Reframe: you're not testing for correctness, you're testing for demo survival.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="eyebrow">Stage 05 — Test</div>
+  <h2>Test for the demo, not for coverage</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">An MVP does not need 80% coverage. It needs to survive four minutes in front of someone who did not build it.</p>
+    <div class="grid g3">
+      <div class="card go"><span class="n">Test hard</span><h3>The happy path</h3><p>The exact sequence you will demo, on the venue's wifi, on a phone.</p></div>
+      <div class="card warn"><span class="n">Test some</span><h3>The obvious edges</h3><p>Empty input, very long input, wrong language, double-click.</p></div>
+      <div class="card"><span class="n">Skip</span><h3>Everything else</h3><p>Unit tests for code you will rewrite tomorrow. Not now.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 test prompt -->
+<section class="slide" data-notes="Ordering by 'likely to happen during a live demo' is what makes this list actionable.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="eyebrow">Copy this — test prompt</div>
+  <h2>Find what breaks on stage</h2><div class="rule"></div>
+  <div class="body">
+    <pre>You are a QA engineer who finds the bugs that embarrass people
+in live demos.
+
+My app: [paste code, or describe it]
+What I will demo: [the exact sequence, step by step]
+
+List 12 things that could break, <span class="k">ordered by how likely they
+are to happen during the demo</span>. For each: the trigger, what the
+user sees, and the one-line fix.
+
+Cover at least: empty input · very long input · wrong-language
+input · no network · slow model response · double-click ·
+mobile keyboard covering the button · model returns something
+unexpected.
+
+Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
+  </div>
+</section>
+
+<!-- 21 evaluation -->
+<section class="slide" data-notes="Stage 6. Evaluate against the criteria you'll actually be judged on — not vibes.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
+  <div class="eyebrow">Stage 06 — Evaluation</div>
+  <h2>Score it against the real rubric</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">"Is it good?" is unanswerable. "Does it score on the criteria it will be judged against?" is answerable — and fixable.</p>
+    <div class="grid g3">
+      <div class="card accent"><div class="stat">40%</div><div class="stat-lbl">Typically <strong>feasibility</strong> — does it work, is it usable, is it accessible</div></div>
+      <div class="card accent"><div class="stat">30%</div><div class="stat-lbl"><strong>Impact</strong> — real problem, real users, could scale</div></div>
+      <div class="card accent"><div class="stat">30%</div><div class="stat-lbl"><strong>Creativity</strong> — original angle, elegant use of AI</div></div>
+    </div>
+    <div class="callout"><p>Get the actual rubric before you build, not after. It tells you where effort converts into score — and where it doesn't.</p></div>
+  </div>
+</section>
+
+<!-- 22 eval prompt -->
+<section class="slide" data-notes="The last line is the one that produces action instead of a report.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
+  <div class="eyebrow">Copy this — evaluation prompt</div>
+  <h2>Make it grade you honestly</h2><div class="rule"></div>
+  <div class="body">
+    <pre>Score my MVP against the criteria it will actually be judged on.
+
+Criteria: [paste the real rubric and its weights]
+Product: [describe it + paste the live link or screenshots]
+
+For each criterion:
+- A score out of its weight, justified by something <span class="k">specific
+  in the product</span> — not a general impression
+- The single change that would raise that score the most
+- Roughly how long that change takes
+
+Then: <span class="k">if I only have [N] hours left, give me the ordered
+list of what to do, and what to consciously not do.</span>
+
+Be harsh. A 9/10 I cannot defend to a judge is worth less than
+a 6/10 I can fix tonight.</pre>
+  </div>
+</section>
+
+<!-- 23 deploy -->
+<section class="slide" data-notes="Starter Tier: free, no card. The condition is a never-published account. This trips up most of the room.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy</div>
+  <div class="eyebrow">Stage 07 — Deploy</div>
+  <h2>A live URL, free, no credit card</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">01</span><h3>Publish</h3><p>Top right → Publish → Get started</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">02</span><h3>Name it</h3><p>Set description and app URL</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">03</span><h3>Live</h3><p>You get <code>your-app.ai.studio</code></p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card go"><h3>Google Cloud Starter Tier</h3><p>Publish free — no credit card, no Cloud project. Up to 2 apps, single region.</p></div>
+      <div class="card warn"><h3>If it asks for a card</h3><p>You are not on Starter Tier. It only works on a Google account that has <strong>never published</strong> from AI Studio — use a fresh account or incognito.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 24 publish artifacts -->
+<section class="slide" data-notes="Two links, and people submit the wrong one. Say it out loud.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
+  <div class="eyebrow">Stage 08 — Publish</div>
+  <h2>Ship the artifacts, not just the app</h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Artifact</th><th>Why it exists</th></tr>
+      <tr class="hl"><td><strong>Project link</strong></td><td>Usually the <em>mandatory</em> one — lets a judge open your actual project. Set sharing to Public first.</td></tr>
+      <tr><td><strong>Live app URL</strong></td><td>Lets anyone use it without seeing your code. Often worth bonus points.</td></tr>
+      <tr><td><strong>Demo video</strong></td><td>The only artifact that is watched all the way through. 60–90 seconds.</td></tr>
+      <tr><td><strong>The written scope</strong></td><td>What you built, and what you deliberately did <em>not</em> build. This is your NOT DOING list from Stage 2.</td></tr>
+    </table>
+    <div class="callout red"><p>The project link and the live URL are different things. Submitting one where the other was required is the most common way to lose points for free.</p></div>
+  </div>
+</section>
+
+<!-- 25 demo video -->
+<section class="slide" data-notes="Most demo videos spend 40 seconds on sign-in. Show the magic moment by second 25.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
+  <div class="eyebrow">The one artifact people watch</div>
+  <h2>90 seconds, in this order</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g4">
+      <div class="card sm"><span class="n">0:00–0:15</span><h3>The problem</h3><p>Shown, not described. A real message, a real bill, a real mess.</p></div>
+      <div class="card sm accent"><span class="n">0:15–0:40</span><h3>The magic moment</h3><p>Input → output. This is the whole video. Get here fast.</p></div>
+      <div class="card sm"><span class="n">0:40–1:10</span><h3>One more angle</h3><p>A second case that proves it wasn't a fluke.</p></div>
+      <div class="card sm"><span class="n">1:10–1:30</span><h3>What's next</h3><p>Who it's for, and where it goes.</p></div>
+    </div>
+    <div class="card stop"><h3>Never in a demo video</h3><p>Sign-in flows · architecture diagrams · your folder structure · apologising for bugs · "as you can see here…" for 20 seconds before anything happens.</p></div>
+  </div>
+</section>
+
+<!-- 26 recap -->
+<section class="slide" data-notes="Time budget. Note research+brainstorm+design is a third of the time and produces no code.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">Recap</div>
+  <div class="eyebrow">If you have one weekend</div>
+  <h2>Where the hours actually go</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Stage</th><th>Time</th><th>You stop when…</th></tr>
+      <tr class="hl"><td><strong>01 Research</strong></td><td>1.5 h</td><td>You can name the segment and what they do today instead</td></tr>
+      <tr class="hl"><td><strong>02 Brainstorm</strong></td><td>1 h</td><td>You have written down CHOSEN / BECAUSE / NOT DOING</td></tr>
+      <tr class="hl"><td><strong>03 Design system</strong></td><td>1.5 h</td><td>You have tokens you can paste, and screen specs with states</td></tr>
+      <tr><td><strong>04 Code</strong></td><td>6 h</td><td>The happy path works end to end on a phone</td></tr>
+      <tr><td><strong>05 Test</strong></td><td>1 h</td><td>You have run the pre-demo checklist once</td></tr>
+      <tr><td><strong>06 Evaluation</strong></td><td>1 h</td><td>You have an ordered fix list and did the top two</td></tr>
+      <tr><td><strong>07 Deploy</strong></td><td>0.5 h</td><td>A stranger opened your URL on their phone</td></tr>
+      <tr><td><strong>08 Publish</strong></td><td>2 h</td><td>Video recorded, links submitted, scope written down</td></tr>
+    </table>
+    <div class="callout"><p>Stages 1–3 are <strong>a quarter of the time and produce no code</strong>. That is the part that feels wrong and is right.</p></div>
+  </div>
+</section>
+
+<!-- 27 failure mode -->
+<section class="slide" data-notes="The honest one. Everyone in the room has done the left column.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">Recap</div>
+  <div class="eyebrow">What actually goes wrong</div>
+  <h2>Skipping a stage doesn't save time</h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Skipped</th><th>What it feels like</th><th>What it costs</th></tr>
+      <tr><td><strong>Research</strong></td><td>"I already know the problem"</td><td>You build for a segment that doesn't feel the pain</td></tr>
+      <tr><td><strong>Brainstorm</strong></td><td>"I had the idea already"</td><td>You build the first idea, which is usually the average one</td></tr>
+      <tr><td><strong>Design system</strong></td><td>"I'll make it pretty later"</td><td>Four screens that look like four different apps</td></tr>
+      <tr class="hl"><td><strong>Evaluation</strong></td><td>"It works, I'm done"</td><td>You polish what you enjoy instead of what is scored</td></tr>
+    </table>
+    <div class="callout green"><p>Each skipped stage returns as rework, at a worse time, with less runway. The pipeline isn't ceremony — it's the cheap version of finding out.</p></div>
+  </div>
+</section>
+
+<!-- 28 close -->
+<section class="slide cover" data-notes="Send them to stage 1 tonight, not to the code editor.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Your turn</span>
+  <h1>Start at stage 01 tonight.</h1>
+  <p class="sub">Not the build prompt. Open the research prompt, paste your idea, and let it tell you what you don't know yet. Everything downstream gets easier.</p>
+  <div class="meta"><span>8 STAGES</span><span>8 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
+</section>
+
+</div></div>
+
+<div id="notes"><b>Presenter notes</b><span id="notes-body"></span></div>
+<div id="hud">
+  <div class="hud-g">
+    <button id="prev" aria-label="Previous slide">← PREV</button>
+    <button id="next" aria-label="Next slide">NEXT →</button>
+    <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
+  </div>
+  <div><span id="counter">1 / 28</span></div>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var i=0, canvas=document.getElementById('canvas'),
+      notes=document.getElementById('notes'), nbody=document.getElementById('notes-body');
+
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i)});
+    document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+    document.getElementById('bar').style.width=((i+1)/slides.length*100)+'%';
+    nbody.textContent=slides[i].getAttribute('data-notes')||'—';
+    location.hash=i+1;
+  }
+  function fit(){
+    var s=Math.min((window.innerWidth-24)/1280,(window.innerHeight-54)/720);
+    canvas.style.transform='scale('+s+')';
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
+    else if(e.key==='n'||e.key==='N'){notes.classList.toggle('on')}
+  });
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  document.getElementById('notesbtn').onclick=function(){notes.classList.toggle('on')};
+  // No click-to-advance: the whole point of this deck is that people copy the
+  // prompts off the slides, and a stage click handler breaks drag-select.
+  // Clickers still work — they emit PageUp/PageDown or arrow keys.
+  window.addEventListener('resize',fit);
+  window.addEventListener('hashchange',function(){
+    var n=parseInt((location.hash||'#1').slice(1),10)-1;
+    if(!isNaN(n)&&n!==i) show(n);
+  });
+  fit();
+  show(parseInt((location.hash||'#1').slice(1),10)-1||0);
+})();
+</script>
+</body>
+</html>

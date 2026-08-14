@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ươm Mầm — Build a Student Idea → Team → Funding App</title>
+<style>
+/* ============================================================
+   Theme extracted from Vibe_Coding_Handbook.pptx
+   ink #20344B · accent cyan #57CAFF · google blue #4285F4
+   tints #E8F0FE / #F0F4FA · Google Sans → system fallback stack
+   Self-contained: no network fonts, no CDN, works from file://
+   ============================================================ */
+:root{
+  --ink:#20344B;
+  --ink-2:#2F4C6F;
+  --muted:#80868B;
+  --line:#DFE3E8;
+  --white:#fff;
+  --cyan:#57CAFF;
+  --blue:#4285F4;
+  --blue-2:#3186FF;
+  --tint:#E8F0FE;
+  --tint-2:#F0F4FA;
+  --red:#EA4335;
+  --yellow:#FBBC04;
+  --green:#34A853;
+  --sans:"Google Sans","Product Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0E1721;
+  font-family:var(--sans);
+  color:var(--ink);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- stage: fixed 1280x720 canvas, scaled to viewport ---------- */
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#canvas{width:1280px;height:720px;position:relative;transform-origin:center center}
+
+.slide{
+  position:absolute;inset:0;
+  background:var(--white);
+  padding:64px 76px 72px;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+}
+.slide.active{display:flex}
+
+/* ---------- recurring chrome ---------- */
+.dots{position:absolute;top:34px;left:40px;display:flex;gap:7px}
+.dots i{width:9px;height:9px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:var(--blue)}
+.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}
+.dots i:nth-child(4){background:var(--green)}
+
+.folio{
+  position:absolute;top:32px;right:44px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  color:var(--muted);text-transform:uppercase;
+}
+.eyebrow{
+  font-family:var(--mono);font-size:13px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--blue);margin-bottom:14px;
+}
+h1{font-size:60px;line-height:1.06;letter-spacing:-.02em;font-weight:700}
+h2{font-size:40px;line-height:1.14;letter-spacing:-.015em;font-weight:700;margin-bottom:8px}
+h3{font-size:21px;font-weight:600;margin-bottom:6px}
+p{font-size:19px;line-height:1.55;color:var(--ink-2)}
+.lede{font-size:23px;line-height:1.5;color:var(--ink-2);max-width:64ch}
+.rule{height:4px;width:76px;background:var(--cyan);border-radius:2px;margin:18px 0 26px}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.small{font-size:16px;color:var(--muted);line-height:1.5}
+
+/* ---------- components ---------- */
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  background:var(--tint-2);border:1px solid var(--line);
+  border-radius:16px;padding:22px 24px;
+}
+.card.accent{background:var(--tint);border-color:#C9DDFB}
+.card.warn{background:#FFF6E5;border-color:#F5D98A}
+.card.stop{background:#FDECEA;border-color:#F5B7B1}
+.card.go{background:#E9F7EF;border-color:#A9DFBF}
+.card h3{color:var(--ink)}
+.card p{font-size:16px;line-height:1.5}
+.card .n{
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  color:var(--blue);text-transform:uppercase;margin-bottom:8px;display:block;
+}
+
+ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+ul li{position:relative;padding-left:26px;font-size:18px;line-height:1.5;color:var(--ink-2)}
+ul li::before{
+  content:"";position:absolute;left:0;top:9px;
+  width:9px;height:9px;border-radius:50%;background:var(--cyan);
+}
+ul.check li::before{
+  content:"✓";background:none;color:var(--green);font-weight:700;
+  top:0;font-size:17px;width:auto;height:auto;
+}
+ul.no li::before{
+  content:"✕";background:none;color:var(--red);font-weight:700;
+  top:0;font-size:16px;width:auto;height:auto;
+}
+
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;border-bottom:2px solid var(--line);
+}
+td{color:var(--ink-2);line-height:1.45}
+td strong{color:var(--ink)}
+tr.hl td{background:var(--tint)}
+
+code,.mono{font-family:var(--mono);font-size:.93em;background:var(--tint);
+  padding:2px 7px;border-radius:5px;color:var(--ink-2)}
+
+/* Sized so the longest block still fits the 720px canvas without scrolling —
+   a projector audience cannot scroll a code block. */
+pre{
+  background:#1B2A3A;color:#DCE6F0;border-radius:14px;
+  padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;
+  white-space:pre-wrap;
+}
+pre.sm{font-size:12px;line-height:1.5;padding:18px 22px}
+pre .k{color:var(--cyan);font-weight:600}
+pre .c{color:#8FA5BC}
+
+.pill{
+  display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;
+  text-transform:uppercase;padding:5px 12px;border-radius:999px;
+  background:var(--tint);color:var(--blue);margin-right:8px;
+}
+.pill.bonus{background:#E9F7EF;color:#1E7E42}
+.pill.must{background:#FDECEA;color:#B3271A}
+
+.stat{font-size:52px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.stat.cyan{color:var(--blue)}
+.stat-lbl{font-size:15px;color:var(--muted);margin-top:6px}
+
+.flow{display:flex;align-items:stretch;gap:12px}
+.flow .step{
+  flex:1;background:var(--tint-2);border:1px solid var(--line);
+  border-radius:14px;padding:18px 16px;position:relative;
+}
+.flow .step .n{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.12em}
+.flow .step h3{font-size:17px;margin:8px 0 4px}
+.flow .step p{font-size:14.5px;line-height:1.45}
+.flow .arw{display:grid;place-items:center;color:var(--cyan);font-size:22px;font-weight:700}
+
+.callout{
+  border-left:5px solid var(--cyan);background:var(--tint-2);
+  padding:16px 22px;border-radius:0 12px 12px 0;
+}
+.callout.red{border-left-color:var(--red);background:#FDECEA}
+.callout.green{border-left-color:var(--green);background:#E9F7EF}
+.callout p{font-size:17px}
+
+/* ---------- title slide ---------- */
+.slide.cover{
+  background:
+    radial-gradient(900px 460px at 82% 12%, #EAF3FF 0%, rgba(234,243,255,0) 70%),
+    var(--white);
+  justify-content:center;
+}
+.badge{
+  display:inline-block;align-self:flex-start; /* flex parent would otherwise stretch it */
+  padding:9px 20px;border-radius:999px;color:#fff;font-weight:600;
+  font-size:14.5px;letter-spacing:.04em;margin-bottom:26px;
+  background:linear-gradient(90deg,#4285F4,#57CAFF,#34A853,#FBBC04,#EA4335);
+}
+.cover h1{max-width:19ch}
+.cover .sub{font-size:22px;color:var(--ink-2);margin-top:20px;max-width:60ch;line-height:1.5}
+.meta{
+  position:absolute;left:76px;bottom:60px;display:flex;gap:34px;
+  font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em;
+}
+
+/* ---------- hud ---------- */
+#hud{
+  position:fixed;left:0;right:0;bottom:0;height:44px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;color:#7C8FA6;font-family:var(--mono);font-size:12px;
+  letter-spacing:.1em;pointer-events:none;z-index:5;
+}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--cyan);width:0;z-index:6;transition:width .25s ease}
+#hud button{pointer-events:auto;background:none;border:1px solid #33475C;color:#7C8FA6;
+  border-radius:7px;padding:5px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em}
+#hud button:hover{color:#DCE6F0;border-color:#5C7A96}
+#hud button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.hud-g{display:flex;gap:9px;align-items:center}
+
+@media print{
+  body{background:#fff;overflow:visible}
+  #stage{position:static;display:block}
+  #canvas{transform:none!important;width:100%;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;
+    height:720px;border:none;box-shadow:none}
+  #hud,#bar{display:none}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"><div id="canvas">
+
+<!-- 1 ─ cover -->
+<section class="slide cover active">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">#BuildwithGoogleAI · AI Riser Vietnam 2026</span>
+  <h1>Ươm Mầm</h1>
+  <p class="sub">Build a web + Android app where students share ideas, form teams, and gather community support — with Google AI Studio. No coding experience required.</p>
+  <div class="meta"><span>STEP-BY-STEP GUIDE</span><span>3–5 HOURS</span><span>BEGINNER</span></div>
+</section>
+
+<!-- 2 ─ what you build -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · The idea</div>
+  <div class="eyebrow">What you are building</div>
+  <h2>From a rough idea to a funded team</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">01</span><h3>Đăng ý tưởng</h3><p>A student posts an idea — even a rough one.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">02</span><h3>Xin tham gia</h3><p>Others browse ideas and ask to join.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">03</span><h3>Lập đội</h3><p>A team forms and posts progress updates.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">04</span><h3>Kêu gọi ủng hộ</h3><p>The community pledges support.</p></div>
+    </div>
+    <div class="callout"><p><strong>Four screens. That is the entire MVP.</strong> Bảng ý tưởng · Chi tiết ý tưởng · Đội của tôi · Chiến dịch ủng hộ</p></div>
+  </div>
+</section>
+
+<!-- 3 ─ two rules -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Before you build</div>
+  <div class="eyebrow">Read this first</div>
+  <h2>Your users include 6-year-olds</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">That single fact changes the design. Getting it wrong builds something genuinely harmful. Two rules are non-negotiable.</p>
+    <div class="grid g2">
+      <div class="card accent"><span class="n">Rule 1</span><h3>Age tiers, not one app for everyone</h3><p>A 6-year-old and a 20-year-old cannot have the same account capabilities.</p></div>
+      <div class="card accent"><span class="n">Rule 2</span><h3>Do not build payments</h3><p>Campaigns collect pledges — promises, not transactions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ─ age tiers -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Rule 1</div>
+  <div class="eyebrow">Rule 1 — Age tiers</div>
+  <h2>Four bands, four capability sets</h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Band</th><th>Can do</th><th>Cannot do</th></tr>
+      <tr class="hl"><td><strong>6–12</strong><br><span class="small">"Lớp học"</span></td>
+        <td>Join with a <strong>class code</strong> from a teacher. See only their class's ideas. Post ideas to the class.</td>
+        <td>No public profile, no photos, no messaging, no campaigns</td></tr>
+      <tr><td><strong>13–15</strong></td><td>Post ideas publicly after moderation. Join teams.</td><td>No private messages. No campaigns.</td></tr>
+      <tr><td><strong>16–17</strong></td><td>Public ideas, teams, campaigns</td><td>Campaign badged "cần người giám hộ xác nhận"</td></tr>
+      <tr><td><strong>18+</strong></td><td>Everything</td><td>—</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 5 ─ no cross-age DMs -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Rule 1</div>
+  <div class="eyebrow">The single most important line</div>
+  <h2>Never allow private 1-to-1 messaging<br>between different age bands</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card go"><h3>Instead</h3><ul class="check">
+        <li>All team discussion in one shared thread</li>
+        <li>Every team member can see it</li>
+        <li>For teams with under-16s, a teacher is in the thread</li></ul></div>
+      <div class="card stop"><h3>Never public</h3><ul class="no">
+        <li>Precise location</li><li>Phone numbers or email</li>
+        <li>Face photo combined with a school name</li></ul></div>
+    </div>
+    <div class="callout green"><p>This one design choice removes the largest risk in any platform that connects minors with strangers. Your AI moderation step enforces the rest automatically.</p></div>
+  </div>
+</section>
+
+<!-- 6 ─ pledges not payments -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Rule 2</div>
+  <div class="eyebrow">Rule 2 — the most important engineering advice here</div>
+  <h2>Pledges, not payments</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">A pledge is a promise — money, materials, mentoring, or hours. Fulfilment happens off-platform through the school. This is not a cop-out:</p>
+    <div class="grid g3">
+      <div class="card"><span class="n">Legal</span><p>Minors cannot enter binding contracts. Handling other people's money means KYC, licensing, and refund liability.</p></div>
+      <div class="card"><span class="n">Practical</span><p>Payment integration is the fastest way for a beginner MVP to stall — the whole budget gone, nothing to show.</p></div>
+      <div class="card"><span class="n">It demos identically</span><p>Judges see the same loop: campaign → goal → pledges → progress. Nothing is missing.</p></div>
+    </div>
+    <div class="callout red"><p>If real money is ever needed later: route it through a licensed provider with <strong>the school or a guardian as merchant of record</strong> — never the child.</p></div>
+  </div>
+</section>
+
+<!-- 7 ─ setup -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Setup</div>
+  <div class="eyebrow">15 minutes</div>
+  <h2>Set up once, correctly</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><span class="n">01</span><h3>A clean Google account</h3><p>One that has <strong>never published</strong> an app from AI Studio. This unlocks Starter Tier.</p></div>
+      <div class="card"><span class="n">02</span><h3>Open AI Studio</h3><p><code>ai.dev</code> → sign in → left panel → <strong>Build</strong> → <strong>+ New app</strong></p></div>
+      <div class="card"><span class="n">03</span><h3>Optional, later</h3><p><strong>Antigravity</strong> agentic IDE at <code>antigravity.google/download</code>. Not needed for this guide.</p></div>
+    </div>
+    <div class="callout"><p><strong>Starter Tier = publish free.</strong> No credit card, no Google Cloud project. Up to 2 apps, single region. If publishing ever asks for a card, you are not on Starter Tier — use incognito with a fresh account.</p></div>
+  </div>
+</section>
+
+<!-- 8 ─ sharpen prompt -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Step 1</div>
+  <div class="eyebrow">Step 1 — Think</div>
+  <h2>Sharpen the prompt before you build</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">The official handbook's method: refine with Gemini first. A weak prompt gets a weak app.</p>
+    <pre>Go to <span class="k">gemini.google.com</span> and say:
+
+<span class="k">Please prepare a prompt for me to send to Google AI Studio to
+vibe-code this app: a platform where students aged 6-22 share
+project ideas, form teams, and collect community pledges.
+Different age groups must have different permissions for safety.</span></pre>
+  </div>
+</section>
+
+<!-- 9 ─ prompt anatomy -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Step 1</div>
+  <div class="eyebrow">From the Vibe Coding Handbook</div>
+  <h2>The anatomy of a powerful prompt</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><span class="n">Layer 1 — Role</span><p>"You are an expert full-stack developer and UX/UI designer…"</p></div>
+      <div class="card"><span class="n">Layer 2 — Goal</span><p>"Build a platform where students share ideas and form teams"</p></div>
+      <div class="card"><span class="n">Layer 3 — Context</span><p>"Users are 6–22, mostly on phones, in Vietnam"</p></div>
+      <div class="card"><span class="n">Layer 4 — Needs AI?</span><p>"Use Gemini to structure rough ideas and moderate posts"</p></div>
+      <div class="card"><span class="n">Layer 5 — The vibe</span><p>"Bright and friendly, like a school project fair"</p></div>
+      <div class="card"><span class="n">Layer 6 — Visual</span><p>Optional: attach a sketch or a screenshot</p></div>
+    </div>
+    <div class="callout"><p>Change it to match <em>your</em> vision. Copying blindly gives you someone else's app.</p></div>
+  </div>
+</section>
+
+<!-- 10 ─ master prompt A -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Step 2</div>
+  <div class="eyebrow">Step 2 — Build · the master prompt (1 of 3)</div>
+  <h2>Role, task &amp; the safety rule</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="c">System Role:</span> You are an expert full-stack developer and UX/UI designer
+who builds safe, accessible products for children and teenagers.
+
+<span class="c">Task:</span> Build a complete, working web application called "Ươm Mầm" — a
+platform where students aged 6 to 22 share project ideas, form teams,
+and gather community support.
+
+<span class="c">Tech Stack:</span> React single-page app, Tailwind CSS, mobile-first.
+
+<span class="k">THE MOST IMPORTANT RULE — AGE TIERS.</span>
+On first open the user picks an age band. This controls what they can do:
+- 6-12 ("Lớp học"): joins with a class code. No public profile, no photos,
+  no messaging, no campaigns. Sees only ideas sharing their class code.
+- 13-15: posts publicly after moderation. Joins teams. No private
+  messages. No campaigns.
+- 16-17: public ideas, teams, campaigns badged "Cần người giám hộ xác nhận".
+- 18+: all features.
+<span class="k">Never allow private one-to-one messaging between different age bands.</span>
+All team discussion happens in one shared thread visible to every member.</pre>
+  </div>
+</section>
+
+<!-- 11 ─ master prompt B -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Step 2</div>
+  <div class="eyebrow">Step 2 — Build · the master prompt (2 of 3)</div>
+  <h2>Screens, pledges &amp; data</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="c">Core screens (exactly four):</span>
+1. Bảng ý tưởng — grid of idea cards, filter by category and age band
+2. Chi tiết ý tưởng — full idea, team members, "Xin tham gia" button
+3. Đội của tôi — teams I own or joined, with a shared update thread
+4. Chiến dịch ủng hộ — campaign page with a goal and a list of pledges
+
+<span class="k">IMPORTANT: campaigns collect PLEDGES, not payments.</span>
+A pledge is a promise of money, materials, mentoring, or hours.
+There is no checkout, no card form, and no payment processing
+anywhere in this app. Show pledge progress toward the goal.
+
+<span class="c">Data:</span> use browser localStorage. Seed the app with 8 sample ideas
+across different age bands and categories so it is never empty
+on first open.</pre>
+  </div>
+</section>
+
+<!-- 12 ─ master prompt C -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Step 2</div>
+  <div class="eyebrow">Step 2 — Build · the master prompt (3 of 3)</div>
+  <h2>AI features, accessibility &amp; vibe</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm"><span class="c">AI features (use Gemini):</span>
+- <span class="k">"Trợ lý ý tưởng"</span>: the user types a rough idea in any wording. Gemini returns
+  a structured card (Vấn đề / Ai gặp / Giải pháp / Bước đầu tiên) and asks 3 short
+  questions to sharpen it.
+- <span class="k">"Đọc theo tuổi"</span>: a toggle that rewrites any idea at the reader's reading level —
+  simple words for a 7-year-old, normal language for a teenager.
+- <span class="k">"Đội cần ai"</span>: from an idea, suggest the 3 roles the team needs.
+- <span class="k">"Kiểm duyệt"</span>: before anything is published, Gemini checks for personal contact
+  details, unsafe content, or bullying, and blocks it with a friendly explanation.
+
+<span class="c">Accessibility (required):</span> every action reachable by keyboard · WCAG AA contrast ·
+large tap targets, one-handed on a phone · alt text on every image · every progress
+bar also shows its value as text.
+
+<span class="c">The Vibe:</span> bright, friendly, encouraging. Rounded cards, warm colours, generous
+whitespace. A school project fair, not a corporate dashboard. UI language: Vietnamese.
+
+<span class="c">Output:</span> complete working code. No placeholders, no "// add logic here".</pre>
+  </div>
+</section>
+
+<!-- 12 ─ why long -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Step 2</div>
+  <div class="eyebrow">Why that prompt is so long</div>
+  <h2>Safety is <em>inside</em> the prompt</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>The common way</h3><p>Build the app first. Add safety rules afterwards, when the data model already assumes everyone is equal.</p></div>
+      <div class="card go"><h3>This way</h3><p>The AI builds age tiers into the very first render. Safety is structural, not a patch.</p></div>
+    </div>
+    <div class="callout"><p>Sophistication in equals quality out. This is the handbook's core lesson — and the reason your app will feel finished while others feel like demos.</p></div>
+  </div>
+</section>
+
+<!-- 13 ─ layered build -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Step 3</div>
+  <div class="eyebrow">Step 3 — Iterate</div>
+  <h2>The Layered Build Approach</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">Core logic first, then aesthetics, then AI features. Never ask for everything at once — send one layer, test, then send the next.</p>
+    <div class="grid g3">
+      <div class="card"><span class="n">Layer 1</span><h3>Join flow</h3><p>Request to join · owner accepts or declines · accepted members appear on the team.</p></div>
+      <div class="card"><span class="n">Layer 2</span><h3>Team updates</h3><p>Shared progress thread, newest first, author + age band. No private messages.</p></div>
+      <div class="card"><span class="n">Layer 3</span><h3>The campaign</h3><p>Title, story, needs, goal, deadline. Pledge type: Tiền · Vật liệu · Cố vấn · Thời gian.</p></div>
+      <div class="card"><span class="n">Layer 4</span><h3>The AI coach</h3><p>After 3 questions, regenerate a polished idea card and publish in one click.</p></div>
+      <div class="card"><span class="n">Layer 5</span><h3>Visible moderation</h3><p>Blocked posts explain which rule and how to fix. A shield icon = "đã kiểm duyệt".</p></div>
+      <div class="card"><span class="n">Layer 6</span><h3>Accessibility pass</h3><p>Keyboard nav, focus rings, ARIA labels, AA contrast, text equivalents.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 ─ three techniques -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Step 3</div>
+  <div class="eyebrow">Three techniques that save hours</div>
+  <h2>Stop typing. Start directing.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card accent"><span class="n">Fix</span><h3>Let it self-heal</h3><p>Hit an error? Click <strong>Fix</strong> and let Gemini diagnose and repair. Never debug by hand.</p></div>
+      <div class="card accent"><span class="n">Annotate</span><h3>Draw the change</h3><p>Click "Annotate app", draw on the part you want changed, describe it. Far faster than words.</p></div>
+      <div class="card accent"><span class="n">Architect Interview</span><h3>Ask before it codes</h3><p>"Ask me 5 technical questions about the user flow before you start coding."</p></div>
+    </div>
+    <div class="callout"><p>The Architect Interview catches mismatches <em>before</em> they become code you have to unpick.</p></div>
+  </div>
+</section>
+
+<!-- 15 ─ integrations -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Step 4</div>
+  <div class="eyebrow">Step 4 — Google integrations</div>
+  <h2>Worth <span style="color:var(--blue)">+10 points</span></h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Integration</th><th>Use it for</th><th>Effort</th></tr>
+      <tr class="hl"><td><strong>Gemini</strong></td><td>Already core — coach, age-adaptive reading, moderation</td><td>Done</td></tr>
+      <tr><td><strong>Firebase Auth</strong></td><td>"Đăng nhập bằng Google" so teams persist across devices</td><td>Low</td></tr>
+      <tr><td><strong>Firestore</strong></td><td>Replace localStorage so real users share the same ideas</td><td>Medium</td></tr>
+      <tr><td><strong>Google Sheets</strong></td><td>Teacher exports class ideas; roster becomes your class codes</td><td>Low</td></tr>
+      <tr><td><strong>Maps</strong></td><td>Local ideas — <strong>district level only</strong>, never precise, for minors</td><td>Low</td></tr>
+    </table>
+    <div class="callout"><p>Select the integration chip <strong>below the prompt box before clicking Build</strong>. Bolted-on tech is obvious to judges — pick what genuinely fits.</p></div>
+  </div>
+</section>
+
+<!-- 16 ─ firestore warning -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Step 4</div>
+  <div class="eyebrow">The moment that matters</div>
+  <h2>localStorage → Firestore<br>is when safety becomes real</h2><div class="rule"></div>
+  <div class="body">
+    <pre>Add Firebase Authentication with "Đăng nhập bằng Google" and move idea,
+team, and pledge storage from localStorage to Firestore, so different
+users on different devices see the same ideas.
+<span class="k">Keep all the age-band rules enforced on read and write.</span></pre>
+    <div class="callout red"><p>Until now your app had one user: you. After this change it is multi-user — and your age rules stop being cosmetic. <strong>Re-test every age tier.</strong> Rules enforced only in the UI are not enforced at all.</p></div>
+  </div>
+</section>
+
+<!-- 17 ─ publish -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Step 5</div>
+  <div class="eyebrow">Step 5 — Publish</div>
+  <h2>Free. No credit card.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">01</span><h3>Publish</h3><p>Top right → <strong>Publish</strong> → <strong>Get started</strong></p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">02</span><h3>Name it</h3><p>Set the description and app URL</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">03</span><h3>Live</h3><p>You get <code>https://your-app.ai.studio</code></p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card go"><h3>What you get</h3><p>Anyone with the link uses your app — without seeing your code or prompts. Worth <strong>+10 points</strong>.</p></div>
+      <div class="card warn"><h3>If it asks for a credit card</h3><p>You are not on Starter Tier. Use a Google account that has never published, or try incognito. 2 apps free, no Cloud project, no billing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 ─ android -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Step 6</div>
+  <div class="eyebrow">Step 6 — Android</div>
+  <h2>Possible — but know the cost first</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><div class="stat cyan">$25</div><div class="stat-lbl">One-time Play Console developer account fee</div></div>
+      <div class="card"><div class="stat cyan">3–5</div><div class="stat-lbl">Business days for account review — you cannot rush this</div></div>
+      <div class="card"><div class="stat cyan">Test</div><div class="stat-lbl">Track only. Full Play Store listing is "coming soon"; the app stays unverified</div></div>
+    </div>
+    <div class="callout green"><p><strong>Recommendation for a beginner: ship the web app first.</strong> It is free, instant, works on every phone through the browser, and earns the same +10. Treat Android as a stretch goal — and if you want it, start the account today while you build.</p></div>
+  </div>
+</section>
+
+<!-- 19 ─ submission -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">10 · Step 7</div>
+  <div class="eyebrow">Step 7 — Submit · deadline 30 Aug 2026</div>
+  <h2>Two links. People submit the wrong one.</h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Artifact</th><th>Required?</th><th>Where to get it</th></tr>
+      <tr class="hl"><td><strong>AI Studio project link</strong></td><td><span class="pill must">Mandatory</span></td><td>Share (top right) → access <strong>Public</strong> → Copy link. Judges use this to see your project.</td></tr>
+      <tr><td><strong>Deployed app link</strong></td><td><span class="pill bonus">+10</span></td><td>The <code>.ai.studio</code> URL from Step 5</td></tr>
+      <tr><td><strong>Google tech integration</strong></td><td><span class="pill bonus">+10</span></td><td>Firebase / Sheets / Maps / Workspace</td></tr>
+      <tr><td><strong>Category</strong></td><td><span class="pill">Yes</span></td><td>"Education" or "Inclusive access" both fit</td></tr>
+    </table>
+    <div class="callout"><p>Form: <code>goo.gle/airiservietnam-completion</code> · Community: <code>slack.airiservietnam.dev</code></p></div>
+  </div>
+</section>
+
+<!-- 20 ─ judging -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">10 · Scoring</div>
+  <div class="eyebrow">What the judges actually reward</div>
+  <h2>40 / 30 / 30</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card accent"><div class="stat cyan">40%</div><div class="stat-lbl">FEASIBILITY</div>
+        <p style="margin-top:12px">The largest slice — and the one you fully control. A small app where every button works beats an ambitious broken one. <strong>Accessibility is named here.</strong> Don't skip Layer 6.</p></div>
+      <div class="card accent"><div class="stat cyan">30%</div><div class="stat-lbl">IMPACT</div>
+        <p style="margin-top:12px">Name your users precisely. Not "students" but <em>"lớp 4–5 tại trường tiểu học công lập, nơi giáo viên muốn học sinh làm dự án nhóm nhưng không có công cụ an toàn."</em></p></div>
+      <div class="card accent"><div class="stat cyan">30%</div><div class="stat-lbl">CREATIVITY</div>
+        <p style="margin-top:12px">Your differentiators: <strong>age-adaptive reading</strong> and <strong>moderation as a friendly visible feature</strong>. Lead with those.</p></div>
+    </div>
+    <div class="callout green"><p>State the age-tier design and the pledges-not-payments decision explicitly. <strong>Judges reward understanding constraints far more than pretending they don't exist.</strong></p></div>
+  </div>
+</section>
+
+<!-- 21 ─ troubleshooting -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">11 · When it breaks</div>
+  <div class="eyebrow">Troubleshooting</div>
+  <h2>The nine things that will go wrong</h2><div class="rule"></div>
+  <div class="body">
+    <table style="font-size:15px">
+      <tr><th>Problem</th><th>Fix</th></tr>
+      <tr><td>Asked for a credit card when publishing</td><td>Not on Starter Tier — account that never published, or incognito</td></tr>
+      <tr><td>Build hangs or renders blank</td><td>Re-send once; if it fails twice, split the prompt in two</td></tr>
+      <tr><td>Error message on screen</td><td>Click <strong>Fix</strong>, or paste <code>Please fix this error "&lt;exact error&gt;"</code></td></tr>
+      <tr><td>App is in English despite the prompt</td><td><code>Toàn bộ giao diện và nội dung phải bằng tiếng Việt.</code></td></tr>
+      <tr><td>System instructions changed nothing</td><td>They don't auto-apply → <code>Rebuild the application UI to strictly follow the new System Instructions.</code></td></tr>
+      <tr><td>App is empty and looks broken</td><td>You forgot seed data — ask for 8 sample ideas</td></tr>
+      <tr class="hl"><td>Age rules stopped working after Firestore</td><td>Enforce on read <em>and</em> write, not just UI. Re-test every tier.</td></tr>
+      <tr><td>403 opening your shared link</td><td>Privacy extension, or the build failed. Try incognito.</td></tr>
+      <tr><td>Stuck</td><td><code>slack.airiservietnam.dev</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 22 ─ session plan -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">12 · Plan</div>
+  <div class="eyebrow">A realistic schedule</div>
+  <h2>Five sessions. Five hours.</h2><div class="rule"></div>
+  <div class="body">
+    <table>
+      <tr><th>Session</th><th>Do this</th><th>Time</th></tr>
+      <tr><td><strong>1</strong></td><td>Setup, master prompt, first working build</td><td>60 min</td></tr>
+      <tr><td><strong>2</strong></td><td>Layers 1–3 — join flow, updates, campaign</td><td>90 min</td></tr>
+      <tr><td><strong>3</strong></td><td>Layers 4–6 — AI coach, moderation, accessibility</td><td>60 min</td></tr>
+      <tr><td><strong>4</strong></td><td>Firebase integration + re-test every age tier</td><td>60 min</td></tr>
+      <tr class="hl"><td><strong>5</strong></td><td>Publish + submission writeup</td><td>45 min</td></tr>
+    </table>
+    <div class="callout"><p><strong>Test on a real phone after every session.</strong> Most of your users will never open this on a laptop.</p></div>
+  </div>
+</section>
+
+<!-- 23 ─ what next -->
+<section class="slide">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">13 · Beyond</div>
+  <div class="eyebrow">If you keep going after the competition</div>
+  <h2>In priority order</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card"><span class="n">01</span><h3>A real teacher flow</h3><p>Class codes, roster import, teacher dashboard. Schools are the only realistic distribution channel for a 6–12 product.</p></div>
+      <div class="card"><span class="n">02</span><h3>Human moderation queue</h3><p>AI catches the obvious; a person must handle the ambiguous. Any platform with minors needs a report button and a human behind it.</p></div>
+      <div class="card"><span class="n">03</span><h3>Guardian consent records</h3><p>Proper stored consent for under-16 accounts — before you have real users, not after.</p></div>
+      <div class="card"><span class="n">04</span><h3>Outcome tracking</h3><p>How many teams actually shipped something? That number is what makes this fundable — and no competitor will have it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 24 ─ end -->
+<section class="slide cover">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Happy Building · #BuildwithGoogleAI</span>
+  <h1>Now go build it.</h1>
+  <p class="sub">Deadline 30 August 2026. You need one working app, published, with an honest description of what it does and does not do — not a perfect one.</p>
+  <div class="meta">
+    <span>goo.gle/airiservietnam</span><span>goo.gle/itsvibecoding</span><span>slack.airiservietnam.dev</span>
+  </div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <div class="hud-g">
+    <button id="prev" aria-label="Previous slide">← PREV</button>
+    <button id="next" aria-label="Next slide">NEXT →</button>
+  </div>
+  <div><span id="counter">1 / 25</span></div>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var i=0, canvas=document.getElementById('canvas');
+
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i)});
+    document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+    document.getElementById('bar').style.width=((i+1)/slides.length*100)+'%';
+    location.hash=i+1;
+  }
+
+  // Scale the fixed 1280x720 canvas to fit any projector/viewport, preserving ratio.
+  function fit(){
+    var pad=54; // room for the HUD
+    var s=Math.min((window.innerWidth-24)/1280,(window.innerHeight-pad)/720);
+    canvas.style.transform='scale('+s+')';
+  }
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
+  });
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  // No click-to-advance: slides contain prompts and commands people need to
+  // select and copy, and a stage click handler turns drag-select into a slide
+  // change. Clickers still work — they emit PageUp/PageDown or arrow keys.
+
+  window.addEventListener('resize',fit);
+  // Keep deep links and browser back/forward working, not just the initial load.
+  window.addEventListener('hashchange',function(){
+    var n=parseInt((location.hash||'#1').slice(1),10)-1;
+    if(!isNaN(n)&&n!==i) show(n);
+  });
+  fit();
+  show(parseInt((location.hash||'#1').slice(1),10)-1||0);
+})();
+</script>
+</body>
+</html>

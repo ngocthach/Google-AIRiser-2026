@@ -1,0 +1,32 @@
+# Rust
+debug
+target
+**/*.rs.bk
+*.pdb
+**/mutants.out*/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+*.local
+
+# Env & secrets — never commit
+.env
+.env.*
+!.env.example
+backend/.env
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+.claude/
+.agent/
+.agents/
+.mcp.json
+.gemini/
+astryx/
+.playwright-mcp/
+.codegraph/
+.omp/
