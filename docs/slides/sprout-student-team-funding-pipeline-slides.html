@@ -406,30 +406,28 @@ No introduction. Start at heading 1.</pre>
   <div class="body">
     <pre class="sm" data-full="#full-sp-s2">You are a full-stack architect. Using the Sprout PRD above:
 
-1. <span class="k">FIRESTORE COLLECTIONS</span> - users, projects, and the subcollections
-   applications, pledges, updates. Every field, its type, who may write
-   it. Denormalise counts onto the project: the board is one cheap read.
+1. <span class="k">FIRESTORE COLLECTIONS</span> - users, projects, applications, pledges,
+   updates. Field types, write permissions, private contact emails vs
+   public profiles, and schema.ts interfaces. Denormalise counts onto
+   the project: the board is one cheap read.
 
-2. <span class="k">SECURITY RULES</span> - write them now, not later:
+2. <span class="k">SECURITY RULES</span> - write them now, with helper functions:
    - only the owner may edit a project or accept an application
    - an applicant reads their OWN application, cannot list others'
-   - a pledge is immutable; no client writes the denormalised counts
-   Give me the rules file AND five Rules Playground tests with the
+   - a pledge is immutable; counts increment ONLY via valid transactions
+   Give me firestore.rules AND five Rules Playground test cases with the
    expected ALLOW or DENY.
 
 3. <span class="k">THE MATCHING FLOW</span> as a state machine: pending | accepted |
-   declined | withdrawn. What happens to the team and the counts on each
-   transition, and what the applicant sees. Name the race condition when
-   two people are accepted to a one-person role, and prevent it.
+   declined | withdrawn. Transitions, count updates, and applicant views.
+   Name the race condition on one-person roles and specify the atomic
+   transaction that prevents it.
 
 4. <span class="k">DESIGN.md</span> - campus noticeboard: warm paper, deep green primary,
-   ONE amber reserved for money. The scales, the computed contrast ratio
-   of every text pair, and an explicit DON'T list: no indigo or violet,
-   no purple-blue gradient, no glassmorphism, no shadow on every card,
-   no pill buttons, no emoji icons, no dark mode in v1. Plus HOW TOKENS
-   ARE CONSUMED: :root in index.css, registered in the Tailwind theme,
-   no raw hex in components, no arbitrary values.
-Output DESIGN.md and firestore.rules as two fenced blocks.</pre>
+   ONE amber reserved for money. Contrast ratios (AA), anti-generic
+   DON'T list, token consumption rules (:root, Tailwind), and numeric
+   layout spec (max-w 1200px, 1/2/3 cols, equal-height clamped cards).
+Output src/types/schema.ts, firestore.rules, and DESIGN.md as fenced blocks.</pre>
   </div>
 </section>
 
@@ -490,7 +488,7 @@ projects/{projectId}
   title  pitch  description  category  faculty  status
   ownerUid  memberUids[]  openRoles[{ id, title, need, filled }]
   fundingGoal  pledgedTotal  backerCount  memberCount  createdAt
-  <span class="c">// the four counts are denormalised, and NOBODY writes them from a client</span>
+  <span class="c">// the four counts are denormalised, updated via atomic transactions with rule validation</span>
 
 projects/{projectId}/applications/{uid}
   roleId  message  status: pending|accepted|declined|withdrawn  createdAt
@@ -540,32 +538,26 @@ projects/{projectId}/updates/{updateId}
   <div class="eyebrow">Copy this — Layer 1 · verified</div>
   <h2>Layer 1: the look, and two real screens</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm" data-full="#full-sp-l1">Build LAYER 1 ONLY of "Sprout": the design system and two read-only
-screens, rendered from a hardcoded seed file. Nothing is real yet.
+    <pre class="sm" data-full="#full-sp-l1">Build LAYER 1 ONLY of "Sprout" (Vite + React + TypeScript + Tailwind).
+Emit each file in a fenced code block with `// filepath: <path>`.
 
 <span class="k">=== SCOPE FENCE ===</span>
-DO NOT build sign-in, auth, Firebase, any database, forms that submit,
-applying, accepting, pledging or payments. Write buttons render
-disabled. Importing firebase means you have left Layer 1.
+Read-only UI from hardcoded seed data. Zero Firebase imports, zero auth,
+zero form submissions. Write buttons render visibly disabled.
 
 <span class="k">=== THE LOOK - NOT A DASHBOARD ===</span>
 A campus noticeboard: warm paper, confident type, legible from a metre.
-- NO indigo or violet primary. NO purple-to-blue gradient.
-- NO glassmorphism, blur, glow, or dark mode.
-- NO pill buttons everywhere. NO drop shadow on every card.
-- NO emoji as icons. Cards separate by a hairline border.
+- NO indigo/violet primary, NO purple-to-blue gradient, NO glassmorphism.
+- NO dark mode in v1, NO pill buttons, NO drop shadows, NO emoji icons.
 
 <span class="k">=== LAYOUT - A SPEC, NOT A SUGGESTION ===</span>
-Content column max 1200px, centred. The board grid: 1 column below 640,
-2 from 640, 3 from 1024, and STILL 3 above 1440 - never a fourth.
-Cards equal height, driven by content. Push the funding block down with
-margin-top:auto and line-clamp title and pitch to 2 lines, so no card
-opens a 150px hole in its middle. Never taller than ~340px.
-Filters are a horizontal chip row - 16 categories is too many to list,
-so show "All" + the 6 commonest + a "More" dropdown. NOT a sidebar.
-A lone filtered card keeps its column width; it does not fill the row.
+Content column max 1200px, centred. The board grid: 1 col (<640px),
+2 col (640-1023px), 3 col (>=1024px) - never a fourth column.
+Cards equal height: margin-top:auto on funding block, line-clamp-2 on
+title and pitch so cards never hollow out (~340px max height).
+Filters: horizontal scrolling chip row ("All" + 6 common + More).
 At 1440px with 12 projects, 6 cards are visible before scrolling.
-<span class="c">... tokens, seed, screens, a11y, 11-point self-check in COPY FULL</span></pre>
+<span class="c">... tokens, seed.ts, screens, a11y, 11-point self-check in COPY FULL</span></pre>
   </div>
 </section>
 
@@ -662,31 +654,28 @@ At 1440px with 12 projects, 6 cards are visible before scrolling.
   <h2>Layer 2: accounts and real data</h2><div class="rule"></div>
   <div class="body">
     <pre class="sm" data-full="#full-sp-l2">Add LAYER 2 ONLY to Sprout. Re-read DESIGN.md first and obey it.
+Emit each file with `// filepath: <path>`.
 
 <span class="k">=== SCOPE FENCE ===</span>
-Do NOT build applying, accepting, pledging, funding or updates. Those
-buttons stay disabled. Do not restyle Layer 1.
+Do NOT build applying, accepting, pledging, funding or updates.
+Those buttons stay disabled. Do not restyle Layer 1.
 
-<span class="k">=== 1. AUTH - GOOGLE ONLY ===</span>
-Firebase Auth, Google provider only. No email/password: no password
-storage, no reset flow, no credential breach to explain. On first
-sign-in create users/{uid}, then route to complete the profile.
+<span class="k">=== 1. AUTH - GOOGLE ONLY (FIREBASE MODULAR SDK v9+) ===</span>
+Firebase Auth, Google provider only. No password storage, no reset flows.
+On first sign-in create users/{uid} and route to complete profile.
 Signed-out visitors still browse - the board is public.
 
 <span class="k">=== 2. PROFILE ===</span>
-Faculty, year, skills, bio, and a PRIVATE contact email - readable only
-by its owner and by the owner of a project they applied to.
+Faculty, year, skills, bio, and PRIVATE contact email (readable only by
+owner and project owner applied to; never rendered publicly).
 
-<span class="k">=== 3. CREATE AND EDIT A PROJECT ===</span>
-Title, pitch, description, category, faculty, open roles, optional
-funding goal in VND. Only the owner may edit. Validate on the client
-AND enforce in the rules - client validation is only a courtesy.
+<span class="k">=== 3. PROJECT CRUD &amp; SERVICES ===</span>
+Title, pitch, description, category, faculty, open roles, optional VND
+goal. Create `src/lib/firebase.ts` and `src/services/projectService.ts`.
 
-<span class="k">=== 4. THE SEED BECOMES REAL, AND THE RULES GO IN ===</span>
-Move the 12 seeded projects into Firestore with a one-off script; both
-screens now read from Firestore with loading, empty and error states.
-Paste the stage-2 rules and deploy them BEFORE the first write. Never
-widen a rule to make a screen work - fix the query instead.</pre>
+<span class="k">=== 4. FIRESTORE INTEGRATION &amp; SEED SCRIPT ===</span>
+Seeding script moves seed.ts into Firestore. Discover and detail screens
+read from Firestore with loading skeletons, empty and error states.</pre>
   </div>
 </section>
 
@@ -696,32 +685,27 @@ widen a rule to make a screen work - fix the query instead.</pre>
   <div class="eyebrow">Copy this — Layer 3</div>
   <h2>Layer 3: a stranger becomes a teammate</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm" data-full="#full-sp-l3">Add LAYER 3 ONLY to Sprout: the matching flow. This is the core of the
-product. Re-read DESIGN.md and obey it.
+    <pre class="sm" data-full="#full-sp-l3">Add LAYER 3 ONLY to Sprout: the matching flow. Re-read DESIGN.md.
+Emit each file with `// filepath: <path>`.
 
 <span class="k">=== SCOPE FENCE ===</span>
-Do NOT build funding, pledges, updates or notifications. Do not
-restyle Layers 1 and 2.
+Do NOT build funding, pledges, updates or notifications.
 
 <span class="k">=== 1. APPLYING ===</span>
-Each open role has an Apply button opening a small form: the role and
-one paragraph. One application per person per project. The applicant
-sees their status and may withdraw while pending.
+Apply modal per open role: role + 1 pitch paragraph. 1 application per
+person per project. Applicant sees status (pending/accepted/declined).
 
-<span class="k">=== 2. THE OWNER'S INBOX ===</span>
-Applications for the owner's projects, grouped by project and role.
-Each row: name, faculty, year, skills, paragraph, Accept, Decline.
-Accepting adds them to memberUids and marks the role filled. Declining
-is silent, final, never harsh - these are classmates.
+<span class="k">=== 2. OWNER'S INBOX ===</span>
+Applications grouped by project &amp; role. Rows show student profile, pitch,
+Accept, Decline. Decline is quiet and respectful ("role is filled").
 
-<span class="k">=== 3. THE RACE CONDITION - HANDLE IT PROPERLY ===</span>
-Two applicants can be accepted to a one-person role at once. Do the
-accept in a Firestore TRANSACTION that re-reads the role, checks it is
-still unfilled, and fails cleanly if not. The second click shows "that
-role was just filled". Counts update in that same transaction.
+<span class="k">=== 3. ATOMIC TRANSACTION &amp; RACE CONDITION ===</span>
+Accept runs in a Firestore TRANSACTION: verifies role is still unfilled,
+appends memberUids, sets role filled, increments memberCount.
+If already filled, aborts with 'ROLE_ALREADY_FILLED' and shows clear banner.
 
 <span class="k">=== 4. THE TEAM ===</span>
-The page shows the team and which roles are open. A member may leave.</pre>
+Team roster shows members &amp; open roles. Member may leave via transaction.</pre>
   </div>
 </section>
 
@@ -732,31 +716,24 @@ The page shows the team and which roles are open. A member may leave.</pre>
   <h2>Layer 4: funding, honestly</h2><div class="rule"></div>
   <div class="body">
     <pre class="sm" data-full="#full-sp-l4">Add LAYER 4 ONLY to Sprout: pledges and polish. Re-read DESIGN.md.
+Emit each file with `// filepath: <path>`.
 
-<span class="k">=== THE RULE THAT GOVERNS THIS ENTIRE LAYER ===</span>
-NO real money moves. No card fields, no wallet, no payment SDK, no
-checkout, no "pay now". A pledge is a recorded COMMITMENT; settlement
-happens off-platform. Every string says "pledged", never "paid".
-The page states plainly that Sprout does not process payments and does
-not hold funds. If you are adding a payment library, stop.
+<span class="k">=== THE NO-PAYMENT CONTRACT ===</span>
+NO real money moves. No cards, no wallets, no payment SDKs. A pledge is
+a recorded COMMITMENT. Every string says "pledged", never "paid".
 
-<span class="k">=== 1. PLEDGING ===</span>
-"Back this project" opens a modal: an amount in VND with three
-suggested values, an optional message, public-or-anonymous.
-A pledge is written once and is IMMUTABLE; withdrawing marks it
-withdrawn, never deletes it. pledgedTotal and backerCount update in
-the same TRANSACTION as the pledge, never from the client.
+<span class="k">=== 1. PLEDGING &amp; ATOMIC TRANSACTIONS ===</span>
+"Back this project" modal with VND presets + custom. Pledges are immutable.
+`createPledge` runs in a transaction: writes pledge &amp; increments
+`pledgedTotal` and `backerCount` atomically. Supports anonymity.
 
-<span class="k">=== 2. THE FUNDING VIEW ===</span>
-Progress bar in --color-accent with role="progressbar". Pledged of
-goal in Vietnamese dong. Backer list honouring anonymity. Past 100%
-it reads "funded" and keeps accepting. The owner sees a private list
-with contact emails, so they can settle off-platform.
+<span class="k">=== 2. THE FUNDING VIEW &amp; VND FORMATTING ===</span>
+Progress bar in --color-accent with role="progressbar". Format via
+`formatVND()`. Owner sees private backer list with contact emails.
 
-<span class="k">=== 3. UPDATES + POLISH ===</span>
-Owner posts short updates. Loading, empty and error states on every
-screen. Full keyboard path: browse, sign in, apply, accept, pledge.
-Re-read DESIGN.md and strip any raw hex from layers 2-4.</pre>
+<span class="k">=== 3. UPDATES &amp; POLISH ===</span>
+Owner posts short text updates. Loading, empty &amp; error states everywhere.
+Full keyboard paths. All screens strictly obey DESIGN.md layout spec.</pre>
   </div>
 </section>
 
@@ -772,7 +749,7 @@ Re-read DESIGN.md and strip any raw hex from layers 2-4.</pre>
       <tr><td><strong>An applicant cannot list other applicants</strong></td><td>Signed in as applicant B, list <code>applications</code></td><td class="mono">DENY</td></tr>
       <tr class="hl"><td>An applicant reads their own application</td><td>Signed in as A, get <code>applications/A</code></td><td class="mono">ALLOW</td></tr>
       <tr><td>A pledge is immutable</td><td>Signed in as the backer, update <code>amount</code></td><td class="mono">DENY</td></tr>
-      <tr class="hl"><td>Counts are never client-written</td><td>Signed in as owner, set <code>pledgedTotal</code></td><td class="mono">DENY</td></tr>
+      <tr class="hl"><td>Counts only update via atomic increment</td><td>Signed in as owner, arbitrarily overwrite <code>pledgedTotal</code></td><td class="mono">DENY</td></tr>
     </table>
     <div class="callout red"><p><strong>The rule that will be wrong:</strong> the private contact email. It must be readable by its owner and by the owner of a project they applied to — and by nobody else. That is the one worth writing a test for, because getting it wrong leaks every student's email to every visitor.</p></div>
     <div class="callout"><p><strong>Never widen a rule to make a screen work.</strong> If a read fails, the query is usually wrong, not the rule.</p></div>
@@ -990,109 +967,76 @@ No introduction. Start at heading 1.
 
 <script type="text/plain" id="full-sp-s2">
 You are a full-stack architect. Using the Sprout PRD above, produce the
-blueprint. Be concrete enough that I can paste the output into a build tool.
+technical blueprint for a Vite + React + TypeScript + Firebase project.
+Output exactly 3 fenced blocks with explicit file paths:
 
-1. FIRESTORE COLLECTIONS - users, projects, and the subcollections
-   applications, pledges and updates. For every field give the type and who
-   is allowed to write it. Denormalise the counts (memberCount, backerCount,
-   pledgedTotal) onto the project document so the Discover board is one cheap
-   read rather than one read per card.
-   Mark clearly which user fields are PRIVATE (contact email) and which are
-   public.
+1. ```typescript filepath="src/types/schema.ts"
+   TypeScript interfaces for all Firestore documents and subcollections:
+   - users/{uid} (distinguish public profile vs private contactEmail)
+   - projects/{projectId} (denormalized counts: memberCount, backerCount,
+     pledgedTotal, fundingGoal in VND)
+   - projects/{projectId}/applications/{uid} (status: 'pending' | 'accepted' |
+     'declined' | 'withdrawn')
+   - projects/{projectId}/pledges/{uid} (immutable pledge record, isAnonymous)
+   - projects/{projectId}/updates/{updateId}
 
-2. SECURITY RULES - write them now, not later. They must cover:
+2. ```firestore filepath="firestore.rules"
+   Complete Firestore security rules with helper functions:
    - anyone may read a project; nobody may read another user's private fields
    - only the owner may edit a project or accept an application
-   - an applicant may create and read their OWN application, and must not be
-     able to list anyone else's
-   - a pledge is immutable once written; the amount can never be edited
-   - no client may write the denormalised counts
-   - the private contact email is readable by its owner, and by the owner of
-     a project that person has applied to, and by nobody else
-   Give me the complete rules file AND five tests for the Rules Playground,
-   each with the exact operation and the expected ALLOW or DENY.
+   - an applicant may create and read their OWN application, and cannot list others
+   - a pledge is immutable once written; amount can never be edited
+   - denormalized project counts are writable ONLY when atomically incremented
+     as part of a valid transaction (no arbitrary overwrites)
+   - private contact email is readable ONLY by its owner and by the owner of
+     a project that person applied to
+   Include 5 Rules Playground test cases (exact operation + expected ALLOW/DENY).
 
-3. THE MATCHING FLOW as a state machine. An application is
-   pending | accepted | declined | withdrawn.
-   For each transition say: who may trigger it, what happens to memberUids,
-   what happens to the role's filled flag, what happens to the counts, and
-   what the applicant sees afterwards.
-   Then name the race condition when two applicants are accepted to a
-   one-person role at the same moment, and specify the transaction that
-   prevents it.
-
-4. DESIGN.md - a campus noticeboard look: warm paper, deep green primary, and
-   ONE amber accent reserved exclusively for money. Include:
-   - colour tokens, type scale, spacing scale, radius, focus ring, touch min
-   - the computed contrast ratio for every text-on-background pair, each
-     passing WCAG AA, with the numbers shown
-   - an explicit DON'T list: no indigo or violet primary, no purple-to-blue
-     gradient, no glassmorphism, no drop shadow on every card, no pill
-     buttons everywhere, no emoji as interface icons, no dark mode in v1
-   - HOW TOKENS ARE CONSUMED, as rules rather than suggestions: declared once
-     in :root in index.css, registered in the Tailwind theme so every utility
-     resolves to a token, no raw hex in any component file, no arbitrary
-     Tailwind values, and re-read DESIGN.md before every later change
-   - LAYOUT RULES, WITH NUMBERS. Colour and type have tokens to fall back on;
-     layout has none, so "responsive" decides nothing and the model will pick
-     badly. Put these in DESIGN.md so every screen added in Layers 2, 3 and 4
-     inherits them, not just the first two:
-       * content column max-width 1200px, centred
-       * any card grid is 1 column below 640px, 2 from 640px, 3 from 1024px,
-         and still 3 above 1440px - never a fourth
-       * cards in a row are equal height, driven by content; push trailing
-         blocks to the bottom with margin-top:auto and line-clamp text to 2
-         lines, so a card can never hollow out in the middle
-       * a filter or category list is a horizontal chip row that scrolls on
-         mobile, never a full-height sidebar
-       * one primary action per screen; developer-only controls live behind
-         import.meta.env.DEV and never in the header
-       * every list screen states how many items are visible before scrolling
-         at 1440px, and it must be more than one
-
-Output DESIGN.md and firestore.rules as two separate fenced blocks I can
-paste straight in as files.
+3. ```markdown filepath="DESIGN.md"
+   Campus noticeboard design system and layout specification:
+   - CSS tokens under :root in index.css and Tailwind theme extension
+   - Palette: Warm paper (#FBFAF7), deep green (#1F6B4A), ONE amber (#B4530A)
+     reserved strictly for money
+   - Computed contrast ratios for all text pairs (all passing WCAG AA)
+   - Explicit DON'T list: no indigo/violet, no purple-blue gradients,
+     no glassmorphism, no drop shadows on every card, no pill buttons,
+     no emoji icons, no dark mode in v1
+   - Token consumption rules (no raw hex in components, no arbitrary Tailwind)
+   - Exact numeric layout spec: max-width 1200px centred, card grid 1 col (<640),
+     2 col (640-1023), 3 col (>=1024, never 4), equal height via margin-top:auto
+     and line-clamp-2, horizontal chip row (All + 6 common + More), one primary CTA.
 </script>
 
 <script type="text/plain" id="full-sp-l1">
 Build LAYER 1 ONLY of "Sprout", a web app where university students find
 teammates for projects and raise seed funding for them.
 
-=== TARGET RUNTIME ===
-Multi-file React + TypeScript with Tailwind, real ES module imports.
-Do NOT emit a single index.html loading React, Babel or Tailwind from a CDN.
-No external fonts, no remote images, no icon libraries fetched at runtime.
-It must run with the network switched off.
+=== TARGET RUNTIME & OUTPUT FORMAT ===
+Multi-file Vite + React + TypeScript with Tailwind CSS.
+Emit each file in a separate code block with `// filepath: <path>`.
+Do NOT emit a single index.html loading CDN scripts.
+No external fonts, remote images, or runtime icon packages. Works fully offline.
 
 === SCOPE FENCE - READ THIS TWICE ===
 Layer 1 is the design system and two read-only screens, rendered from a
 hardcoded seed file. Nothing is real yet.
-DO NOT build, and do not stub in passing: sign-in, authentication, Firebase,
-Firestore, any database, forms that submit, creating a project, applying to a
-project, accepting a member, pledging money, payments, notifications, search
-indexes, or an admin area.
-Every button that would write data is rendered, visibly disabled, with the
-title attribute "Coming in the next build step".
-If you are writing an onSubmit handler or importing firebase, you have left
-Layer 1. Stop and delete it.
+DO NOT build: sign-in, auth, Firebase, Firestore, databases, forms that submit,
+creating projects, applying, accepting, pledging, payments, or notifications.
+Every write button is rendered, visibly disabled, with title="Coming in Layer 2/3".
+If you write an onSubmit handler or import firebase, you have left Layer 1.
 
 === THE LOOK - THIS IS NOT A DASHBOARD ===
-Should feel: a well-made campus noticeboard. Warm paper, confident typography,
-generous whitespace, everything legible from a metre away. Calm and credible -
-a student is deciding whether to trust this with their idea.
-
-Must NOT feel like generic SaaS. This is a hard list, not a preference:
+Feel: a campus noticeboard. Warm paper, confident typography, generous whitespace.
+Calm and credible — a student is deciding whether to trust this with their idea.
+Hard DON'T list:
 - NO indigo or violet primary. NO purple-to-blue hero gradient.
-- NO glassmorphism, no frosted blur panels, no neon glow.
+- NO glassmorphism, frosted blur panels, or neon glow.
 - NO dark mode in this layer. One light theme, done properly.
 - NO pill-shaped buttons everywhere. NO drop shadows on every card.
-- NO emoji used as interface icons.
-- Cards are separated by a hairline border and space, not by shadow.
+- NO emoji used as interface icons. Cards separate by hairline border.
 
 === DESIGN TOKENS - AND HOW THEY MUST BE CONSUMED ===
-Declare these once in index.css under :root, then register them in the
-Tailwind theme so every utility class resolves to a token.
-
+Declare these in src/index.css under :root, and register in tailwind.config.js:
   --color-bg:#FBFAF7;        --color-surface:#FFFFFF;
   --color-surface-2:#F2F0EA; --color-line:#E2DED4;
   --color-ink:#161A17;       --color-ink-2:#4E564F;
@@ -1108,113 +1052,45 @@ Tailwind theme so every utility class resolves to a token.
   --border-w:1px;   --touch-min:44px;
   --focus-ring:2px solid var(--color-primary);
 
-Hard rules, not preferences:
-- No raw hex in any component file. No bg-[#1F6B4A], no text-[13px].
-- No arbitrary Tailwind values at all. Every class resolves to the theme.
-- Smallest font is 14px. Body text is 16px and never smaller.
-- Green --color-primary means "act". Amber --color-accent means "money" and
-  is used ONLY for funding figures and the fund button. Never decoratively.
-- Every interactive element is at least --touch-min tall and shows a visible
-  --focus-ring on keyboard focus.
+Hard rules:
+- No raw hex in components. No arbitrary Tailwind values.
+- Smallest font is 14px; body copy is 16px.
+- Green --color-primary means "act". Amber --color-accent means "money" and is
+  used ONLY for funding figures and the fund button. Never decoratively.
+- Every interactive element has min 44px touch target and visible focus ring.
+- Write these tokens and rules into DESIGN.md at project root.
 
-Also write these tokens and these rules into a file called DESIGN.md at the
-project root, and re-read that file before every later change I ask for.
-Layers 2, 3 and 4 will tell you to re-read it, so it has to exist.
-
-=== SEED DATA - ONE FILE, TYPED, REALISTIC ===
+=== SEED DATA - REALISTIC & TOKEN-EFFICIENT ===
 src/data/seed.ts exports 12 projects and 8 student profiles.
-A project has: id, title, a one-line pitch, a longer description, category,
-the faculty it came from, status (recruiting | building | funding), an array
-of open roles (title + one-line requirement), team members (name, role),
-fundingGoal in VND, fundingRaised in VND, backerCount, and a created date.
-Make the content plausible for a Vietnamese university: a campus recycling
-tracker, a Cham heritage archive, a hydroponics controller, a sign-language
-translation app. Not "Project Alpha". Vary the funding progress - some at 0%,
-some at 30%, one fully funded, some not fundraising at all.
+Define 4 richly detailed showcase projects:
+1. Campus recycling & e-waste tracker (Recruiting, 45% funded)
+2. Cham cultural heritage & language archive (Building, 100% funded)
+3. Vietnamese sign-language translator app (Funding, 15% funded)
+4. Automated smart IoT hydroponics controller (Recruiting, 0% funded)
+and programmatically generate 8 realistic variations to populate 12 total cards
+without truncating output tokens.
 
-=== LAYOUT AND RESPONSIVE - THIS IS A SPEC, NOT A SUGGESTION ===
-"Make it responsive" is not an instruction. These are the numbers.
+=== LAYOUT AND RESPONSIVE SPEC ===
+PAGE SHELL: Max-width 1200px centred, --space-3 gutters. Never stretch edge-to-edge.
+BOARD GRID BREAKPOINTS:
+- <640px: 1 column
+- 640px-1023px: 2 columns
+- >=1024px: 3 columns (STILL 3 columns above 1440px; never 4). Gap: --space-3.
+CARD HEIGHT & ALIGNMENT:
+- Equal height per row. Inside card: flex-column with margin-top:auto on funding block.
+- Title and pitch line-clamped to exactly 2 lines (line-clamp-2). Max card height ~340px.
+FILTERS:
+- Horizontal chip row above board ("All" + 6 common + "More" dropdown), scrolls on mobile.
+HEADER:
+- Wordmark + context line on left. Disabled "Sign in" CTA on right. No header clutter.
+DENSITY:
+- At 1440px with 12 projects, at least 6 cards visible before scrolling.
 
-PAGE SHELL
-- Content column max-width 1200px, centred, --space-3 side gutters.
-- Never let content stretch edge to edge on a wide monitor.
-
-THE BOARD IS A GRID, WITH THESE EXACT BREAKPOINTS
-- below 640px:   1 column
-- 640px and up:  2 columns
-- 1024px and up: 3 columns
-- above 1440px:  still 3 columns. Do NOT add a fourth - cards get unreadable.
-- gap: --space-3 on both axes.
-
-CARD HEIGHT - THIS IS WHERE IT GOES WRONG
-- Cards in a row are equal height, driven by content, never a fixed height.
-- Inside the card use flex-column and push the funding block and footer to
-  the bottom with margin-top:auto.
-- Clamp the title to 2 lines and the pitch to exactly 2 lines (line-clamp-2).
-- A card must never exceed about 340px tall. If you are opening a 150px hole
-  in the middle of a card between the pitch and the progress bar, the layout
-  is wrong - close it.
-
-CARD CONTENT, IN THIS ORDER, NO GAPS
-  category chip (--text-small, subtle - not a heavy grey box)
-  title (--text-title, weight 600, max 2 lines)
-  pitch (--text-body, --color-ink-2, exactly 2 lines, clamped)
-  [margin-top:auto pushes everything below to the bottom]
-  team: up to 4 initial circles, 28px, overlapping by 8px
-  funding bar + "X pledged of Y" - ONLY when the project is fundraising
-  footer row: "N roles open" on the left, status on the right
-
-FILTERS - A HORIZONTAL CHIP ROW ABOVE THE BOARD, NOT A SIDEBAR
-- There are 16 categories. That is far too many to list vertically.
-  Show "All" plus the 6 most common, and put the rest behind a "More"
-  dropdown. A filter list longer than the result list is a broken filter.
-- On mobile the chip row scrolls horizontally on one line. It must not wrap
-  into four stacked rows.
-- Never render the filters as a full-height left sidebar.
-
-THE HEADER - ONE ROW WITH A HIERARCHY
-- Left: the wordmark, then one short line of context.
-- Right, in this order and these weights:
-    "Sign in"           - the ONE primary action, filled --color-primary
-    later: Inbox, Profile - quiet text links; Sign out last and quietest
-- Five buttons of identical weight is not navigation, it is a list.
-- Any developer-only control (seeding or reseeding data) lives on a /dev
-  route or behind import.meta.env.DEV. It NEVER appears in the header.
-
-DENSITY - THE BOARD MUST LOOK LIKE A BOARD
-At 1440px with 12 projects a visitor sees at least 6 cards before scrolling.
-If one card is sitting alone in a 700px-wide box, the layout has failed.
-When a filter returns a single result, that card keeps its grid column width
-- it does not expand to fill the row.
-
-=== SCREEN 1: DISCOVER ===
-The landing screen. A header per the layout spec above, with a disabled
-"Sign in" button. Then one line saying what Sprout is. Then the board:
-- The filter chip row described above. Filtering the seed array in local
-  state is allowed - that is not persistence.
-- The project card grid described above. Each card: category, title, pitch,
-  team initials, the number of open roles, and - only if the project is
-  fundraising - a funding progress bar with the amount pledged and the goal,
-  formatted as Vietnamese dong.
-- The card is one link to the project page. Not a card with a button inside.
-- An empty state for when a filter matches nothing, with a way back.
-
-=== SCREEN 2: PROJECT DETAIL ===
-Routed by project id, using react-router.
-- The pitch, the description, the faculty, the status.
-- OPEN ROLES: each with its requirement and a disabled "Apply" button.
-- THE TEAM: members with name and role.
-- FUNDING, only when the project is fundraising: the progress bar, amount
-  raised of goal, backer count, and a disabled "Back this project" button
-  in --color-accent.
-- A back link to Discover.
-
-=== ACCESSIBILITY - PART OF THE DEFINITION OF DONE ===
-Real semantic landmarks: header, main, nav. One h1 per screen and a correct
-heading order. Filter chips are real buttons with aria-pressed. The progress
-bar uses role="progressbar" with aria-valuenow, valuemin and valuemax.
-Disabled buttons are genuinely disabled, not divs. The whole of Layer 1 is
-operable and readable with the keyboard alone.
+=== SCREENS TO BUILD ===
+1. `src/pages/Discover.tsx`: Landing board, filter chip row, project card grid, empty state.
+2. `src/pages/ProjectDetail.tsx`: Pitch, description, open roles list, team list, funding progress bar with role="progressbar", back button.
+3. `src/components/Navbar.tsx`, `src/components/ProjectCard.tsx`, `src/components/CategoryFilter.tsx`.
+4. `src/App.tsx`: React Router wiring.
 
 === BEFORE YOU ANSWER, CHECK YOURSELF ===
 1. Zero CDN script tags, zero external fonts, zero remote assets.
@@ -1223,188 +1099,152 @@ operable and readable with the keyboard alone.
 4. Amber appears only on funding figures and the fund button.
 5. No font below 14px; body copy is 16px.
 6. Every screen reachable and operable by keyboard, with visible focus.
-7. The board grid is 1 / 2 / 3 columns at the named breakpoints, and never
-   four. A lone filtered card keeps its column width.
-8. No card has a gap in its middle: the funding block is pushed down with
-   margin-top:auto, and title and pitch are line-clamped to 2 lines.
+7. Grid is 1 / 2 / 3 columns at breakpoints, never four. Single card keeps column width.
+8. No card has a gap in its middle: margin-top:auto + line-clamp-2.
 9. Filters are a horizontal chip row, never a full-height sidebar.
-10. The content column is capped at 1200px and centred.
-11. At 1440px with 12 projects, at least 6 cards are visible without
-    scrolling. Say how many you actually render.
-State each of the 11 as PASS or FAIL, then list the files you created.
+10. Content column is capped at 1200px and centred.
+11. At 1440px with 12 projects, at least 6 cards visible without scrolling.
+State each as PASS/FAIL, then list all files created with `// filepath: <path>`.
 </script>
 
 <script type="text/plain" id="full-sp-l2">
 Add LAYER 2 ONLY to Sprout. Re-read DESIGN.md first and obey it.
+Emit each file in a separate code block with `// filepath: <path>`.
 
 === SCOPE FENCE ===
 Do NOT build applying to a role, accepting a member, pledging, funding
-progress or project updates. Those buttons stay disabled with their existing
-title. Do not restyle or rewrite Layer 1 - extend it.
+progress or project updates. Those buttons stay disabled with their existing title.
+Do not restyle or rewrite Layer 1 — extend it.
 
-=== 1. AUTH - GOOGLE ONLY ===
-Firebase Auth with the Google provider only. No email and password: that
-means no password storage, no reset flow, and no credential breach to
-explain. This is a security decision, not a convenience one.
-On first sign-in, create users/{uid} with displayName and photoURL from the
-Google profile, then route the user to complete their profile.
-Signed-out visitors can still browse Discover and project pages - the board
-is public on purpose, because an empty-feeling site loses people at the door.
+=== 1. AUTH - GOOGLE ONLY (FIREBASE MODULAR SDK v9+) ===
+Use Firebase v9 Modular SDK (`firebase/auth`, `firebase/firestore`).
+Google provider only: no passwords, no reset flow, no credential breach risk.
+On first sign-in, create users/{uid} with displayName and photoURL from Google profile,
+then route user to complete their profile.
+Signed-out visitors can still browse Discover and project detail — board is public.
 
 === 2. PROFILE ===
-Fields: faculty, year, skills (chosen from the 8-role taxonomy), a short bio,
-and a contact email which is PRIVATE. The contact email is readable only by
-its owner, and by the owner of a project that person has applied to. It must
-never be rendered on a public page. Enforce this in the security rules, not
-only in the UI.
+Fields: faculty, year, skills (from 8-role taxonomy), bio, and PRIVATE contactEmail.
+contactEmail is readable ONLY by owner and project owners they applied to.
+Never render contact email on public profile views.
 
-=== 3. CREATE AND EDIT A PROJECT ===
-Title, pitch, description, category, faculty, a list of open roles, and an
-optional funding goal in VND. Only the owner may edit.
-Validate on the client AND enforce the same constraints in the rules. Client
-validation is a courtesy to the user; the rule is the actual control.
+=== 3. CREATE AND EDIT PROJECT ===
+`src/pages/CreateProject.tsx`: Title, pitch, description, category, faculty, open roles,
+and optional funding goal in VND. Only owner may edit.
+Validate on client AND enforce constraints in rules.
 
-=== 4. THE SEED BECOMES REAL ===
-Move the 12 seeded projects into Firestore with a one-off seeding script I
-can run once. Discover and project detail now read from Firestore, with real
-loading, empty and error states rather than a spinner that never resolves.
-Do not delete seed.ts - it stays as the source for reseeding.
+=== 4. FIRESTORE SERVICE LAYER & SEED SCRIPT ===
+- `src/lib/firebase.ts`: Initialize Firebase Auth and Firestore with env vars.
+- `src/services/projectService.ts`: `getProjects()`, `getProjectById()`, `createProject()`,
+  and `seedFirestore()` one-off seeding script to populate Firestore from seed.ts.
+- Discover and Project Detail now read live Firestore data with loading skeletons,
+  empty states, and error alerts.
 
-=== 5. SECURITY RULES - DEPLOY BEFORE THE FIRST WRITE ===
-Paste in the rules from stage 2 and deploy them before any write path exists.
-Never widen a rule to make a screen work. If a read fails, either the query
-is wrong or the rule is wrong - decide which deliberately and say so.
-Do not, under any circumstances, set allow read, write: if true.
+=== 5. ENVIRONMENT CONFIGURATION ===
+Emit `.env.example` with required `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
+`VITE_FIREBASE_PROJECT_ID`, etc.
 
 === 6. SELF-CHECK - state PASS or FAIL for each ===
 1. A signed-out visitor can browse the board and every project page.
 2. A second account cannot read the first account's contact email.
 3. A non-owner cannot edit a project, verified against the rules.
 4. Applying, accepting and pledging are all still disabled.
-5. Loading, empty and error states exist on every screen that reads data.
+5. Loading skeletons, empty and error states exist on every data-reading screen.
 6. Zero raw hex and zero arbitrary Tailwind values were added.
-7. Every NEW screen obeys the LAYOUT RULES in DESIGN.md: content column
-   capped at exactly 1200px (not "roughly" - not max-w-6xl, which is 1152),
-   card grids never four-wide, margin-top:auto and line-clamp-2 so no card
-   hollows out, chip rows rather than sidebars, one primary action.
-   For each new list screen, state how many items are visible at 1440px.
-8. Layer 1 files were extended, not rewritten. List every file you changed.
+7. Every NEW screen obeys LAYOUT RULES in DESIGN.md: content column capped at
+   exactly 1200px, card grids never 4-wide, margin-top:auto + line-clamp-2,
+   chip rows rather than sidebars, one primary action.
+8. Layer 1 files were extended, not rewritten. List every file changed.
 </script>
 
 <script type="text/plain" id="full-sp-l3">
-Add LAYER 3 ONLY to Sprout: the matching flow. This is the core of the
-product - everything before it is a listing site. Re-read DESIGN.md and obey
-it.
+Add LAYER 3 ONLY to Sprout: the matching flow. This is the core of the product.
+Re-read DESIGN.md and obey it. Emit each file with `// filepath: <path>`.
 
 === SCOPE FENCE ===
 Do NOT build funding, pledges, project updates, notifications or email.
 Do not restyle or rewrite Layers 1 and 2.
 
 === 1. APPLYING ===
-On a project page each open role has an Apply button, shown only to a signed
--in user who is not already a member. It opens a small form: the role being
-applied for, and one paragraph explaining why.
-One application per person per project - applying again edits the existing
-one rather than creating a second.
-The applicant sees their own status on the project page: pending, accepted or
-declined. While pending they may withdraw.
+On project page, each open role has an Apply button (shown only to signed-in non-members).
+Opens `src/components/ApplyModal.tsx`: role requirement summary + 1 pitch paragraph.
+One application per person per project (`projects/{projectId}/applications/{uid}`).
+Applicant sees status on project page: pending, accepted, or declined. May withdraw while pending.
 
-=== 2. THE OWNER'S INBOX ===
-A screen listing applications for the projects the signed-in user owns,
-grouped by project and then by role, newest first.
-Each row shows: applicant name, faculty, year, skills, their paragraph, and
-Accept and Decline actions.
-Accepting adds the applicant to memberUids and marks that role filled.
-Declining is silent and final. The wording of a decline must never be harsh -
-these are classmates who will see each other in a lecture on Monday. "This
-role has been filled" is enough.
+=== 2. OWNER'S INBOX ===
+`src/pages/OwnerInbox.tsx`: Lists applications for owned projects, grouped by project and role.
+Each row shows: applicant name, faculty, year, skills, pitch paragraph, Accept and Decline buttons.
+Accepting adds applicant to memberUids and marks role filled.
+Declining is quiet and final ("This role has been filled"). Never harsh.
 
-=== 3. THE RACE CONDITION - HANDLE IT PROPERLY ===
-Two applicants can be accepted to a one-person role at the same moment, from
-two tabs or two devices.
-Do the accept inside a Firestore TRANSACTION that re-reads the role, confirms
-it is still unfilled, and fails cleanly if it is not. The second click must
-show "that role was just filled" and leave the team uncorrupted.
-memberCount and the role's filled flag are updated in that same transaction.
-Never update counts from the client.
+=== 3. ATOMIC TRANSACTION & RACE CONDITION HANDLING ===
+In `src/services/applicationService.ts`, `acceptApplication` MUST use Firestore `runTransaction`:
+1. Read `projects/{projectId}` document inside transaction.
+2. Verify `openRoles[roleIndex].filled == false`.
+3. If already filled: abort transaction with Error('ROLE_ALREADY_FILLED').
+4. If unfilled: set `applications/{uid}.status = 'accepted'`, append `uid` to `memberUids`,
+   mark `role.filled = true`, and increment `memberCount`.
+UI handles 'ROLE_ALREADY_FILLED' gracefully with banner: "That role was just filled."
+Action buttons have optimistic disabled state during transaction execution.
 
 === 4. THE TEAM ===
-The project page shows the current team with names, roles and faculties, and
-which roles remain open. A member may leave a project, which reopens their
-role and decrements the count in a transaction.
+Project detail shows active team roster (names, roles, faculties) and remaining open roles.
+Member may leave via transaction (reopens role, decrements memberCount).
 
 === 5. SELF-CHECK - state PASS or FAIL for each ===
-1. Accepting twice to a one-person role fails cleanly on the second attempt.
+1. Accepting twice to a one-person role fails cleanly on second attempt with clear UI banner.
 2. An applicant cannot list or read another applicant's application.
-3. All counts are updated inside transactions, never from client code.
-4. A declined applicant sees a neutral message, never a harsh one.
+3. All role states and counts are updated inside atomic transactions.
+4. A declined applicant sees a neutral, respectful message.
 5. No funding, pledge or update code was added.
 6. Zero raw hex and zero arbitrary Tailwind values were added.
-7. The owner's inbox obeys the LAYOUT RULES in DESIGN.md: content column
-   capped at exactly 1200px (not "roughly" - not max-w-6xl, which is 1152),
-   never four columns, margin-top:auto and line-clamp-2 so no row hollows
-   out, no full-height sidebar, one primary action.
-   State how many applications are visible at 1440px before scrolling.
+7. Owner's inbox strictly obeys LAYOUT RULES in DESIGN.md (1200px max width, no sidebars,
+   state how many applications are visible at 1440px before scrolling).
 </script>
 
 <script type="text/plain" id="full-sp-l4">
-Add LAYER 4 ONLY to Sprout: pledges and the polish pass. Re-read DESIGN.md
-and obey it.
+Add LAYER 4 ONLY to Sprout: pledges and the polish pass. Re-read DESIGN.md.
+Emit each file with `// filepath: <path>`.
 
-=== THE RULE THAT GOVERNS THIS ENTIRE LAYER ===
-NO real money moves through this application. No card fields, no wallet, no
-payment SDK, no checkout, no "pay now" button, no Stripe, no PayPal, no
-VNPay, no MoMo integration.
-A pledge is a recorded COMMITMENT. Settlement happens off-platform between
-two people.
-Every user-facing string says "pledged", never "paid" and never "donated".
-The project page states plainly that Sprout does not process payments and
-does not hold funds.
-If you find yourself adding a payment library, stop. That is the one thing
-this layer must not do.
+=== THE NO-PAYMENT CONTRACT ===
+NO real money moves. No card fields, no wallets, no payment SDKs, no Stripe/VNPay/MoMo.
+A pledge is a recorded COMMITMENT. Settlement happens off-platform.
+Every string says "pledged", never "paid" or "donated".
+Project page clearly states: "Sprout records pledges; funds are transferred directly off-platform."
 
-=== 1. PLEDGING ===
-"Back this project" opens a modal: an amount in VND with three suggested
-values, an optional short message, and a choice of public or anonymous.
-A pledge is written once and is IMMUTABLE - the amount can never be edited.
-A pledge may be withdrawn, which marks it withdrawn rather than deleting it,
-so the history stays honest.
-pledgedTotal and backerCount are updated in the same TRANSACTION as the
-pledge write. Never from the client.
+=== 1. PLEDGING & ATOMIC TRANSACTIONS ===
+"Back this project" opens `src/components/PledgeModal.tsx`:
+- Amount in VND with presets (50.000 ₫, 100.000 ₫, 200.000 ₫, custom).
+- Optional message and choice of public or anonymous.
+- A pledge is IMMUTABLE once written. Withdrawing marks status 'withdrawn' (never deletes).
+- In `src/services/pledgeService.ts`, `createPledge` runs in a Firestore `runTransaction`:
+  writes `projects/{projectId}/pledges/{uid}` and atomically increments `pledgedTotal`
+  and `backerCount` on `projects/{projectId}`.
 
-=== 2. THE FUNDING VIEW ===
-A progress bar in --color-accent with role="progressbar" and correct aria
-values. The amount pledged of the goal, formatted as Vietnamese dong.
-A backer list that honours the anonymity choice.
-Past 100% the project reads "funded" and still accepts pledges.
-The project owner sees a private list of backers with contact emails, so they
-can settle off-platform. Nobody else can see that list.
+=== 2. THE FUNDING VIEW & VIETNAMESE CURRENCY FORMATTING ===
+- `src/utils/currency.ts`: helper `formatVND(amount: number)` using
+  `Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })`.
+- Progress bar in `--color-accent` with `role="progressbar"`, `aria-valuenow`, `aria-valuemax`.
+- Backer list honors `isAnonymous` choice (public view hides name/email).
+- Project owner sees private backer list with contact emails for off-platform settlement.
+- Past 100% reads "Funded" and continues accepting pledges.
 
 === 3. UPDATES ===
-The owner can post short text updates. Backers and members see them on the
-project page, newest first. No email, no notification centre.
+Owner can post short text updates. Displayed on project page, newest first.
 
-=== 4. THE POLISH PASS ===
-- Loading, empty and error states on every screen that reads data. No screen
-  may show a spinner that never resolves, or a raw Firebase error.
-- A complete keyboard path: browse, sign in, apply, accept, pledge.
-- Check 390x844 and 1440x900 - nothing clips, overlaps or scrolls off.
-- Re-read DESIGN.md and sweep layers 2 to 4 for any raw hex, arbitrary
-  Tailwind value, shadow, pill button or colour outside the token set that
-  crept in. Replace each and list every replacement you made.
+=== 4. POLISH PASS ===
+- Loading skeletons, empty states, and error alerts on all data views.
+- Complete keyboard path: browse, sign in, apply, accept, pledge.
+- Strict layout check across all screens against DESIGN.md (max 1200px, 3-col max, no hollow cards).
 
 === 5. SELF-CHECK - state PASS or FAIL for each ===
-1. There is no payment library, card input, or the word "pay" in user copy.
-2. A pledge amount cannot be edited, verified against the rules.
-3. pledgedTotal and backerCount are only ever written in transactions.
-4. Only the project owner can see backer contact emails.
+1. Zero payment SDKs, card inputs, or words like "pay"/"donate" in user copy.
+2. A pledge amount cannot be edited after creation.
+3. pledgedTotal and backerCount update strictly via atomic transactions.
+4. Backer anonymity is honored publicly; contact emails visible ONLY to project owner.
 5. Every data-reading screen has loading, empty and error states.
 6. Zero raw hex outside index.css across the entire project.
-7. Every screen in the finished app obeys the LAYOUT RULES in DESIGN.md.
-   Sweep all four layers, not just this one: content column capped at
-   exactly 1200px (not max-w-6xl, which is 1152), no four-column grid, no
-   card with a hollow middle, no full-height sidebar, one primary action
-   per screen. List every screen you had to correct.
+7. Every screen in the finished app obeys LAYOUT RULES in DESIGN.md (1200px max width).
 </script>
 
 <script type="text/plain" id="full-sp-s4">
