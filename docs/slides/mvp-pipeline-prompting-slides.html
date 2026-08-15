@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Idea → Shipped: the 8-stage MVP pipeline, and how to prompt each one</title>
+<title>Idea → Shipped: the 9-stage MVP pipeline, and how to prompt each one</title>
 <style>
 /* ============================================================
    Google deck — tokens measured from Vibe_Coding_Handbook.pptx
@@ -110,7 +110,8 @@ pre .c{color:#8FA5BC}
 .turn .clock{position:absolute;right:76px;top:50%;transform:translateY(-50%);text-align:center}
 .turn .clock .n{font-size:104px;font-weight:700;color:var(--blue);line-height:1}
 .turn .clock .u{font-family:var(--mono);font-size:14px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
-.turn .done{margin-top:22px;font-size:17px;color:var(--ink);background:#fff;border:1px solid #C9DDFB;border-radius:12px;padding:14px 20px;max-width:60ch}
+.turn .done{margin-top:22px;font-size:17px;color:var(--ink);background:#fff;border:1px solid #C9DDFB;
+  border-radius:12px;padding:14px 20px;max-width:880px}
 .turn .done b{color:#1A62C9}
 
 /* stage divider */
@@ -158,29 +159,32 @@ pre .c{color:#8FA5BC}
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <span class="badge">#BuildwithGoogleAI · MVP Pipeline</span>
   <h1>Idea → Shipped</h1>
-  <p class="sub">Eight stages, and the exact prompt that gets you through each one. The prompts are the deck — copy them.</p>
-  <div class="meta"><span>STEP-BY-STEP</span><span>8 STAGES</span><span>BEGINNER → INTERMEDIATE</span></div>
+  <p class="sub">Nine stages, and the exact prompt that gets you through each one. The prompts are the deck — copy them.</p>
+  <div class="meta"><span>STEP-BY-STEP</span><span>9 STAGES</span><span>BEGINNER → INTERMEDIATE</span></div>
 </section>
 
-<!-- 2 the eight stages -->
+<!-- 2 the nine stages -->
 <section class="slide" data-notes="Don't read all eight. Point out that the first three are where people skip, and where this talk spends its time.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
   <div class="eyebrow">The pipeline</div>
-  <h2>Eight stages, in this order</h2><div class="rule"></div>
+  <h2>Nine stages, in this order</h2><div class="rule"></div>
   <div class="body">
-    <div class="grid g4">
+    <div class="grid g3">
       <div class="card sm accent"><span class="n">01</span><h3>Research</h3><p>Is the problem real?</p></div>
       <div class="card sm accent"><span class="n">02</span><h3>Brainstorm</h3><p>Which solution?</p></div>
-      <div class="card sm accent"><span class="n">03</span><h3>Design system</h3><p>What does it look like?</p></div>
-      <div class="card sm"><span class="n">04</span><h3>Code</h3><p>Build the thing</p></div>
+      <div class="card sm accent"><span class="n">03</span><h3>Plan</h3><p>What, and built with what?</p></div>
     </div>
-    <div class="grid g4">
-      <div class="card sm"><span class="n">05</span><h3>Test</h3><p>What breaks?</p></div>
-      <div class="card sm"><span class="n">06</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
-      <div class="card sm"><span class="n">07</span><h3>Deploy</h3><p>Get a live URL</p></div>
-      <div class="card sm"><span class="n">08</span><h3>Publish</h3><p>Ship it to people</p></div>
+    <div class="grid g3">
+      <div class="card sm accent"><span class="n">04</span><h3>Design system</h3><p>What does it look like?</p></div>
+      <div class="card sm"><span class="n">05</span><h3>Code</h3><p>Build the thing</p></div>
+      <div class="card sm"><span class="n">06</span><h3>Test</h3><p>What breaks?</p></div>
     </div>
-    <div class="callout"><p>Most people start at <strong>04</strong>. That is why their MVP looks like everyone else's — and why they can't answer "why this?"</p></div>
+    <div class="grid g3">
+      <div class="card sm"><span class="n">07</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
+      <div class="card sm"><span class="n">08</span><h3>Deploy</h3><p>Get a live URL</p></div>
+      <div class="card sm"><span class="n">09</span><h3>Publish</h3><p>Ship it to people</p></div>
+    </div>
+    <div class="callout"><p>Most people start at <strong>05</strong>. That is why their MVP looks like everyone else's — and why they can't answer "why this?"</p></div>
   </div>
 </section>
 
@@ -193,15 +197,16 @@ pre .c{color:#8FA5BC}
     <table class="sm">
       <tr><th>Stage</th><th>What comes out</th><th>Feeds</th></tr>
       <tr class="hl"><td><strong>Research</strong></td><td>A problem brief — segments, status quo, killer assumptions</td><td>Brainstorm</td></tr>
-      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Design</td></tr>
-      <tr class="hl"><td><strong>Design system</strong></td><td>Token set + screen specs</td><td>Code</td></tr>
+      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Plan</td></tr>
+      <tr class="hl"><td><strong>Plan</strong></td><td>Feature cut · screen list · <strong>stack</strong> · data model</td><td>Design</td></tr>
+      <tr class="hl"><td><strong>Design system</strong></td><td>Token set + visual spec per screen</td><td>Code</td></tr>
       <tr><td><strong>Code</strong></td><td>A working app</td><td>Test</td></tr>
       <tr><td><strong>Test</strong></td><td>Ranked bug list + pre-demo checklist</td><td>Evaluation</td></tr>
       <tr><td><strong>Evaluation</strong></td><td>Prioritised fix list against the real rubric</td><td>Deploy</td></tr>
       <tr><td><strong>Deploy</strong></td><td>A live URL</td><td>Publish</td></tr>
       <tr><td><strong>Publish</strong></td><td>Submission + demo video</td><td>—</td></tr>
     </table>
-    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 4 output good — not a cleverer build prompt.</p></div>
+    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 5 output good — not a cleverer build prompt.</p></div>
   </div>
 </section>
 
@@ -250,7 +255,7 @@ most change your response. Wait for my answers.</pre>
   <h2>Research</h2><div class="rule"></div>
   <p>Decide whether the problem is real <em>before</em> you fall in love with a solution. Output: a problem brief you can hand to the next stage.</p>
   <div class="stagerow">
-    <span class="on">Research</span><span>Brainstorm</span><span>Design</span><span>Code</span>
+    <span class="on">Research</span><span>Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
@@ -396,7 +401,7 @@ mentoring, hours. Pledges only, no payment processing).
   <div class="eyebrow">Thực hành 01</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Mở Gemini. Dán prompt Research, điền ý tưởng của <em>chính bạn</em> vào <code>[PROBLEM]</code> và <code>[AUDIENCE]</code>. Chạy.</p>
-  <div class="done"><b>Xong khi:</b> bạn trả lời được — nhóm người dùng đau nhất là ai, và <b>hôm nay họ đang xoay xở bằng cách nào?</b></div>
+  <div class="done"><b>Xong khi:</b> bạn nói được nhóm nào đau nhất, và <b>hôm nay họ xoay xở bằng cách gì.</b></div>
   <div class="clock"><div class="n">10</div><div class="u">phút</div></div>
 </section>
 
@@ -407,7 +412,7 @@ mentoring, hours. Pledges only, no payment processing).
   <h2>Brainstorm</h2><div class="rule"></div>
   <p>Two separate prompts: one to <em>diverge</em>, one to <em>converge</em>. Asking for both at once gets you three ideas and a premature favourite.</p>
   <div class="stagerow">
-    <span>Research</span><span class="on">Brainstorm</span><span>Design</span><span>Code</span>
+    <span>Research</span><span class="on">Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
@@ -488,21 +493,102 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
 </section>
 
+<!-- PLAN divider -->
+<section class="slide divider" data-notes="Chặng 03. Chặng này em thêm vào sau khi soát lại — vì prompt build đang ghi 'React, Tailwind' mà chưa chặng nào chốt điều đó.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 03</div>
+  <h2>Plan</h2><div class="rule"></div>
+  <p>Decide <em>what</em> you are building and <em>what you are building it with</em> — before anyone talks about colour. Output: a cut feature list, a screen list, the stack, and the data model.</p>
+  <div class="stagerow">
+    <span>Research</span><span>Brainstorm</span><span class="on">Plan</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- Plan — vì sao + prompt -->
+<section class="slide" data-notes="Chỉ thẳng vào lỗ hổng: prompt build ghi React+Tailwind, nhưng không ai quyết định. Đó là chặng này.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — plan prompt</div>
+  <h2>Cut scope, then pick the stack</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+
+Input: [paste the decision from Brainstorm]
+
+Decide four things, and nothing else:
+
+<span class="k">1. FEATURES</span> — what is in the MVP and what is cut. One line of why
+   for each cut. <span class="k">If the in-list is longer than 5 items, cut again.</span>
+<span class="k">2. SCREENS</span> — the minimum number. Each with its single job in one
+   sentence. If a screen has two jobs, split it or cut it.
+<span class="k">3. STACK</span> — frontend, data/auth, and how AI is called: which SDK,
+   which model, where the API key lives. One line of why for each.
+<span class="k">4. DATA</span> — the 2-3 entities and their fields. Nothing speculative.
+
+Rules: I have [N] hours, working [solo / team of N].
+Every choice must survive that. If something cannot be built in that
+time, say so and propose the smaller version.
+<span class="k">Prefer boring technology over interesting technology.</span></pre>
+    <div class="callout red"><p>Không có chặng này thì prompt build của bạn ghi "React, Tailwind" mà <strong>không ai từng quyết định như vậy</strong> — và số màn hình thì bỏ trống.</p></div>
+  </div>
+</section>
+
+<!-- Plan — artifact thật -->
+<section class="slide" data-notes="Đây là artifact mà Design và Code sẽ ăn. Chỉ vào dòng STACK — đó là thứ dán thẳng vào prompt build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan</div>
+  <div class="eyebrow">Worked example — from a real run</div>
+  <h2>The plan artifact</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm"><span class="c">FEATURES — in</span>                  <span class="c">FEATURES — cut</span>
+  Upload proof link                Payments → pledges only
+  Auto-tag skills from the link    Under-18 → Decree 13 consent
+  Browse vetted network            Chat → team thread, later
+  Request to join a project        Mobile app → web first
+
+<span class="c">SCREENS — 3</span>
+  1. The Gate        force proof before access
+  2. The Network     show vetted peers and projects
+  3. Proof Detail    one-click collaboration request
+
+<span class="k">STACK</span>
+  Frontend    React (TypeScript) + CSS custom properties
+  Auth/Data   Firebase Auth (Sign in with Google) + Cloud Firestore
+  AI          <span class="k">@google/genai</span> on a Node backend, <span class="k">Gemini 3.7 Flash</span>,
+              key in <span class="k">process.env.GEMINI_API_KEY</span>
+              → reads the portfolio link, tags competencies
+
+<span class="c">DATA</span>
+  User(uid, name, proofUrl, tags[])
+  Project(id, ownerUid, title, need, proofUrl)
+  Request(id, projectId, fromUid, status)</pre>
+  </div>
+</section>
+
+<!-- THỰC HÀNH — Plan -->
+<section class="slide turn" data-notes="7 phút. Nhắc: danh sách 'in' quá 5 dòng là chưa cắt đủ.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Thực hành 04</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Dán quyết định từ chặng 2 vào prompt Plan, rồi chạy. <strong>Đếm số tính năng nó giữ lại — hơn 5 là chưa cắt đủ, bảo nó cắt tiếp.</strong></p>
+  <div class="done"><b>Xong khi:</b> bạn có tính năng đã cắt, số màn hình, <b>stack</b>, và mô hình dữ liệu.</div>
+  <div class="clock"><div class="n">7</div><div class="u">phút</div></div>
+</section>
+
 <!-- DESIGN divider -->
 <section class="slide divider" data-notes="Stage 3. The stage that most separates a good-looking MVP from a generic one.">
   <div class="dots"><i></i><i></i><i></i><i></i></div>
-  <div class="eyebrow">Stage 03</div>
+  <div class="eyebrow">Stage 04</div>
   <h2>Design system &amp; UI</h2><div class="rule"></div>
   <p>Tokens before screens. This is the single biggest difference between an MVP that looks designed and one that looks generated.</p>
   <div class="stagerow">
-    <span>Research</span><span>Brainstorm</span><span class="on">Design</span><span>Code</span>
+    <span>Research</span><span>Brainstorm</span><span>Plan</span><span class="on">Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
 
 <!-- 14 why tokens -->
 <section class="slide" data-notes="Explain: 'make it look nice' has no memory. Tokens are the memory.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
   <div class="eyebrow">Why this order</div>
   <h2>"Make it look nice" has no memory</h2><div class="rule"></div>
   <div class="body">
@@ -516,7 +602,7 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
 
 <!-- 15 design system prompt -->
 <section class="slide" data-notes="Point at the WCAG line — it forces accessibility, which is usually a scored criterion.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — design system prompt</div>
   <h2>Generate the system, not a screen</h2><div class="rule"></div>
   <div class="body">
@@ -592,7 +678,7 @@ you chose the brand colour.</pre>
 
 <!-- 16 screens prompt -->
 <section class="slide" data-notes="'Only these tokens' is the constraint doing the work. And the last line stops silent drift.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — screens prompt</div>
   <h2>Screens, constrained by the system</h2><div class="rule"></div>
   <div class="body">
@@ -614,18 +700,18 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 
 <!-- THỰC HÀNH 3 -->
 <section class="slide turn" data-notes="9 phút. Nhấn: giữ lại bộ token — lát nữa dán thẳng vào prompt build.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design <span class="tool">Gemini chat</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Thực hành 03</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Chạy prompt design system. <strong>Lưu lại bộ CSS variables</strong> — lát nữa dán thẳng vào prompt build.</p>
-  <div class="done"><b>Xong khi:</b> bạn có bộ token dán được, và spec cho màn hình đầu tiên — kèm <b>empty state</b> và <b>error state</b>.</div>
+  <div class="done"><b>Xong khi:</b> có bộ token dán được, và spec màn hình đầu kèm <b>empty + error state</b>.</div>
   <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
 </section>
 
 <!-- CODE -->
 <section class="slide" data-notes="Stage 4. Now the build prompt is easy, because it inherits three artifacts.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
-  <div class="eyebrow">Stage 04 — Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 05 — Code</div>
   <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
   <div class="body">
     <div class="flow">
@@ -643,7 +729,7 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 
 <!-- 18 code prompt -->
 <section class="slide" data-notes="The scope line — no routing, no login, no database — is what keeps the model from building a dashboard.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Copy this — build prompt</div>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
@@ -666,7 +752,7 @@ Output complete working code. No placeholders, no "add logic here".</pre>
 
 <!-- ví dụ điền thật — build prompt -->
 <section class="slide" data-notes="Nhấn hai điều. Một: prompt này ngắn vì nó THỪA HƯỞNG — token và spec đã có sẵn. Hai: sản phẩm đã đổi tên và đổi đối tượng sau chặng Research. Đó là pipeline đang làm việc, không phải đi lạc.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Worked example — from a real run</div>
   <h2>The same build prompt, filled in</h2><div class="rule"></div>
   <div class="body">
@@ -773,8 +859,8 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
 
 <!-- THỰC HÀNH 4 -->
 <section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Ai xong sớm thì bảo publish luôn.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code <span class="tool ai">AI Studio</span></div>
-  <div class="eyebrow">Thực hành 04 — dài nhất</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Thực hành 05 — dài nhất</div>
   <h2>Build đi</h2><div class="rule"></div>
   <p class="task">Mở <code>ai.dev</code> → Build. Dán prompt build kèm bộ token của bạn. Chạy. Rồi sửa từng lớp một.</p>
   <div class="done"><b>Xong khi:</b> app chạy được trên <b>máy của bạn</b>. Xong sớm thì bấm Publish luôn.</div>
@@ -783,8 +869,8 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
 
 <!-- test -->
 <section class="slide" data-notes="Stage 5. Reframe: you're not testing for correctness, you're testing for demo survival.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
-  <div class="eyebrow">Stage 05 — Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test</div>
+  <div class="eyebrow">Stage 06 — Test</div>
   <h2>Test for the demo, not for coverage</h2><div class="rule"></div>
   <div class="body">
     <p class="lede">An MVP does not need 80% coverage. It needs to survive four minutes in front of someone who did not build it.</p>
@@ -798,7 +884,7 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
 
 <!-- 20 test prompt -->
 <section class="slide" data-notes="Ordering by 'likely to happen during a live demo' is what makes this list actionable.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test <span class="tool">Gemini chat</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — test prompt</div>
   <h2>Find what breaks on stage</h2><div class="rule"></div>
   <div class="body">
@@ -862,8 +948,8 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
 
 <!-- 21 evaluation -->
 <section class="slide" data-notes="Stage 6. Evaluate against the criteria you'll actually be judged on — not vibes.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
-  <div class="eyebrow">Stage 06 — Evaluation</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation</div>
+  <div class="eyebrow">Stage 07 — Evaluation</div>
   <h2>Score it against the real rubric</h2><div class="rule"></div>
   <div class="body">
     <p class="lede">"Is it good?" is unanswerable. "Does it score on the criteria it will be judged against?" is answerable — and fixable.</p>
@@ -878,7 +964,7 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
 
 <!-- 22 eval prompt -->
 <section class="slide" data-notes="The last line is the one that produces action instead of a report.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation <span class="tool">Gemini chat</span></div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — evaluation prompt</div>
   <h2>Make it grade you honestly</h2><div class="rule"></div>
   <div class="body">
@@ -941,8 +1027,8 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 23 deploy -->
 <section class="slide" data-notes="Starter Tier: free, no card. The condition is a never-published account. This trips up most of the room.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy <span class="tool ai">AI Studio</span></div>
-  <div class="eyebrow">Stage 07 — Deploy</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Deploy <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 08 — Deploy</div>
   <h2>A live URL, free, no credit card</h2><div class="rule"></div>
   <div class="body">
     <div class="flow">
@@ -961,8 +1047,8 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 24 publish artifacts -->
 <section class="slide" data-notes="Two links, and people submit the wrong one. Say it out loud.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
-  <div class="eyebrow">Stage 08 — Publish</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Publish</div>
+  <div class="eyebrow">Stage 09 — Publish</div>
   <h2>Ship the artifacts, not just the app</h2><div class="rule"></div>
   <div class="body">
     <table>
@@ -978,7 +1064,7 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 25 demo video -->
 <section class="slide" data-notes="Most demo videos spend 40 seconds on sign-in. Show the magic moment by second 25.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Publish</div>
   <div class="eyebrow">The one artifact people watch</div>
   <h2>90 seconds, in this order</h2><div class="rule"></div>
   <div class="body">
@@ -1002,14 +1088,15 @@ a 6/10 I can fix tonight.</pre>
       <tr><th>Stage</th><th>Time</th><th>You stop when…</th></tr>
       <tr class="hl"><td><strong>01 Research</strong></td><td>1.5 h</td><td>You can name the segment and what they do today instead</td></tr>
       <tr class="hl"><td><strong>02 Brainstorm</strong></td><td>1 h</td><td>You have written down CHOSEN / BECAUSE / NOT DOING</td></tr>
-      <tr class="hl"><td><strong>03 Design system</strong></td><td>1.5 h</td><td>You have tokens you can paste, and screen specs with states</td></tr>
-      <tr><td><strong>04 Code</strong></td><td>6 h</td><td>The happy path works end to end on a phone</td></tr>
-      <tr><td><strong>05 Test</strong></td><td>1 h</td><td>You have run the pre-demo checklist once</td></tr>
-      <tr><td><strong>06 Evaluation</strong></td><td>1 h</td><td>You have an ordered fix list and did the top two</td></tr>
-      <tr><td><strong>07 Deploy</strong></td><td>0.5 h</td><td>A stranger opened your URL on their phone</td></tr>
-      <tr><td><strong>08 Publish</strong></td><td>2 h</td><td>Video recorded, links submitted, scope written down</td></tr>
+      <tr class="hl"><td><strong>03 Plan</strong></td><td>1 h</td><td>Feature cut, screen list, stack, data model — all on one page</td></tr>
+      <tr class="hl"><td><strong>04 Design system</strong></td><td>1.5 h</td><td>Tokens you can paste, screen specs with states</td></tr>
+      <tr><td><strong>05 Code</strong></td><td>5 h</td><td>The happy path works end to end on a phone</td></tr>
+      <tr><td><strong>06 Test</strong></td><td>1 h</td><td>You have run the pre-demo checklist once</td></tr>
+      <tr><td><strong>07 Evaluation</strong></td><td>1 h</td><td>You have an ordered fix list and did the top two</td></tr>
+      <tr><td><strong>08 Deploy</strong></td><td>0.5 h</td><td>A stranger opened your URL on their phone</td></tr>
+      <tr><td><strong>09 Publish</strong></td><td>2 h</td><td>Video recorded, links submitted, scope written down</td></tr>
     </table>
-    <div class="callout"><p>Stages 1–3 are <strong>a quarter of the time and produce no code</strong>. That is the part that feels wrong and is right.</p></div>
+    <div class="callout"><p>Stages 1–4 are <strong>a third of the time and produce no code</strong>. That is the part that feels wrong and is right.</p></div>
   </div>
 </section>
 
@@ -1023,6 +1110,7 @@ a 6/10 I can fix tonight.</pre>
       <tr><th>Skipped</th><th>What it feels like</th><th>What it costs</th></tr>
       <tr><td><strong>Research</strong></td><td>"I already know the problem"</td><td>You build for a segment that doesn't feel the pain</td></tr>
       <tr><td><strong>Brainstorm</strong></td><td>"I had the idea already"</td><td>You build the first idea, which is usually the average one</td></tr>
+      <tr><td><strong>Plan</strong></td><td>"I'll decide as I go"</td><td>Scope grows every session, and the stack is whatever the model guessed</td></tr>
       <tr><td><strong>Design system</strong></td><td>"I'll make it pretty later"</td><td>Four screens that look like four different apps</td></tr>
       <tr class="hl"><td><strong>Evaluation</strong></td><td>"It works, I'm done"</td><td>You polish what you enjoy instead of what is scored</td></tr>
     </table>
@@ -1036,7 +1124,7 @@ a 6/10 I can fix tonight.</pre>
   <span class="badge">Your turn</span>
   <h1>Start at stage 01 tonight.</h1>
   <p class="sub">Not the build prompt. Open the research prompt, paste your idea, and let it tell you what you don't know yet. Everything downstream gets easier.</p>
-  <div class="meta"><span>8 STAGES</span><span>8 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
+  <div class="meta"><span>9 STAGES</span><span>10 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
 </section>
 
 </div></div>

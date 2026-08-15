@@ -1,8 +1,8 @@
 # Script buổi 1 — 90 phút: "Từ ý tưởng đến app chạy được"
 
-Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (34 slide)
+Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (38 slide)
 Khán giả: sinh viên / fresher / junior, có mang laptop
-Kết quả mong muốn: mỗi người rời phòng với **một app chạy được trên điện thoại của chính mình**, và 3 artifact viết ra giấy (problem brief, quyết định, bộ token).
+Kết quả mong muốn: mỗi người rời phòng với **một app chạy được trên điện thoại của chính mình**, và 4 artifact viết ra giấy (problem brief, quyết định, bản kế hoạch, bộ token).
 
 App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-idea-team-funding-app-ai-studio.md`).
 
@@ -19,7 +19,7 @@ App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-ide
 - [ ] Tắt thông báo, để zoom trình duyệt về 100%
 - [ ] Brief facilitator: mốc kiểm tra ở phút 10, và câu trả lời cho lỗi "đòi thẻ tín dụng"
 
-**Nguyên tắc xuyên suốt:** khán giả mang laptop tới để *làm*, không phải để nghe. Bốn khối THỰC HÀNH là phần chính của buổi — phần nói chỉ để mở đường cho chúng.
+**Nguyên tắc xuyên suốt:** khán giả mang laptop tới để *làm*, không phải để nghe. Năm khối THỰC HÀNH là phần chính của buổi — phần nói chỉ để mở đường cho chúng.
 
 ---
 
@@ -27,36 +27,44 @@ App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-ide
 
 | Thời gian | Slide | Nội dung | Dạng |
 |---|---|---|---|
-| 00:00–00:04 | 1–2 | Mở đầu + 8 chặng | Nói |
+| 00:00–00:04 | 1–2 | Mở đầu + 9 chặng | Nói |
 | 00:04–00:10 | 3–5 | Chuỗi artifact + khung prompt | Nói |
 | 00:10–00:16 | 6–9 | Research + ví dụ điền Ươm Mầm | Nói |
 | 00:16–00:26 | 10 | **THỰC HÀNH 1** | Làm (10′) |
 | 00:26–00:33 | 11–14 | Brainstorm | Nói |
 | 00:33–00:42 | 15 | **THỰC HÀNH 2** | Làm (9′) |
-| 00:42–00:50 | 16–19 | Design system | Nói |
-| 00:50–00:59 | 20 | **THỰC HÀNH 3** | Làm (9′) |
-| 00:59–01:04 | 21–23 | Code + ví dụ điền build prompt | Nói |
-| 01:04–01:17 | 24 | **THỰC HÀNH 4** | Làm (13′) |
-| 01:17–01:22 | 25–26 | Test | Nói (5′) |
-| 01:22–01:27 | 27–28 | Đánh giá | Nói (5′) |
-| 01:27–01:33 | 29 | Publish + publish tại chỗ | Làm (6′) |
-| 01:33–01:39 | 30–31 | Nộp bài & video demo | Nói (6′) |
-| 01:39–01:43 | 32–33 | Tổng kết | Nói (4′) |
-| 01:43–01:45 | 34 | Đóng + Q&A | Nói (2′) |
+| 00:42–00:47 | 16–18 | **Plan** — cắt phạm vi + chốt stack | Nói (5′) |
+| 00:47–00:54 | 19 | **THỰC HÀNH 3** | Làm (7′) |
+| 00:54–01:02 | 20–23 | Design system | Nói (8′) |
+| 01:02–01:11 | 24 | **THỰC HÀNH 4** | Làm (9′) |
+| 01:11–01:16 | 25–27 | Code + ví dụ điền build prompt | Nói (5′) |
+| 01:16–01:29 | 28 | **THỰC HÀNH 5** | Làm (13′) |
+| 01:29–01:34 | 29–30 | Test | Nói (5′) |
+| 01:34–01:39 | 31–32 | Đánh giá | Nói (5′) |
+| 01:39–01:45 | 33 | Publish + publish tại chỗ | Làm (6′) |
+| 01:45–01:51 | 34–35 | Nộp bài & video demo | Nói (6′) |
+| 01:51–01:55 | 36–37 | Tổng kết | Nói (4′) |
+| 01:55–01:57 | 38 | Đóng + Q&A | Nói (2′) |
 
-**Bảng trên là bản đầy đủ — 105 phút**, chạy hết cả 8 chặng.
+**Bảng trên là bản đầy đủ — 117 phút**, chạy hết cả 9 chặng.
 
-Đến 01:17 là khung cứng, không co giãn được: bốn slide THỰC HÀNH đều có đồng hồ đếm phút hiện trên màn hình, lệch là slide nói dối anh giữa buổi.
+Đến 01:29 là khung cứng: năm slide THỰC HÀNH đều có đồng hồ đếm phút hiện trên màn hình (10 / 9 / 7 / 9 / 13), lệch là slide nói dối anh giữa buổi.
 
-**Từ 01:17 trở đi thì co được.** Nếu buổi 2 chắc chắn diễn ra, nén khối này lại để về 90 phút:
+**Để về 90 phút** thì cắt theo thứ tự này:
 
-| Cắt gì | Tiết kiệm | Còn lại |
-|---|---|---|
-| Test (25–26) → nói 1 phút thay vì 5 | 4′ | Để buổi 2 làm kỹ |
-| Đánh giá (27–28) → nói 1 phút thay vì 5 | 4′ | Để buổi 2 làm kỹ |
-| Nộp bài & video (30–31) → bỏ hẳn | 6′ | Toàn bộ là nội dung buổi 2 |
+| Cắt gì | Tiết kiệm |
+|---|---|
+| Nộp bài & video (34–35) → bỏ hẳn, là nội dung buổi 2 | 6′ |
+| Test (29–30) → nói 1 phút thay vì 5 | 4′ |
+| Đánh giá (31–32) → nói 1 phút thay vì 5 | 4′ |
+| THỰC HÀNH 3 Plan (19) → 7′ còn 4′, chỉ chốt stack tại chỗ | 3′ |
+| THỰC HÀNH 4 Design (24) → 9′ còn 6′ | 3′ |
+| Code (25–27) → bỏ slide ví dụ điền build prompt (27) | 2′ |
+| Publish (33) → demo trên màn hình, khán giả làm ở nhà | 4′ |
 
-Nén cả ba → **90 phút**. Đừng dạy trùng nội dung buổi 2 nếu hai buổi cách nhau gần.
+Cắt hết → **91 phút**. Đừng dạy trùng nội dung buổi 2 nếu hai buổi cách nhau gần.
+
+**Chặng Plan (16–19) thì đừng cắt.** Nó là chặng quyết định stack — bỏ nó thì prompt build ở slide 26 lại rơi vào cảnh "React, Tailwind" mà không ai chọn.
 
 ---
 
@@ -64,8 +72,8 @@ Nén cả ba → **90 phút**. Đừng dạy trùng nội dung buổi 2 nếu ha
 
 | Tool | Chặng | Slide |
 |---|---|---|
-| **Gemini chat** — `gemini.google.com` | 01 Research · 02 Brainstorm · 03 Design | 7, 9, **10** · 12, 13, **15** · 18, 19, **20** |
-| **AI Studio** — `ai.dev` → Build | 04 Code · 07 Deploy | 21, 22, 23, **24** · 29 |
+| **Gemini chat** — `gemini.google.com` | 01 Research · 02 Brainstorm · 03 Plan · 04 Design | 7, 9, **10** · 12, 13, **15** · 17, **19** · 22, 23, **24** |
+| **AI Studio** — `ai.dev` → Build | 05 Code · 08 Deploy | 25, 26, 27, **28** · 33 |
 
 Mỗi slide có việc phải làm đều mang **badge tool ở góc phải trên**. Khi chuyển tool thì chỉ tay lên đó, đừng chỉ nói.
 
@@ -85,17 +93,17 @@ Mỗi slide có việc phải làm đều mang **badge tool ở góc phải trê
 
 **Slide 1.**
 
-> "Chào mọi người. Hôm nay chúng ta không học cách gõ prompt cho đẹp. Chúng ta đi qua đúng tám bước để biến một ý tưởng trong đầu thành một cái link mà bạn gửi cho mẹ bạn, mẹ bạn bấm vào và dùng được."
+> "Chào mọi người. Hôm nay chúng ta không học cách gõ prompt cho đẹp. Chúng ta đi qua đúng chín bước để biến một ý tưởng trong đầu thành một cái link mà bạn gửi cho mẹ bạn, mẹ bạn bấm vào và dùng được."
 
 > "Cuối buổi, mục tiêu là mỗi người ở đây có một app chạy trên điện thoại của mình. Không phải app của tôi — app của bạn."
 
-**Slide 2 — tám chặng.**
+**Slide 2 — chín chặng.**
 
-Đừng đọc cả tám. Chỉ vào ba ô đầu (Research, Brainstorm, Design system) rồi nói:
+Đừng đọc cả chín. Chỉ vào bốn ô đầu (Research, Brainstorm, Plan, Design) rồi nói:
 
-> "Hầu hết mọi người bắt đầu ở ô số 4 — mở AI Studio ra và gõ 'làm cho tôi một cái app'. Đó là lý do sản phẩm của họ trông giống hệt nhau, và là lý do khi giám khảo hỏi 'sao bạn chọn cái này' thì không trả lời được."
+> "Hầu hết mọi người bắt đầu ở ô số 5 — mở AI Studio ra và gõ 'làm cho tôi một cái app'. Đó là lý do sản phẩm của họ trông giống hệt nhau, và là lý do khi giám khảo hỏi 'sao bạn chọn cái này' thì không trả lời được."
 
-> "Ba ô đầu tiên chiếm một phần tư thời gian và **không sinh ra dòng code nào**. Đó là phần cảm giác như đang lãng phí, và là phần quyết định."
+> "Bốn ô đầu tiên chiếm một phần ba thời gian và **không sinh ra dòng code nào**. Đó là phần cảm giác như đang lãng phí, và là phần quyết định."
 
 ---
 
@@ -103,7 +111,7 @@ Mỗi slide có việc phải làm đều mang **badge tool ở góc phải trê
 
 **Slide 3 — quan trọng nhất deck.**
 
-> "Mỗi chặng đẻ ra một thứ cầm được. Research đẻ ra problem brief. Brainstorm đẻ ra một quyết định. Design đẻ ra bộ token."
+> "Mỗi chặng đẻ ra một thứ cầm được. Research đẻ ra problem brief. Brainstorm đẻ ra một quyết định. Plan đẻ ra danh sách tính năng và stack. Design đẻ ra bộ token."
 
 > "Và đây là mấu chốt: **prompt của chặng sau ăn artifact của chặng trước**. Prompt build của bạn tốt không phải vì bạn viết prompt build giỏi — mà vì lúc đó bạn đã có sẵn bộ token và bản mô tả màn hình để dán vào."
 
@@ -273,19 +281,117 @@ Chỉ dòng in đậm:
 
 ---
 
-## 00:42–00:50 — Design system (slide 16–19)
+## 00:42–00:47 — Plan (slide 16–18)
+
+**Slide 16 (divider).**
+
+> "Chặng ba. Chặng này lúc đầu không có trong bài — tôi thêm vào sau khi soát lại quy trình và phát hiện một lỗ hổng."
+
+**Slide 17 — prompt Plan.**
+
+Chỉ callout đỏ trước, vì đó là lý do chặng này tồn tại:
+
+> "Nhìn trước tới prompt build ở cuối buổi: nó ghi 'React, Tailwind'. Nhưng **không chặng nào quyết định điều đó cả** — nó chỉ xuất hiện, như thể đương nhiên. Tương tự: Firebase hay lưu tạm trong trình duyệt? Model nào? Bao nhiêu màn hình? Không ai chốt."
+
+> "Đó chính là chặng này. Chốt *làm gì* và *dựng bằng gì*, trước khi bàn tới màu sắc."
+
+Chỉ bốn mục trong prompt:
+
+> "Bốn thứ, không hơn. Tính năng — cái nào làm, cái nào cắt. Màn hình — ít nhất bao nhiêu cái, mỗi cái một việc. Stack — frontend, dữ liệu, và AI gọi thế nào. Dữ liệu — hai ba thực thể là đủ."
+
+Dừng ở dòng *if the in-list is longer than 5 items, cut again*:
+
+> "Dòng này làm việc nặng nhất. Ai cũng liệt kê mười hai tính năng rồi gọi đó là MVP. Bắt nó cắt xuống năm — vẫn thấy dài thì cắt tiếp."
+
+Dòng cuối — dòng này cần giải thích, vì hai chữ "boring" hay bị hiểu nhầm:
+
+> "**'Prefer boring technology over interesting technology.'** Boring ở đây **không phải là thứ bạn đã quen** — mà là thứ *cả ngành* đã quen. Bạn có thể chưa từng dùng Firebase, nó vẫn là boring tech, vì hàng triệu người đã dùng và mọi lỗi đều có câu trả lời từ năm 2019."
+
+> "Ngược lại, một framework mới ra tháng trước mà bạn vừa đọc thấy hay — đó là interesting tech, dù bạn thấy quen. Thế giới chưa kịp mắc đủ lỗi với nó."
+
+**Và đây mới là lý do thật, khi làm với AI:**
+
+> "Model học từ những gì đã có trên đời. Công nghệ càng cũ và càng phổ biến thì nó càng thấy nhiều ví dụ, và code nó viết ra càng chạy được. Công nghệ mới thì nó thấy rất ít — nhưng **nó không im lặng khi không biết**. Nó vẫn viết code trông rất tự tin, gọi những hàm không hề tồn tại. Và bạn chỉ phát hiện lúc chạy."
+
+> "Rồi mười một giờ đêm app vỡ, bạn google lỗi đó. Với thứ boring: bốn mươi câu trả lời. Với thứ mới: một cái issue trên GitHub, chưa ai trả lời."
+
+**Câu chốt — dùng hình ảnh này, khán giả nhớ lâu hơn:**
+
+> "Mỗi dự án chỉ có khoảng **một 'token đổi mới'**. Tiêu nó vào đúng cái khiến sản phẩm của bạn khác biệt. Ở đây là cách AI đọc link portfolio rồi gắn thẻ năng lực — đó là phần độc đáo. Còn database, đăng nhập, framework thì chọn thứ chán nhất có thể."
+
+> "Tiêu token đổi mới vào database thì bạn vừa mất thời gian, vừa chẳng ai chấm điểm cho việc đó."
+
+**Slide 18 — bản kế hoạch thật.**
+
+Đây là slide dày nhất chặng này. Đi theo bốn khối, mỗi khối một ý — đừng đọc hết một lượt.
+
+> "Đây là thứ chạy ra từ prompt vừa nãy, trong một lần chạy thật. Cả bản kế hoạch nằm gọn trên một màn hình. Nếu của bạn dài hơn thế này, bạn chưa cắt đủ."
+
+**Khối 1 — hai cột tính năng.** Chỉ tay từ trái sang phải:
+
+> "Bên trái bốn dòng: nộp link chứng minh, tự động gắn thẻ kỹ năng, xem mạng lưới, xin tham gia. Đó là toàn bộ MVP. Bốn dòng."
+
+> "Nhưng cột **bên phải mới là cột làm việc.** Payments — bỏ, vì cộng đồng chỉ cam kết hỗ trợ chứ không giao dịch. Dưới 18 tuổi — bỏ, vì Nghị định 13. Chat — bỏ, để sau. App di động — bỏ, web trước."
+
+> "Để ý mỗi dòng cắt đều kèm **một lý do một câu**. Không phải 'chưa kịp làm' — mà một lý do bạn bảo vệ được. Cái đó lát nữa đi thẳng vào bài nộp."
+
+**Khối 2 — ba màn hình.**
+
+> "Ba màn hình, mỗi màn một việc. The Gate: chặn cho tới khi có bằng chứng. The Network: hiện những người đã qua cổng. Proof Detail: xin hợp tác một cú bấm."
+
+> "Đọc lại ba dòng đó xem — không dòng nào có chữ 'và'. Màn hình nào mà mô tả có chữ 'và' là màn hình làm hai việc, phải tách hoặc cắt."
+
+**Khối 3 — STACK.** Đây là khối quan trọng nhất slide, nói chậm lại:
+
+> "Đây là thứ mà chặng 5 sẽ ăn. Ba dòng."
+
+> "Frontend: React với TypeScript. Dữ liệu và đăng nhập: Firebase Auth cộng Firestore. Và dòng thứ ba — AI gọi thế nào."
+
+Chỉ từng phần dòng AI:
+
+> "`@google/genai` — thư viện nào. `Gemini 2.5 Flash` — model nào, và Flash vì nó nhanh và rẻ, chứ không phải vì nó mạnh nhất. `process.env.GEMINI_API_KEY` — **chìa khoá nằm ở biến môi trường trên server, không nằm trong code chạy ở trình duyệt.**"
+
+> "Dòng cuối cùng đó là dòng về bảo mật. Nếu key nằm trong code frontend thì bất kỳ ai mở DevTools cũng lấy được, và hoá đơn là của bạn. Hỏi ngay từ chặng lập kế hoạch thì nó miễn phí. Phát hiện sau khi build xong thì phải sửa lại kiến trúc."
+
+> "Và dòng cuối: AI ở đây làm đúng một việc — đọc link portfolio rồi gắn thẻ năng lực. Không phải 'tích hợp AI' chung chung. Một việc, nói được thành câu."
+
+**Khối 4 — dữ liệu.**
+
+> "Ba thực thể, mỗi cái vài trường. User, Project, Request. Hết. Chưa có gì về thông báo, bình luận, hay lịch sử — vì chưa cắt thì không biết cần, mà đoán trước thì chín trên mười lần là đoán sai."
+
+**Câu chốt slide:**
+
+> "Bản kế hoạch này mất bảy phút để làm ra. Nó tiết kiệm cho bạn cái cảnh ngồi giữa chặng code rồi tự hỏi 'ủa mình lưu cái này ở đâu nhỉ' — và trả lời bằng cách tự bịa ra một câu trả lời khác với câu hôm qua."
+
+---
+
+## 00:47–00:54 — THỰC HÀNH 3 (slide 19, 7 phút)
+
+> "Bảy phút. Dán quyết định từ chặng 2 vào prompt Plan, chạy."
+
+> "Xong khi bạn có bốn thứ: tính năng đã cắt, số màn hình, **stack**, và mô hình dữ liệu."
+
+**Làm:** đi vòng và hỏi đúng một câu:
+
+> "Danh sách 'in' của bạn mấy dòng? Quá năm là chưa cắt đủ — bảo nó cắt lại."
+
+*(Đây là khối thực hành khán giả hay làm qua loa nhất, vì nó không sinh ra thứ gì nhìn được. Nhưng nó là chặng duy nhất chốt stack — thiếu nó thì prompt build ở khối sau trống một mảng.)*
+
+---
+
+## 00:54–01:02 — Design system (slide 20–23)
 
 **Slide 15 (divider).**
 
 > "Chặng này là khác biệt lớn nhất giữa một MVP trông *có thiết kế* và một MVP trông *do máy đẻ ra*."
 
-**Slide 17 — vì sao token trước.**
+**Slide 21 — vì sao token trước.**
 
 > "'Làm cho đẹp đi' là câu không có trí nhớ. Màn hình một xanh thế này, màn hình bốn xanh thế khác, và đến lúc đó sửa là sửa tay từng chỗ."
 
 > "Làm token trước thì tính nhất quán là *cấu trúc*, không phải thứ bạn phải đi canh."
 
-**Slide 18 — prompt design system.**
+**Slide 22 — prompt design system.**
 
 Bấm nút **COPY FULL** rồi nói:
 
@@ -299,7 +405,7 @@ Chỉ dòng WCAG:
 
 > "Dòng này bắt nó tự kiểm tra độ tương phản. Accessibility gần như luôn nằm trong tiêu chí chấm điểm, và gần như không ai làm. Một dòng prompt, ăn điểm thật."
 
-**Slide 19 — prompt màn hình.** Chỉ hai chỗ:
+**Slide 23 — prompt màn hình.** Chỉ hai chỗ:
 
 > "'CHỈ dùng token ở trên' — đó là ràng buộc làm việc. Và dòng cuối: bắt nó khai ra chỗ nào bộ token không đủ, thay vì tự bịa thêm màu. Đó là cách bạn phát hiện thiết kế đang trôi."
 
@@ -309,19 +415,19 @@ Chỉ callout xanh:
 
 ---
 
-## 00:50–00:59 — THỰC HÀNH 3 (slide 20, 9 phút)
+## 01:02–01:11 — THỰC HÀNH 4 (slide 24, 9 phút)
 
 > "Chín phút. Chạy prompt design system. **Giữ lại bộ CSS variables** — lát nữa dán thẳng vào prompt build, đừng để lạc."
 
 ---
 
-## 00:59–01:04 — Code (slide 21–23)
+## 01:11–01:16 — Code (slide 25–27)
 
-**Slide 21 — xây theo lớp.**
+**Slide 25 — xây theo lớp.**
 
 > "Đừng xin tất cả trong một prompt. Xin từng lớp, test sau mỗi lớp. Vì khi bạn xin mười thứ cùng lúc và nó vỡ, bạn không biết chỉ thị nào gây ra."
 
-**Slide 22 — prompt build.**
+**Slide 26 — prompt build.**
 
 > "Nhìn xem prompt này ngắn thế nào. Nó ngắn được vì nó *thừa hưởng*: token từ chặng 3, mô tả màn hình từ chặng 3, quyết định từ chặng 2."
 
@@ -329,7 +435,7 @@ Chỉ dòng scope:
 
 > "Và dòng này giữ mạng cho bạn: **không routing, không đăng nhập, không database**. Bỏ dòng này ra, model sẽ dựng cho bạn một cái dashboard có sidebar và bạn hết giờ."
 
-**Slide 23 — ví dụ điền thật, từ một lần chạy có thật.**
+**Slide 27 — ví dụ điền thật, từ một lần chạy có thật.**
 
 > "Đây là prompt build đó, điền bằng kết quả thật của chặng 1 đến 3."
 
@@ -345,7 +451,7 @@ Chỉ nút COPY FULL:
 
 ---
 
-## 01:04–01:17 — THỰC HÀNH 4 (slide 24, 13 phút)
+## 01:16–01:29 — THỰC HÀNH 5 (slide 28, 13 phút)
 
 > "Mười ba phút — khối dài nhất. Mở ai.dev, vào Build, dán prompt build kèm bộ token của bạn."
 
@@ -355,9 +461,9 @@ Chỉ nút COPY FULL:
 
 ---
 
-## 01:17–01:22 — Test (slide 25–26)
+## 01:29–01:34 — Test (slide 29–30)
 
-**Slide 25 — test để sống sót, không phải để đủ coverage.**
+**Slide 29 — test để sống sót, không phải để đủ coverage.**
 
 > "Đổi lại cách nghĩ về test. App của bạn không cần 80% coverage. Nó cần sống sót bốn phút trước mặt **một người không phải bạn** — người không biết chỗ nào nên tránh bấm."
 
@@ -369,7 +475,7 @@ Câu chốt của slide:
 
 > "Người dựng app luôn bấm đúng chỗ mình đã quen. Người lạ thì không. Toàn bộ việc test ở giai đoạn này là đi tìm những chỗ mà chỉ người lạ mới bấm vào."
 
-**Slide 26 — prompt test.**
+**Slide 30 — prompt test.**
 
 Chỉ vào dòng "no code needed" trước tiên — đây là chỗ nhiều người vướng:
 
@@ -397,9 +503,9 @@ Chỉ dòng cuối:
 
 ---
 
-## 01:22–01:27 — Đánh giá (slide 27–28)
+## 01:34–01:39 — Đánh giá (slide 31–32)
 
-**Slide 27 — chấm theo thang điểm thật.**
+**Slide 31 — chấm theo thang điểm thật.**
 
 > "'App em ổn chưa ạ?' là câu không ai trả lời được — kể cả AI. Đổi thành: 'nó có ăn điểm theo đúng tiêu chí sẽ bị chấm không?' Câu đó trả lời được, và quan trọng hơn, **sửa được**."
 
@@ -413,7 +519,7 @@ Chỉ callout:
 
 > "Lấy thang điểm thật **trước khi build**, không phải sau. Nó cho bạn biết công sức bỏ vào đâu thì ra điểm — và quan trọng không kém, chỗ nào bỏ công vào cũng không ra điểm."
 
-**Slide 28 — prompt đánh giá.**
+**Slide 32 — prompt đánh giá.**
 
 Chỉ cụm "specific in the product":
 
@@ -429,7 +535,7 @@ Chỉ dòng cuối cùng:
 
 ---
 
-## 01:27–01:33 — Publish (slide 29)
+## 01:39–01:45 — Publish (slide 33)
 
 > "Bây giờ lấy link thật. Miễn phí, không cần thẻ."
 
@@ -445,9 +551,9 @@ Chỉ dòng cuối cùng:
 
 ---
 
-## 01:33–01:39 — Nộp bài & video demo (slide 30–31)
+## 01:45–01:51 — Nộp bài & video demo (slide 34–35)
 
-**Slide 30 — hai cái link, và người ta nộp nhầm.**
+**Slide 34 — hai cái link, và người ta nộp nhầm.**
 
 > "Chỗ này mất điểm oan nhiều nhất trong cả cuộc thi, và nó **không liên quan gì tới kỹ thuật**."
 
@@ -465,7 +571,7 @@ Chỉ dòng cuối bảng:
 
 > "Đừng ngại viết ra những gì mình đã cắt. Một người viết 'tôi cố tình không làm phần thanh toán vì đối tượng là học sinh dưới 16 tuổi, và luật không cho' — người đó nghe như một người hiểu việc. Người viết một danh sách tính năng dài dằng dặc mà nửa số đó không chạy thì ngược lại."
 
-**Slide 31 — video 90 giây.**
+**Slide 35 — video 90 giây.**
 
 > "Đây là artifact duy nhất được xem hết từ đầu đến cuối. Bài viết thì người ta lướt, code thì người ta mở ra rồi đóng lại — video thì xem hết."
 
@@ -483,19 +589,19 @@ Thêm một câu trấn an:
 
 ---
 
-## 01:39–01:43 — Tổng kết (slide 32–33)
+## 01:51–01:55 — Tổng kết (slide 36–37)
 
-**Slide 32 — ngân sách giờ.**
+**Slide 36 — ngân sách giờ.**
 
 > "Nếu bạn có một cuối tuần, đây là chỗ giờ thực sự đi. Để ý ba chặng đầu: một phần tư thời gian, không có dòng code nào."
 
-**Slide 33 — bỏ chặng.**
+**Slide 37 — bỏ chặng.**
 
 > "Và đây là phần thật lòng. Bỏ chặng không tiết kiệm được thời gian — nó quay lại dưới dạng làm lại, vào lúc tệ hơn, khi bạn còn ít thời gian hơn."
 
 ---
 
-## 01:43–01:45 — Đóng (slide 34)
+## 01:55–01:57 — Đóng (slide 38)
 
 > "Buổi sau chúng ta lấy chính app này, tìm chỗ nó vỡ, chấm điểm nó theo thang thật, rồi nộp — nộp ngay trong phòng, không phải 'về nhà rồi nộp'."
 
@@ -507,8 +613,8 @@ Thêm một câu trấn an:
 
 Cắt theo đúng thứ tự này:
 
-1. Slide 25–28 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
-2. Slide 33 (bỏ chặng) — gộp một câu vào slide 31
+1. Slide 29–32 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
+2. Slide 37 (bỏ chặng) — gộp một câu vào slide 31
 3. THỰC HÀNH 3 từ 9′ → 6′, bảo họ chỉ lấy phần màu và chữ
 4. Slide 14 (artifact brainstorm) — nói miệng thay vì chiếu
 

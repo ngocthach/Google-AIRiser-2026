@@ -4,7 +4,9 @@ Deck: `docs/slides/session2-ship-and-submit-slides.html` (15 slide)
 Khán giả: **gần như cùng nhóm với buổi 1** — đã có app trong tay
 Kết quả mong muốn: mỗi người **đã bấm nộp ngay trong phòng**, không phải "về nhà sẽ nộp".
 
-Buổi này tái dùng toàn bộ kết quả buổi 1: problem brief, quyết định, bộ token, và app đã build.
+Buổi này tái dùng toàn bộ kết quả buổi 1: problem brief, quyết định, **bản kế hoạch (tính năng + stack)**, bộ token, và app đã build.
+
+Chặng: **06 Test → 09 Nộp bài** (buổi 1 chạy 01 Research → 05 Code).
 
 ---
 
@@ -59,7 +61,7 @@ Nhắc lại quy tắc từ buổi 1: *output là chữ để đọc → Gemini;
 
 **Slide 2 — nhắc lại 30 giây, đừng dạy lại.**
 
-> "Buổi trước để lại bốn thứ. Thiếu cái nào cũng theo được, nhưng phải có một app mở lên được — dù còn xấu."
+> "Buổi trước để lại năm thứ. Thiếu cái nào cũng theo được, nhưng phải có một app mở lên được — dù còn xấu."
 
 Hỏi nhanh, không đợi lâu:
 
