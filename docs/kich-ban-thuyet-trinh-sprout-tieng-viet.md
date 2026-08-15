@@ -1,6 +1,6 @@
 # Kịch bản thuyết trình — Sprout (tiếng Việt)
 
-Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 31 slide, khoảng **48 phút** nếu nói hết.
+Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 32 slide, khoảng **51 phút** nếu nói hết.
 
 **Quy ước trong file này**
 - `[HÀNH ĐỘNG]` = việc cần làm (bấm phím, đổi tab, copy prompt), không đọc lên.
@@ -14,14 +14,16 @@ Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 31 
 | Mở đầu + vấn đề + phạm vi | 1–8 | 13 phút |
 | Stage 1 — Ý tưởng | 9–11 | 4 phút |
 | Stage 2 — Bản thiết kế | 12–15 | 6 phút |
-| Stage 3 — Build 4 lớp | 16–25 | 18 phút |
-| Stage 4 — Kiểm thử | 26–28 | 4 phút |
-| Stage 5 — Deploy + kết | 29–31 | 3 phút |
-| | | **48 phút** |
+| Stage 3 — Build 4 lớp | 16–26 | 21 phút |
+| Stage 4 — Kiểm thử | 27–29 | 4 phút |
+| Stage 5 — Deploy + kết | 30–32 | 3 phút |
+| | | **51 phút** |
 
-**Nếu chỉ có 40 phút:** rút gọn slide 21, 22, 23 xuống mỗi slide 1 phút (chỉ đọc tiêu đề khối, không giải thích từng mục) và bỏ slide 25. Vẫn giữ nguyên slide 4, 5, 19, 24 — đó là bốn slide có nội dung mà người khác không nói được.
+**Nếu chỉ có 40 phút:** rút gọn slide 22, 23, 24 xuống mỗi slide 1 phút (chỉ đọc tiêu đề khối, không giải thích từng mục) và bỏ slide 26. Vẫn giữ nguyên slide 4, 5, **19**, 20, 25 — đó là năm slide có nội dung mà người khác không nói được.
 
-**Nếu chỉ có 20 phút:** chạy slide 1 → 2 → 3 → 4 → 5 → 6 → 17 → 19 → 24 → 30 → 31. Bỏ toàn bộ prompt; nói rằng prompt nằm trong deck và bấm `C` là copy được.
+**Nếu chỉ có 20 phút:** chạy slide 1 → 2 → 3 → 4 → 5 → 6 → 17 → **19** → 20 → 25 → 31 → 32. Bỏ toàn bộ prompt; nói rằng prompt nằm trong deck và bấm `C` là copy được.
+
+> **Slide 19 là slide mới, và nếu phải chọn một slide để giữ trong phần build thì chọn nó.** Đó là chỗ duy nhất bạn thừa nhận một sai lầm cụ thể và cho thấy cách sửa — thứ mà không ai copy lại được từ deck của bạn.
 
 ---
 
@@ -273,7 +275,33 @@ Nửa dưới mới là phần làm việc: danh sách **KHÔNG**. Không tím, 
 
 ---
 
-## Slide 19 — Kết quả đo được · 2 phút
+## Slide 19 — "Responsive" không phải là spec · 2 phút 30
+
+Slide này có mặt ở đây vì **mình đã làm sai**, và mình nghĩ đây là bài học đáng giá nhất trong cả phần build.
+
+[HÀNH ĐỘNG] Chỉ vào callout đỏ trên cùng.
+
+Bản prompt Layer 1 đầu tiên của mình, nói về layout, **chỉ có đúng một câu**: "một lưới dự án responsive". Cộng thêm một dòng self-check: "layout hiển thị ổn ở 390 và 1440".
+
+Model **đã làm đúng cả hai**. Nó không hề gian dối. Và màn hình trả về thì không dùng được.
+
+[HÀNH ĐỘNG] Chỉ sang thẻ đỏ bên trái.
+
+Cụ thể: một cái thẻ nằm chơ vơ trong một khung rộng bảy trăm pixel, phần còn lại của màn hình trống trơn. Bên trong thẻ có một khoảng trống một trăm năm mươi pixel giữa mô tả và thanh tiến độ. Mười sáu danh mục xổ thành một sidebar dọc kín cả cột trái, phải cuộn mới hết. Năm cái nút trên header cùng một độ đậm như nhau, trong đó có cả nút "Seed Data" — tức là công cụ dành cho lập trình viên, nằm chình ình trên thanh điều hướng chính.
+
+[HÀNH ĐỘNG] Chỉ sang thẻ xanh bên phải.
+
+Còn spec đúng thì phải là **những con số**: lưới 1 cột dưới 640, 2 cột từ 640, 3 cột từ 1024, và **trên 1440 vẫn là 3 — không bao giờ có cột thứ tư**. Thẻ đẩy khối gọi vốn xuống đáy bằng `margin-top:auto` và cắt tiêu đề với mô tả ở 2 dòng bằng `line-clamp-2`, để thẻ không thể rỗng ruột. Bộ lọc là một hàng chip ngang. Cột nội dung tối đa 1200 pixel.
+
+[HÀNH ĐỘNG] Chỉ vào callout vàng dưới cùng. Nói chậm.
+
+Và đây là quy luật rút ra: **token sửa được màu và chữ, vì token là một con số.** Còn layout thì **không có token** — nên nếu bạn không đưa con số, model sẽ tự chọn, và nó chọn dở.
+
+Nói rộng ra: **mỗi tính từ trong prompt là một chỗ bạn nhường quyền quyết định cho model.** "Responsive", "đẹp", "hiện đại", "sạch sẽ" — bốn chỗ nhường. Đổi chúng thành số thì bạn lấy lại quyền.
+
+---
+
+## Slide 20 — Kết quả đo được · 2 phút
 
 Mình không đoán. Mình chạy prompt đó qua Gemini rồi đếm.
 
@@ -293,7 +321,7 @@ Nhưng phải nói cho sòng phẳng: **grep chứng minh được luật đã �
 
 ---
 
-## Slide 20 — Nghiệm thu Layer 1 · 1 phút 30
+## Slide 21 — Nghiệm thu Layer 1 · 1 phút 30
 
 Sáu mươi giây kiểm tra trước khi dán Layer 2.
 
@@ -307,7 +335,7 @@ Layer 2, 3, 4 sẽ thêm màn hình mới **theo đúng phong cách mà Layer 1 
 
 ---
 
-## Slide 21 — Prompt Layer 2 · 2 phút
+## Slide 22 — Prompt Layer 2 · 2 phút
 
 Layer 2 là lúc app trở thành thật: đăng nhập Google, hồ sơ, tạo dự án, và dữ liệu seed chuyển vào Firestore.
 
@@ -323,7 +351,7 @@ Nếu một truy vấn lỗi, thường là truy vấn sai, không phải rule s
 
 ---
 
-## Slide 22 — Prompt Layer 3 · 2 phút 30
+## Slide 23 — Prompt Layer 3 · 2 phút 30
 
 Đây là lớp quan trọng nhất. Mọi thứ trước nó chỉ là một trang đăng tin.
 
@@ -343,7 +371,7 @@ Còn một chi tiết nhỏ mà mình nghĩ là quan trọng: **lời từ chố
 
 ---
 
-## Slide 23 — Prompt Layer 4 · 2 phút
+## Slide 24 — Prompt Layer 4 · 2 phút
 
 Layer 4: pledge và hoàn thiện.
 
@@ -359,7 +387,7 @@ Còn về kỹ thuật: pledge **bất biến**. Rút lại thì đánh dấu l�
 
 ---
 
-## Slide 24 — Security rules · 2 phút
+## Slide 25 — Security rules · 2 phút
 
 Đây là slide làm cho chữ "production" trở thành trung thực.
 
@@ -377,7 +405,7 @@ Còn cái rule chắc chắn bạn sẽ viết sai lần đầu là **email liê
 
 ---
 
-## Slide 25 — Prompt sửa lỗi · 1 phút 30
+## Slide 26 — Prompt sửa lỗi · 1 phút 30
 
 Bốn prompt sửa lỗi, để mở sẵn trong lúc build.
 
@@ -393,13 +421,13 @@ Nguyên tắc chung khi sửa: **gọi tên cái luật bị vi phạm, đừng 
 
 ---
 
-## Slide 26 — Divider Stage 04 · 20 giây
+## Slide 27 — Divider Stage 04 · 20 giây
 
 Bước bốn. Với app này, kiểm thử chủ yếu là về **quyền truy cập** và **trạng thái rỗng** — đúng hai thứ luôn trông ổn trên máy bạn, với dữ liệu của bạn.
 
 ---
 
-## Slide 27 — Prompt kiểm thử · 2 phút
+## Slide 28 — Prompt kiểm thử · 2 phút
 
 [HÀNH ĐỘNG] Chỉ vào mục 1.
 
@@ -415,7 +443,7 @@ Mục 6 thì mình cho grep toàn bộ codebase tìm thư viện thanh toán và
 
 ---
 
-## Slide 28 — Chi phí thật · 1 phút 30
+## Slide 29 — Chi phí thật · 1 phút 30
 
 Nói thật về số giờ. **Tám mươi hai tiếng.**
 
@@ -431,13 +459,13 @@ Và tuyệt đối không cắt **transaction lúc nhận thành viên**. Một 
 
 ---
 
-## Slide 29 — Divider Stage 05 · 20 giây
+## Slide 30 — Divider Stage 05 · 20 giây
 
 Bước năm. Deploy từ hôm trước, và tập demo với hai tài khoản trên hai thiết bị.
 
 ---
 
-## Slide 30 — Deploy và demo · 2 phút
+## Slide 31 — Deploy và demo · 2 phút
 
 [HÀNH ĐỘNG] Chỉ vào thẻ bên trái.
 
@@ -455,7 +483,7 @@ Câu cuối của video: *"Chúng tôi không bao giờ chạm vào tiền. Chú
 
 ---
 
-## Slide 31 — Kết · 1 phút
+## Slide 32 — Kết · 1 phút
 
 Kết lại bằng hai lần nói "không".
 

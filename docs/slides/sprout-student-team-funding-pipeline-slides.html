@@ -540,36 +540,69 @@ projects/{projectId}/updates/{updateId}
   <div class="eyebrow">Copy this — Layer 1 · verified</div>
   <h2>Layer 1: the look, and two real screens</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm" data-full="#full-sp-l1">Build LAYER 1 ONLY of "Sprout", a web app where university students find
-teammates for projects and raise seed funding for them.
+    <pre class="sm" data-full="#full-sp-l1">Build LAYER 1 ONLY of "Sprout": the design system and two read-only
+screens, rendered from a hardcoded seed file. Nothing is real yet.
 
-<span class="k">=== TARGET RUNTIME ===</span>
-Multi-file React + TypeScript + Tailwind, real ES module imports. No CDN
-tags, no external fonts, no icon libraries. Runs with the network off.
+<span class="k">=== SCOPE FENCE ===</span>
+DO NOT build sign-in, auth, Firebase, any database, forms that submit,
+applying, accepting, pledging or payments. Write buttons render
+disabled. Importing firebase means you have left Layer 1.
 
-<span class="k">=== SCOPE FENCE - READ THIS TWICE ===</span>
-Layer 1 is the design system and two read-only screens from a hardcoded
-seed file. Nothing is real yet.
-DO NOT build, or stub in passing: sign-in, auth, Firebase, Firestore, any
-database, forms that submit, creating a project, applying, accepting a
-member, pledging, payments, notifications, search, or an admin area.
-Every write button renders visibly disabled. If you are writing an
-onSubmit handler or importing firebase, you have left Layer 1.
-
-<span class="k">=== THE LOOK - THIS IS NOT A DASHBOARD ===</span>
-Should feel: a well-made campus noticeboard. Warm paper, confident type,
-generous whitespace, legible from a metre away. A student is deciding
-whether to trust this with their idea. Must NOT feel like generic SaaS -
-a hard list, not a preference:
-- NO indigo or violet primary. NO purple-to-blue hero gradient.
-- NO glassmorphism, no frosted blur, no neon glow, no dark mode.
+<span class="k">=== THE LOOK - NOT A DASHBOARD ===</span>
+A campus noticeboard: warm paper, confident type, legible from a metre.
+- NO indigo or violet primary. NO purple-to-blue gradient.
+- NO glassmorphism, blur, glow, or dark mode.
 - NO pill buttons everywhere. NO drop shadow on every card.
-- NO emoji as icons. Cards separate by a hairline border, not shadow.
-<span class="c">... tokens, seed spec, screens, a11y, self-check in COPY FULL</span></pre>
+- NO emoji as icons. Cards separate by a hairline border.
+
+<span class="k">=== LAYOUT - A SPEC, NOT A SUGGESTION ===</span>
+Content column max 1200px, centred. The board grid: 1 column below 640,
+2 from 640, 3 from 1024, and STILL 3 above 1440 - never a fourth.
+Cards equal height, driven by content. Push the funding block down with
+margin-top:auto and line-clamp title and pitch to 2 lines, so no card
+opens a 150px hole in its middle. Never taller than ~340px.
+Filters are a horizontal chip row - 16 categories is too many to list,
+so show "All" + the 6 commonest + a "More" dropdown. NOT a sidebar.
+A lone filtered card keeps its column width; it does not fill the row.
+At 1440px with 12 projects, 6 cards are visible before scrolling.
+<span class="c">... tokens, seed, screens, a11y, 11-point self-check in COPY FULL</span></pre>
   </div>
 </section>
 
-<!-- 19 verified -->
+<!-- 19 responsive is not a spec -->
+<section class="slide" data-notes="This slide exists because I got it wrong. My first Layer 1 prompt said 'a responsive grid of project cards' and the self-check said 'layout holds at 390 and 1440'. Both were satisfied, honestly, and the result was unusable. Colour and type were perfect — the layout was never specified at all.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">The mistake I actually made</div>
+  <h2>"Responsive" is a wish, not a spec</h2><div class="rule"></div>
+  <div class="body">
+    <div class="callout red"><p><strong>My first version of this prompt said, in full:</strong> <em>"a responsive grid of project cards"</em>, plus a self-check reading <em>"layout holds at 390x844 and 1440x900."</em> The model satisfied both — truthfully — and the screen was still unusable.</p></div>
+    <div class="two">
+      <div class="card stop">
+        <h3>What came back</h3>
+        <ul class="tight no">
+          <li>One card alone in a 700px box, the rest of the screen empty</li>
+          <li>A 150px hole inside the card between pitch and progress bar</li>
+          <li>All 16 categories as a full-height left sidebar, scrolling</li>
+          <li>Five header buttons at identical weight, including "Seed Data"</li>
+          <li>Content stretched edge to edge on a wide monitor</li>
+        </ul>
+      </div>
+      <div class="card go">
+        <h3>What the spec has to say instead</h3>
+        <ul class="tight check">
+          <li>1 / 2 / 3 columns at 640 and 1024 — <strong>and never a fourth</strong></li>
+          <li><code>margin-top:auto</code> + <code>line-clamp-2</code>, so cards cannot hollow out</li>
+          <li>Chip row, "All" + 6 + More — not a sidebar</li>
+          <li>One primary action; dev controls behind <code>import.meta.env.DEV</code></li>
+          <li>1200px max width; 6 cards visible at 1440 before scrolling</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout amber"><p><strong>The pattern:</strong> tokens fix colour and type, because a token is a number. Layout has no token — so if you do not give it numbers, the model picks its own, and it picks badly. <strong>Every adjective in a prompt is a place the model gets to decide.</strong></p></div>
+  </div>
+</section>
+
+<!-- 20 verified -->
 <section class="slide" data-notes="I ran that prompt through Gemini before it went on the deck. Every anti-generic rule held. The interesting bit is the last card — the only mentions of indigo and purple in the whole output were inside the DESIGN.md it wrote, listing them as forbidden.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Measured, not assumed</div>
@@ -903,7 +936,7 @@ End with the three fixes with the best score-per-hour, in order.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 31</span></div>
+  <div><span id="counter">1 / 32</span></div>
 </div>
 <div id="bar"></div>
 
@@ -1000,6 +1033,22 @@ blueprint. Be concrete enough that I can paste the output into a build tool.
      in :root in index.css, registered in the Tailwind theme so every utility
      resolves to a token, no raw hex in any component file, no arbitrary
      Tailwind values, and re-read DESIGN.md before every later change
+   - LAYOUT RULES, WITH NUMBERS. Colour and type have tokens to fall back on;
+     layout has none, so "responsive" decides nothing and the model will pick
+     badly. Put these in DESIGN.md so every screen added in Layers 2, 3 and 4
+     inherits them, not just the first two:
+       * content column max-width 1200px, centred
+       * any card grid is 1 column below 640px, 2 from 640px, 3 from 1024px,
+         and still 3 above 1440px - never a fourth
+       * cards in a row are equal height, driven by content; push trailing
+         blocks to the bottom with margin-top:auto and line-clamp text to 2
+         lines, so a card can never hollow out in the middle
+       * a filter or category list is a horizontal chip row that scrolls on
+         mobile, never a full-height sidebar
+       * one primary action per screen; developer-only controls live behind
+         import.meta.env.DEV and never in the header
+       * every list screen states how many items are visible before scrolling
+         at 1440px, and it must be more than one
 
 Output DESIGN.md and firestore.rules as two separate fenced blocks I can
 paste straight in as files.
@@ -1083,14 +1132,69 @@ tracker, a Cham heritage archive, a hydroponics controller, a sign-language
 translation app. Not "Project Alpha". Vary the funding progress - some at 0%,
 some at 30%, one fully funded, some not fundraising at all.
 
+=== LAYOUT AND RESPONSIVE - THIS IS A SPEC, NOT A SUGGESTION ===
+"Make it responsive" is not an instruction. These are the numbers.
+
+PAGE SHELL
+- Content column max-width 1200px, centred, --space-3 side gutters.
+- Never let content stretch edge to edge on a wide monitor.
+
+THE BOARD IS A GRID, WITH THESE EXACT BREAKPOINTS
+- below 640px:   1 column
+- 640px and up:  2 columns
+- 1024px and up: 3 columns
+- above 1440px:  still 3 columns. Do NOT add a fourth - cards get unreadable.
+- gap: --space-3 on both axes.
+
+CARD HEIGHT - THIS IS WHERE IT GOES WRONG
+- Cards in a row are equal height, driven by content, never a fixed height.
+- Inside the card use flex-column and push the funding block and footer to
+  the bottom with margin-top:auto.
+- Clamp the title to 2 lines and the pitch to exactly 2 lines (line-clamp-2).
+- A card must never exceed about 340px tall. If you are opening a 150px hole
+  in the middle of a card between the pitch and the progress bar, the layout
+  is wrong - close it.
+
+CARD CONTENT, IN THIS ORDER, NO GAPS
+  category chip (--text-small, subtle - not a heavy grey box)
+  title (--text-title, weight 600, max 2 lines)
+  pitch (--text-body, --color-ink-2, exactly 2 lines, clamped)
+  [margin-top:auto pushes everything below to the bottom]
+  team: up to 4 initial circles, 28px, overlapping by 8px
+  funding bar + "X pledged of Y" - ONLY when the project is fundraising
+  footer row: "N roles open" on the left, status on the right
+
+FILTERS - A HORIZONTAL CHIP ROW ABOVE THE BOARD, NOT A SIDEBAR
+- There are 16 categories. That is far too many to list vertically.
+  Show "All" plus the 6 most common, and put the rest behind a "More"
+  dropdown. A filter list longer than the result list is a broken filter.
+- On mobile the chip row scrolls horizontally on one line. It must not wrap
+  into four stacked rows.
+- Never render the filters as a full-height left sidebar.
+
+THE HEADER - ONE ROW WITH A HIERARCHY
+- Left: the wordmark, then one short line of context.
+- Right, in this order and these weights:
+    "Sign in"           - the ONE primary action, filled --color-primary
+    later: Inbox, Profile - quiet text links; Sign out last and quietest
+- Five buttons of identical weight is not navigation, it is a list.
+- Any developer-only control (seeding or reseeding data) lives on a /dev
+  route or behind import.meta.env.DEV. It NEVER appears in the header.
+
+DENSITY - THE BOARD MUST LOOK LIKE A BOARD
+At 1440px with 12 projects a visitor sees at least 6 cards before scrolling.
+If one card is sitting alone in a 700px-wide box, the layout has failed.
+When a filter returns a single result, that card keeps its grid column width
+- it does not expand to fill the row.
+
 === SCREEN 1: DISCOVER ===
-The landing screen. A header with the wordmark and a disabled "Sign in"
-button. Then one line saying what Sprout is. Then the project board:
-- Filter chips by category and by status. These filter the seed array in
-  local state - that is allowed, it is not persistence.
-- A responsive grid of project cards. Each card: title, one-line pitch,
-  category, the number of open roles, and - only if the project is
-  fundraising - a funding progress bar with the amount raised and the goal,
+The landing screen. A header per the layout spec above, with a disabled
+"Sign in" button. Then one line saying what Sprout is. Then the board:
+- The filter chip row described above. Filtering the seed array in local
+  state is allowed - that is not persistence.
+- The project card grid described above. Each card: category, title, pitch,
+  team initials, the number of open roles, and - only if the project is
+  fundraising - a funding progress bar with the amount pledged and the goal,
   formatted as Vietnamese dong.
 - The card is one link to the project page. Not a card with a button inside.
 - An empty state for when a filter matches nothing, with a way back.
@@ -1119,8 +1223,15 @@ operable and readable with the keyboard alone.
 4. Amber appears only on funding figures and the fund button.
 5. No font below 14px; body copy is 16px.
 6. Every screen reachable and operable by keyboard, with visible focus.
-7. Layout holds at 390x844 and at 1440x900.
-State each of the 7 as PASS or FAIL, then list the files you created.
+7. The board grid is 1 / 2 / 3 columns at the named breakpoints, and never
+   four. A lone filtered card keeps its column width.
+8. No card has a gap in its middle: the funding block is pushed down with
+   margin-top:auto, and title and pitch are line-clamped to 2 lines.
+9. Filters are a horizontal chip row, never a full-height sidebar.
+10. The content column is capped at 1200px and centred.
+11. At 1440px with 12 projects, at least 6 cards are visible without
+    scrolling. Say how many you actually render.
+State each of the 11 as PASS or FAIL, then list the files you created.
 </script>
 
 <script type="text/plain" id="full-sp-l2">
