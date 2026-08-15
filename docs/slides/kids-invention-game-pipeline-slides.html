@@ -1,0 +1,1863 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nine stages, one game — building a kids' English + inventions game with AI</title>
+<style>
+/* ============================================================
+   Google deck — tokens measured from Vibe_Coding_Handbook.pptx
+   Self-contained: no webfonts, no CDN, no network requests.
+   ============================================================ */
+:root{
+  --ink:#20344B; --ink-2:#2F4C6F; --muted:#80868B; --line:#DFE3E8; --white:#fff;
+  --cyan:#57CAFF; --blue:#4285F4; --blue-2:#3186FF; --tint:#E8F0FE; --tint-2:#F0F4FA;
+  --red:#EA4335; --yellow:#FBBC04; --green:#34A853;
+  --sans:"Google Sans","Product Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0E1721;font-family:var(--sans);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#canvas{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--white);padding:64px 76px 72px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+.dots{position:absolute;top:34px;left:40px;display:flex;gap:7px}
+.dots i{width:9px;height:9px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:var(--blue)}
+.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}
+.dots i:nth-child(4){background:var(--green)}
+.folio{position:absolute;top:32px;right:44px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+h1{font-size:60px;line-height:1.06;letter-spacing:-.02em;font-weight:700}
+h2{font-size:40px;line-height:1.14;letter-spacing:-.015em;font-weight:700;margin-bottom:8px}
+h3{font-size:21px;font-weight:600;margin-bottom:6px}
+p{font-size:19px;line-height:1.55;color:var(--ink-2)}
+.lede{font-size:23px;line-height:1.5;color:var(--ink-2);max-width:64ch}
+.small{font-size:16px;color:var(--muted);line-height:1.5}
+.rule{height:4px;width:76px;background:var(--cyan);border-radius:2px;margin:18px 0 26px}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.body.top{justify-content:flex-start}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--tint-2);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+.card.accent{background:var(--tint);border-color:#C9DDFB}
+.card.warn{background:#FFF6E5;border-color:#F5D98A}
+.card.stop{background:#FDECEA;border-color:#F5B7B1}
+.card.go{background:#E9F7EF;border-color:#A9DFBF}
+.card h3{color:var(--ink)}
+.card p{font-size:16px;line-height:1.5}
+.card .n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;margin-bottom:8px;display:block}
+.card.sm{padding:16px 18px;border-radius:14px}
+.card.sm h3{font-size:17px;margin-bottom:3px}
+.card.sm p{font-size:14px;line-height:1.4}
+ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+ul li{position:relative;padding-left:26px;font-size:18px;line-height:1.5;color:var(--ink-2)}
+ul li::before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:50%;background:var(--cyan)}
+ul.check li::before{content:"✓";background:none;color:var(--green);font-weight:700;top:0;font-size:17px;width:auto;height:auto}
+ul.no li::before{content:"✕";background:none;color:var(--red);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.tight li{font-size:16px;gap:8px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:400;border-bottom:2px solid var(--line)}
+td{color:var(--ink-2);line-height:1.45}
+td strong{color:var(--ink)}
+tr.hl td{background:var(--tint)}
+table.sm{font-size:14.5px}
+table.sm th,table.sm td{padding:8px 12px}
+code,.mono{font-family:var(--mono);font-size:.93em;background:var(--tint);padding:2px 7px;border-radius:5px;color:var(--ink-2)}
+pre{position:relative;background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+/* Copy button. Slides often show an abridged prompt — the button copies the
+   FULL text so nobody transcribes from a projector. */
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
+pre.sm{font-size:12px;line-height:1.5;padding:18px 22px}
+pre .k{color:var(--cyan);font-weight:600}
+pre .c{color:#8FA5BC}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--tint);color:var(--blue);margin-right:8px}
+.stat{font-size:52px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--blue)}
+.stat-lbl{font-size:15px;color:var(--muted);margin-top:6px}
+.flow{display:flex;align-items:stretch;gap:12px}
+.flow .step{flex:1;background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+.flow .step .n{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.12em}
+.flow .step h3{font-size:17px;margin:8px 0 4px}
+.flow .step p{font-size:14.5px;line-height:1.45}
+.flow .arw{display:grid;place-items:center;color:var(--cyan);font-size:22px;font-weight:700}
+.callout{border-left:5px solid var(--cyan);background:var(--tint-2);padding:16px 22px;border-radius:0 12px 12px 0}
+.callout.red{border-left-color:var(--red);background:#FDECEA}
+.callout.green{border-left-color:var(--green);background:#E9F7EF}
+.callout p{font-size:17px}
+.slide.cover{background:radial-gradient(900px 460px at 82% 12%,#EAF3FF 0%,rgba(234,243,255,0) 70%),var(--white);justify-content:center}
+.badge{display:inline-block;align-self:flex-start;padding:9px 20px;border-radius:999px;color:#fff;font-weight:600;font-size:14.5px;letter-spacing:.04em;margin-bottom:26px;background:linear-gradient(90deg,#4285F4,#57CAFF,#34A853,#FBBC04,#EA4335)}
+.cover h1{max-width:19ch}
+.cover .sub{font-size:22px;color:var(--ink-2);margin-top:20px;max-width:60ch;line-height:1.5}
+.meta{position:absolute;left:76px;bottom:60px;display:flex;gap:34px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+
+/* stage divider */
+.slide.divider{background:#16222E;justify-content:center}
+.divider h2{color:#fff;font-size:56px}
+.divider .eyebrow{color:var(--cyan)}
+.divider p{color:#A9BACB;font-size:21px;max-width:56ch;margin-top:14px}
+.divider .rule{background:var(--cyan)}
+.divider .dots i{opacity:.85}
+.stagerow{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.stagerow span{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border:1px solid #2B3E52;border-radius:999px;color:#7E93A8}
+.stagerow span.on{background:var(--cyan);color:#0E1721;border-color:var(--cyan);font-weight:700}
+#notes{position:fixed;right:16px;bottom:56px;width:340px;max-height:44vh;overflow:auto;background:#16222E;color:#C9D6E2;border:1px solid #2B3E52;border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.55;display:none;z-index:7}
+#notes.on{display:block}
+#notes b{color:var(--cyan);display:block;margin-bottom:6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+#hud{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#7C8FA6;font-family:var(--mono);font-size:12px;letter-spacing:.1em;pointer-events:none;z-index:5}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--cyan);width:0;z-index:6;transition:width .25s ease}
+#hud button{pointer-events:auto;background:none;border:1px solid #33475C;color:#7C8FA6;border-radius:7px;padding:5px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em}
+#hud button:hover{color:#DCE6F0;border-color:#5C7A96}
+#hud button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.hud-g{display:flex;gap:9px;align-items:center}
+@media print{
+  body{background:#fff;overflow:visible}
+  #stage{position:static;display:block}
+  #canvas{transform:none!important;width:100%;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
+  #hud,#bar,#notes{display:none}
+}
+
+/* Tool badge in the folio. A talk that switches between tools loses people
+   silently — showing the current tool on every actionable slide fixes that. */
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
+.folio .tool.fb{border-color:#F5D98A;color:#8F5400}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"><div id="canvas">
+
+<!-- ===== BLOCK: OVERVIEW ===== -->
+
+<!-- 1 cover -->
+<section class="slide cover active" data-notes="Open with the object, not the process. A child will read the same book about how a rocket works four times, and quit an English app on day three. That gap is the whole talk.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">#BuildwithGoogleAI · MVP Pipeline</span>
+  <h1>Nine stages, one game.</h1>
+  <p class="sub">A steam engine is coming apart, and the only way to fix it is to read the English on the parts. Here is every prompt that got us there — copy them.</p>
+  <div class="meta"><span>45 MINUTES</span><span>9 STAGES</span><span>ONE RUNNING EXAMPLE</span></div>
+</section>
+
+<!-- 2 the nine stages -->
+<section class="slide" data-notes="Do not read all nine. Point out that the first four are where people skip, and where this talk spends its time.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The pipeline</div>
+  <h2>Nine stages, in this order</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card sm accent"><span class="n">01</span><h3>Research</h3><p>Is the problem real?</p></div>
+      <div class="card sm accent"><span class="n">02</span><h3>Brainstorm</h3><p>Which solution?</p></div>
+      <div class="card sm accent"><span class="n">03</span><h3>Plan</h3><p>What, and built with what?</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card sm accent"><span class="n">04</span><h3>Design system</h3><p>What does it look like?</p></div>
+      <div class="card sm"><span class="n">05</span><h3>Code</h3><p>Build the thing</p></div>
+      <div class="card sm"><span class="n">06</span><h3>Test</h3><p>What breaks?</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card sm"><span class="n">07</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
+      <div class="card sm"><span class="n">08</span><h3>Deploy</h3><p>Get a live URL</p></div>
+      <div class="card sm"><span class="n">09</span><h3>Publish</h3><p>Ship it to people</p></div>
+    </div>
+    <div class="callout"><p>Most people start at <strong>05</strong>. That is why their MVP looks like everyone else's — and why they cannot answer "why this?"</p></div>
+  </div>
+</section>
+
+<!-- 3 artifact chain -->
+<section class="slide" data-notes="The most important slide in the deck. Every prompt eats the previous stage's artifact. Watch for the Design row later — the reading level starts there and ends up inside a Gemini call.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The spine</div>
+  <h2>Every stage produces an artifact</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Stage</th><th>What comes out</th><th>Feeds</th></tr>
+      <tr class="hl"><td><strong>Research</strong></td><td>A problem brief — who, what they do today, what kills it</td><td>Brainstorm</td></tr>
+      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Plan</td></tr>
+      <tr class="hl"><td><strong>Plan</strong></td><td>Screens · <strong>stack</strong> · data model · costed tasks</td><td>Design</td></tr>
+      <tr class="hl"><td><strong>Design</strong></td><td>A DESIGN.md — tokens, layout, and the rules you forbade</td><td>Code</td></tr>
+      <tr><td><strong>Code</strong></td><td>A working game, built in five layers</td><td>Test</td></tr>
+      <tr><td><strong>Test</strong></td><td>Ranked bug list + pre-demo checklist</td><td>Evaluation</td></tr>
+      <tr><td><strong>Evaluation</strong></td><td>Prioritised fix list against the real rubric</td><td>Deploy</td></tr>
+      <tr><td><strong>Deploy</strong></td><td>A live URL, and a locked database</td><td>Publish</td></tr>
+      <tr><td><strong>Publish</strong></td><td>Submission + demo video</td><td>—</td></tr>
+    </table>
+    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 5 output good — not a cleverer build prompt.</p></div>
+  </div>
+</section>
+
+<!-- 4 prompt anatomy -->
+<section class="slide" data-notes="Same skeleton every stage. Only the content changes. Spend thirty seconds here, no more.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The reusable skeleton</div>
+  <h2>Every prompt has the same six parts</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="c">[ROLE]</span>     You are a &lt;specific kind of expert, with an attitude&gt;
+
+<span class="c">[GOAL]</span>     I want to &lt;one outcome, not three&gt;
+
+<span class="c">[CONTEXT]</span>  Users, market, my time budget, solo or team
+
+<span class="c">[INPUT]</span>    &lt;paste the artifact from the previous stage&gt;
+
+<span class="c">[OUTPUT]</span>   Give me exactly: &lt;shape — a table, 8 items, CSS vars&gt;
+
+<span class="k">[QUALITY]  Push back if… / Mark guesses as [UNVERIFIED] /
+           Ask me 3 questions before you answer</span></pre>
+    <div class="callout"><p><strong>ROLE with an attitude</strong> beats a neutral role. "A researcher who is skeptical by default" produces different output than "a researcher".</p></div>
+  </div>
+</section>
+
+<!-- 5 the one line -->
+<section class="slide" data-notes="If they remember one technique from the whole talk, make it this one. It is also the line that produces the surprise on slide 9.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The highest-leverage line</div>
+  <h2>Make it interview you first</h2><div class="rule"></div>
+  <div class="body">
+    <pre>Before you answer, ask me the 3 questions whose answers would
+most change your response. Wait for my answers.</pre>
+    <div class="grid g2">
+      <div class="card stop"><h3>Without it</h3><p>The model fills your gaps with the most average assumption available, and you get the same output as everyone else who typed a similar prompt.</p></div>
+      <div class="card go"><h3>With it</h3><p>The gaps get filled with <em>your</em> specifics. The output stops being generic — because the input stopped being generic.</p></div>
+    </div>
+    <div class="callout green"><p>Works at every stage. Costs one extra round trip. It is the cheapest quality upgrade available to you.</p></div>
+  </div>
+</section>
+
+<!-- ===== BLOCK: STAGE-01-03 ===== -->
+
+<!-- 6 RESEARCH divider -->
+<section class="slide divider" data-notes="Stage 1. The stage everyone skips. Note that we do NOT have a product yet — we have a complaint about children and English apps.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 01</div>
+  <h2>Research</h2><div class="rule"></div>
+  <p>Decide whether the problem is real <em>before</em> you fall in love with a solution. Output: a problem brief you can hand to the next stage.</p>
+  <div class="stagerow">
+    <span class="on">Research</span><span>Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 7 research prompt -->
+<section class="slide" data-notes="Point at line 3 — 'what do they do today instead'. The status quo is the real competitor. For a child, the status quo is a book, a YouTube video, or nothing.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — research prompt</div>
+  <h2>Interrogate the problem</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">You are a product researcher who is <span class="k">skeptical by default</span>.
+
+Goal: decide whether [PROBLEM] is real and worth building for,
+before I write any code.
+
+Context: MVP for [AUDIENCE] in [MARKET]. I have [TIME], working
+[solo / team of N].
+
+Do this:
+1. Restate the problem in one sentence, as a USER would say it —
+   not as I said it.
+2. Split who has it into 3 segments. Say which segment feels it
+   most acutely, and why.
+3. <span class="k">For each segment: what do they do today instead?</span>
+   (the status quo is the real competitor, not other apps)
+4. List 5 existing solutions. For each: what it does well, and
+   the specific gap it leaves.
+5. List the 3 assumptions that, if wrong, kill this idea.
+6. The cheapest way to test the riskiest one this week.
+
+Rules: mark anything you are unsure about as [UNVERIFIED].
+Never invent statistics, market sizes, or company names.</pre>
+  </div>
+</section>
+
+<!-- 8 worked example -->
+<section class="slide" data-notes="This is the prompt above, filled in. Steps 1-6 unchanged — only the context changes. Then point at questions 7 and 8: both can kill the idea, which is exactly why they go in before you build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Worked example</div>
+  <h2>The same prompt, filled in</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-research-spark">
+You are a product researcher who is skeptical by default.
+
+Goal: decide whether this problem is real and worth building for,
+before I write any code.
+
+  PROBLEM: Children start an English learning app, use it for about
+  three days, and stop. The app has streaks, points and badges, but
+  nothing inside it is worth coming back to. The same child will
+  replay one level of a game forty times without being asked.
+
+  What I am considering: making the English the CONTROLS of a game
+  rather than the content of a lesson. If you cannot read the word,
+  you cannot play — so reading is not the homework, it is the skill
+  the game is actually testing.
+
+Context: MVP for children in Vietnam. Market: Vietnam. I have roughly
+60 hours total across evenings and weekends, working solo.
+
+Do this:
+1. Restate the problem in one sentence, as a USER would say it —
+   not as I said it. Give me two versions: one as the child would
+   say it, one as the parent would say it.
+2. Split who has it into 3 segments. Say which segment feels it
+   most acutely, and why.
+3. For each segment: what do they do today instead?
+   (the status quo is the real competitor, not other apps)
+   Be specific about Vietnam — extra English classes, YouTube,
+   a parent teaching at home, school textbooks, nothing at all.
+4. List 5 existing solutions. For each: what it does well, and the
+   specific gap it leaves. Include non-app answers — a library book,
+   a teacher, an older sibling.
+5. List the 3 assumptions that, if wrong, kill this idea.
+6. The cheapest way to test the riskiest one this week, without
+   building anything.
+
+Then two more, specific to this product:
+7. I have written "children" as one audience. Argue that this is
+   wrong. What breaks if a 7-year-old and a 12-year-old use the same
+   product? If you think I should narrow it, name the single age band
+   you would keep and what I lose by cutting the rest.
+8. Who actually has to say yes for this to reach a child — the child,
+   the parent, the teacher, or the school? Whoever it is: what do
+   they need to see before they say yes, and what does that force
+   into the product itself?
+
+Rules: mark anything you are unsure about as [UNVERIFIED].
+Never invent statistics, market sizes, or company names.
+Before you answer, ask me the 3 questions whose answers would most
+change your response. Wait for my answers.
+</script>
+    <pre class="sm" data-full="#full-research-spark"><span class="c">PROBLEM:</span> Children start an English app, use it three days, and stop. It
+has streaks and points, but nothing inside is worth coming back to. <span class="k">The same
+child will replay one level of a game forty times without being asked.</span>
+
+<span class="c">IDEA:</span> make the English the <span class="k">CONTROLS of a game</span>, not the content of a lesson.
+If you cannot read the word, you cannot play.
+
+<span class="c">CONTEXT:</span> children in Vietnam. Solo, ~60h.
+
+[ steps 1–6 unchanged ] · 3. …grounded in Vietnam: extra classes, YouTube,
+a parent teaching at home, or nothing at all
+
+<span class="k">Then two more, specific to this product:</span>
+<span class="k">7.</span> I wrote "children" as ONE audience. <span class="k">Argue that this is wrong.</span>
+   What breaks if a 7-year-old and a 12-year-old use the same product?
+   Name the single age band you would keep, and what I lose.
+<span class="k">8.</span> Who actually has to say yes — child, parent, teacher, or school?
+   What do they need to see, and <span class="k">what does that force into the product?</span></pre>
+    <div class="callout red"><p>Both added questions can kill the idea — which is exactly why they go in <em>before</em> you build.</p></div>
+  </div>
+</section>
+
+<!-- 9 what came back -->
+<section class="slide" data-notes="THE payoff slide of the first block. Do not rush it. Three things came back that I did not put in: the age band, the parent screen, and the reading-level assumption. The third one becomes a design token in twelve minutes, and a line inside a Gemini call in twenty.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="eyebrow">The output that changed the product</div>
+  <h2>What I asked for, and what came back</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>What I asked for</h3>
+        <p>"An English app for children." One audience, one screen in my head, and a vague sense that it should be fun.</p></div>
+      <div class="card go"><h3>What the pipeline handed back</h3>
+        <ul class="check tight">
+          <li><b>Ages 8–11.</b> Reading independently, not yet owning a phone</li>
+          <li><b>The parent says yes</b> — so sign-in is a parent screen, and the child never fills in a form</li>
+          <li><b>The killer assumption:</b> a child will abandon anything they cannot read</li>
+        </ul></div>
+    </div>
+    <div class="callout red"><p><strong>The product changed before a line of code existed.</strong> That third answer is not a note — it becomes a design token in Stage 04, and a constraint inside a Gemini call in Stage 05.</p></div>
+  </div>
+</section>
+
+<!-- 10 BRAINSTORM divider -->
+<section class="slide divider" data-notes="Stage 2. Two prompts: one to open up, one to cut down. Never in the same message.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 02</div>
+  <h2>Brainstorm</h2><div class="rule"></div>
+  <p>Two separate prompts: one to <em>diverge</em>, one to <em>converge</em>. Asking for both at once gets you three ideas and a premature favourite.</p>
+  <div class="stagerow">
+    <span>Research</span><span class="on">Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 11 diverge + converge -->
+<section class="slide" data-notes="Two prompts, run in this order, never merged. The buckets stop all eight ideas being the same idea in different clothes. Criterion 4 on the converge side is the one people fail — and the one the card game passes.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — two prompts, in this order</div>
+  <h2>Open up. Then be brutal.</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-brainstorm">
+=========== PROMPT 1 — DIVERGE. Run this alone. ===========
+
+You are a product designer who is good at unusual angles.
+
+Input: [paste the problem brief from Research]
+
+Generate 8 solutions. Force variety — 2 from each bucket:
+  A. The obvious approach, done unusually well
+  B. Solves it by REMOVING something, not adding
+  C. Changes WHO does the work (automate / delegate / community)
+  D. Only possible because of AI
+
+For each: name, one sentence, the child's first 60 seconds, and why
+it might fail.
+
+Do not rank them. Do not tell me which you prefer.
+
+
+=========== PROMPT 2 — CONVERGE. Only after reading all 8. ===========
+
+Now be brutal. Score each of the 8 ideas 1-5 on:
+
+  1. Can ONE person build a working version in 60 hours?
+  2. Does it solve the acute pain for the segment we identified
+     (children 8-11 who read independently), or a mild pain for
+     everyone?
+  3. Would a child come back a second time unprompted?
+  4. Can I demo it in 60 seconds without explaining it first?
+
+Show the scores as a table with a total column. Then:
+- Name the 2 strongest, and what would kill each.
+- Name the idea I am most emotionally attached to, and argue
+  against it.
+- Recommend one. State the assumption your recommendation depends
+  on, so I know what to watch.
+</script>
+    <pre class="sm" data-full="#full-brainstorm"><span class="k">PROMPT 1 — DIVERGE.</span> Run this alone.
+Input: [the problem brief]. Generate 8 solutions.
+<span class="k">Force variety — 2 from each bucket:</span>
+  A. the obvious approach, done unusually well
+  B. solves it by REMOVING something, not adding
+  C. changes WHO does the work    D. only possible because of AI
+For each: name · one sentence · <span class="k">the child's first 60 seconds</span> · why it fails.
+<span class="k">Do not rank them.</span>
+
+<span class="k">PROMPT 2 — CONVERGE.</span> Only after reading all 8.
+Score each 1–5 on: one person, 60 hours? · acute pain or mild pain? ·
+<span class="k">would a child come back unprompted?</span> · <span class="k">demo in 60s without explaining it?</span>
+Table with totals. Then: the 2 strongest and what kills each ·
+<span class="k">the one I am emotionally attached to — argue against it</span> · recommend one.</pre>
+    <div class="callout red"><p>Criterion 4 is where most ideas die. If it needs a paragraph of setup before the demo makes sense, it is the wrong MVP. <strong>A machine falling apart while a child taps frantically needs none.</strong></p></div>
+  </div>
+</section>
+
+<!-- 12 brainstorm, filled in -->
+<section class="slide" data-notes="Same two prompts, with a real problem brief already pasted in. Say it plainly: you do not have to run stage 1 first and wait — hit COPY FULL and this runs right now. Everything from PROBLEM down to the three killer assumptions is what stage 1 actually gave back.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">The same prompts, filled in — runs right now</div>
+  <h2>With the brief already pasted</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-brainstorm-filled">
+=========== PROMPT 1 — DIVERGE. Run this alone. ===========
+
+You are a product designer who is good at unusual angles.
+
+Input — the problem brief that came out of Research:
+
+  AS A CHILD WOULD SAY IT: "English homework is boring and I already
+  forgot the words from last week."
+  AS A PARENT WOULD SAY IT: "She was excited for three days. Now the
+  app just sends me notifications she ignores."
+
+  THE SEGMENT THAT FEELS IT MOST: children 8-11 who read
+  independently in their own language, are curious about how things
+  work, and do not yet own a phone. They have the attention for a
+  real thing and no patience for a fake one.
+
+  WHAT THEY DO TODAY INSTEAD: extra English classes after school,
+  YouTube in their own language, a parent teaching at home, or
+  nothing at all. The honest default is nothing.
+
+  WHO HAS TO SAY YES: the parent. They need to see that this is not
+  another notification machine, and that nothing about their child
+  leaves the app.
+
+  THE 3 ASSUMPTIONS THAT WOULD KILL IT:
+  1. That a child accepts English inside something they wanted
+     anyway, rather than resenting the ambush.
+  2. That "how things work" is interesting enough to carry the
+     English - and not just interesting to me, an adult.
+  3. That a parent will set up an account for a child this young.
+
+Generate 8 solutions. Force variety - 2 from each bucket:
+  A. The obvious approach, done unusually well
+  B. Solves it by REMOVING something, not adding
+  C. Changes WHO does the work (automate / delegate / community)
+  D. Only possible because of AI
+
+For each: name, one sentence, the child's first 60 seconds, and why
+it might fail.
+
+Do not rank them. Do not tell me which you prefer.
+
+
+=========== PROMPT 2 — CONVERGE. Only after reading all 8. ===========
+
+Now be brutal. Score each of the 8 ideas 1-5 on:
+
+  1. Can ONE person build a working version in 60 hours?
+  2. Does it solve the acute pain for children 8-11 who read
+     independently, or a mild pain for everyone?
+  3. Would a child come back a second time unprompted?
+  4. Can I demo it in 60 seconds without explaining it first?
+
+Show the scores as a table with a total column. Then:
+- Name the 2 strongest, and what would kill each.
+- Name the idea I am most emotionally attached to, and argue
+  against it.
+- Recommend one. State the assumption your recommendation depends
+  on, so I know what to watch.
+
+One more thing before you score. Be honest with me about a trap:
+if an idea is really a lesson wearing a game's clothes - a quiz with
+points, a flashcard with a streak - say so and score it a 1 on
+criterion 3. A child can tell the difference in about four seconds.
+</script>
+    <pre class="sm" data-full="#full-brainstorm-filled" data-copy-label="COPY — RUNS NOW"><span class="c">Input — the problem brief that came out of Research:</span>
+
+  <span class="k">AS A CHILD:</span> "English homework is boring and I already forgot the
+  words from last week."
+  <span class="k">AS A PARENT:</span> "She was excited for three days. Now the app just sends
+  me notifications she ignores."
+
+  <span class="k">SEGMENT:</span> children 8–11 who read independently in their own language,
+  curious about how things work, not yet phone-owning.
+  <span class="k">TODAY INSTEAD:</span> extra classes, YouTube in their own language, a parent
+  teaching at home — or nothing. <span class="c">The honest default is nothing.</span>
+  <span class="k">WHO SAYS YES:</span> the parent. Not another notification machine, and
+  nothing about their child leaves the app.
+  <span class="k">KILLS IT:</span> a child resenting the ambush · "how things work" being
+  interesting only to me · a parent not setting up an account at all
+<span class="c">[ then the 8 ideas, 2 per bucket, and the converge scoring ]</span>
+<span class="k">Plus one honesty clause:</span> if an idea is <span class="k">a lesson wearing a game's clothes</span> —
+a quiz with points, a flashcard with a streak — say so and score it 1 on
+"would a child come back". <span class="c">A child can tell in about four seconds.</span></pre>
+    <div class="callout green"><p><strong>You never have to run the previous stage and wait.</strong> Every stage here has a filled-in twin — join the pipeline anywhere.</p></div>
+  </div>
+</section>
+
+<!-- 13 the decision -->
+<section class="slide" data-notes="Five lines, written by hand, not generated. In two weeks you will not remember why you chose this. NOT DOING is the line you will reuse twice more — as scope defence while coding, and in the submission.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="eyebrow">The artifact</div>
+  <h2>Write the decision down</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-decision-spark">
+=== Fill these five lines by hand. Do not generate them. ===
+
+CHOSEN:    Spark - a machine falls apart, and the English words are the
+           controls that fix it
+FOR:       children aged 8-11 who read independently, and the parent
+           who sets them up
+BECAUSE:   a child replays a game they lost. No child rereads a lesson.
+KILLS IT:  a slow reader losing every round in eight seconds - the timer
+           turns reading speed into the difficulty
+NOT DOING: leaderboards, audio, several children per account, offline
+
+
+=== Then paste this into Gemini to expand it into a one-page PRD ===
+
+You are a product manager who writes one-page PRDs, not documents
+nobody reads.
+
+Input - the decision above.
+
+Turn it into a PRD that fits on ONE page. Exactly these sections:
+1. Problem - one paragraph, in the user's words, not mine.
+2. Who it is for - the segment, and roughly how many plausibly exist.
+   Mark any number you are unsure of as [UNVERIFIED].
+3. What success looks like - 2 metrics I could measure within a week
+   of launching. No vanity numbers.
+4. User stories - at most 5, "As a X, I want Y so that Z". Order them
+   so cutting from the bottom still leaves a usable product.
+5. Out of scope - the cuts, each with one line of why it can wait.
+6. Open questions - what I still do not know, and who could tell me.
+
+Rules:
+- No timelines, no team structure, no tech choices. The plan stage
+  handles those.
+- If a section needs more than 120 words, I have not decided enough
+  yet. Say so instead of padding it.
+</script>
+    <pre data-full="#full-decision-spark"><span class="k">CHOSEN:</span>    Spark — a machine falls apart, and the English words are the
+           controls that fix it
+<span class="k">FOR:</span>       children 8–11 who read independently, and the parent who sets
+           them up
+<span class="k">BECAUSE:</span>   a child replays a game they lost. No child rereads a lesson.
+<span class="k">KILLS IT:</span>  a slow reader losing every round in eight seconds — the timer
+           turns reading speed into the difficulty
+<span class="k">NOT DOING:</span> leaderboards, audio, several children per account, offline</pre>
+    <div class="grid g2">
+      <div class="card"><h3>Why bother</h3><p>In two weeks you will not remember why you chose this, and you will drift back toward the idea you cut.</p></div>
+      <div class="card accent"><h3>It pays off twice</h3><p>NOT DOING becomes your scope defence during coding — and the "what we deliberately left out" line in your submission.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 PLAN divider -->
+<section class="slide divider" data-notes="Stage 3. This is where the stack gets decided. Without it, the stack is whatever the model guessed on the day.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 03</div>
+  <h2>Plan</h2><div class="rule"></div>
+  <p>Decide <em>what</em> you are building and <em>what you are building it with</em> — before anyone talks about colour. Output: screens, stack, data model, and costed tasks.</p>
+  <div class="stagerow">
+    <span>Research</span><span>Brainstorm</span><span class="on">Plan</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 14 plan prompt -->
+<section class="slide" data-notes="Structure borrowed from spec-driven development, cut down for a 20-hour MVP. The line that matters is the last one in PART B: it does not hand the plan back, it cuts until it fits.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — plan prompt</div>
+  <h2>The product is decided. Now: how, and does it fit?</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-plan-prompt">
+You are a technical product manager who cuts scope for a living.
+
+Input - the product is already decided. Paste whichever you have:
+[the 5-line decision or the one-page PRD]
+
+Budget: 60 hours, working solo.
+
+Do NOT restate the product, the users, or the features. That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+
+=== PART A - HOW ===
+
+## Screens
+The minimum number. Each with its single job in one sentence.
+If a screen needs the word "and" to describe, split it or cut it.
+Remember that the parent signs in and the child plays - if that means
+one of these screens is never seen by the child, say so explicitly.
+
+## Stack
+- Frontend:
+- Auth and data:
+- AI: which SDK, which model, and where the API key lives
+One line of why for each. Prefer boring technology - something the
+world has already made every mistake with - over interesting
+technology, which the model has seen too few examples of to write
+reliably.
+
+## Data model
+The 2-3 collections and their fields. Nothing speculative. Say which
+documents belong to a user and which are shared reference data - that
+distinction decides the security rules later.
+
+
+=== PART B - TASKS ===
+
+For each task: id, what it delivers, hours, what it depends on, and
+the one acceptance criterion that means it is done.
+
+Then SUM the hours.
+If the sum exceeds 60, do not hand the plan back to me. Cut the
+lowest-priority features until it fits, and tell me exactly what you
+cut and what that costs the product.
+
+If the sum is under half of 60, I have probably under-scoped or you
+have under-estimated. Say which.
+
+
+Rules:
+- No timelines, no team structure, no sprint names.
+- Mark anything you are unsure about as [UNVERIFIED].
+- If a section needs more than 150 words, I have not decided enough
+  yet. Say so instead of padding it.
+</script>
+    <pre class="sm" data-full="#full-plan-prompt">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+
+Input: [the 5-line decision or the PRD — <span class="c">slide 13</span>]. Budget: 60 hours, solo.
+
+<span class="k">Do NOT restate the product, the users, or the features.</span> That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+<span class="k">PART A — HOW</span>     screens (one job each) · stack: frontend, auth/data,
+                 AI — which SDK, which model, where the key lives
+                 · data model. <span class="k">Say which documents belong to a user and
+                 which are shared — that decides the security rules.</span>
+
+<span class="k">PART B — TASKS</span>   id · what it delivers · hours · depends on ·
+                 the one criterion that means it is done
+
+<span class="k">Then SUM the hours. If the sum exceeds 60, do not hand it back —
+cut the lowest-priority features until it fits, and say what you cut.</span>
+
+Prefer boring technology. Mark guesses as [UNVERIFIED].</pre>
+  </div>
+</section>
+
+<!-- 16 plan prompt, filled in -->
+<section class="slide" data-notes="Same plan prompt with the real decision pasted in. Point at the budget line — sixty hours, not twenty. And at the last paragraph: it asks the model to tell you which single task, if it overruns, eats the AI work. That is the question that actually decides whether you score on Creativity.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">The same prompt, filled in — runs right now</div>
+  <h2>With the decision already pasted</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-plan-filled">
+You are a technical product manager who cuts scope for a living.
+
+Input — the product is already decided:
+
+CHOSEN:    Spark - a machine falls apart, and the English words are the
+           controls that fix it. A steam engine runs and comes apart.
+           Six parts, each labelled with one English noun. A fault
+           appears - "THE VALVE IS LOOSE!" - and the child has three
+           seconds to tap the right part. Miss, and a pressure gauge
+           fills. Fill the gauge and the machine explodes and restarts
+           in one tap. Survive sixty seconds and the real invention is
+           revealed and the next machine unlocks.
+FOR:       children aged 8-11 who read independently, and the parent
+           who sets them up
+BECAUSE:   a child replays a game they lost. No child rereads a lesson.
+KILLS IT:  a slow reader losing every round in eight seconds - the timer
+           turns reading speed into the difficulty
+NOT DOING: leaderboards, audio, several children per account, offline
+
+Budget: 60 hours, working solo.
+
+Do NOT restate the product, the users, or the features. That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+
+=== PART A - HOW ===
+
+## Screens
+The minimum number. Each with its single job in one sentence.
+The parent signs in and the child plays - if that means one of these
+screens is never seen by the child, say so explicitly.
+
+## Stack
+- Frontend:
+- Auth and data:
+- AI: which SDK, which model, and where the API key lives
+One line of why for each. Prefer boring technology. Note that this is
+a real-time game running in a browser: say plainly whether the thing
+you are recommending can hold a three-second timer and a tap response
+without a game engine, or whether I need one.
+
+## Data model
+The 2-3 collections and their fields. Say which documents belong to a
+user and which are shared reference data - that distinction decides
+the security rules later.
+
+
+=== PART B - TASKS ===
+
+For each task: id, what it delivers, hours, what it depends on, and
+the one acceptance criterion that means it is done.
+
+Then SUM the hours.
+If the sum exceeds 60, cut the lowest-priority features until it fits
+and tell me exactly what you cut and what that costs the product.
+If the sum is under half of 60, I have under-scoped or you have
+under-estimated. Say which.
+
+Then one more thing, and be blunt: name the single task most likely
+to overrun, and tell me which other task will get squeezed when it
+does. If the answer is the AI work, say so loudly - that is the part
+I am scored on for originality, and I would rather cut a whole
+machine than cut it.
+
+
+Rules:
+- No timelines, no team structure, no sprint names.
+- Mark anything you are unsure about as [UNVERIFIED].
+- If a section needs more than 150 words, I have not decided enough
+  yet. Say so instead of padding it.
+</script>
+    <pre class="sm" data-full="#full-plan-filled" data-copy-label="COPY — RUNS NOW">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+
+<span class="c">Input — the product is already decided:</span>
+<span class="k">CHOSEN:</span>    Spark — six labelled parts, a fault every 2–4s, <span class="k">3 seconds</span> to tap
+           the right one, a gauge that fills, 60 seconds to survive
+<span class="k">FOR:</span>       children 8–11 who read independently, + the parent who sets up
+<span class="k">BECAUSE:</span>   a child replays a game they lost. No child rereads a lesson.
+<span class="k">KILLS IT:</span>  a slow reader losing every round in eight seconds
+<span class="k">NOT DOING:</span> leaderboards, audio, several children per account, offline
+
+<span class="k">Budget: 60 hours, working solo.</span>
+
+<span class="k">PART A — HOW</span>   screens · stack · data model. <span class="k">This is a real-time game in a
+browser: say plainly whether your stack holds a 3-second timer without a
+game engine, or whether I need one.</span>
+
+<span class="k">PART B — TASKS</span> id · delivers · hours · depends on · the one criterion.
+Sum them. Over 60 → cut and say what you cut.
+
+<span class="k">Then be blunt: name the task most likely to overrun, and which task gets
+squeezed when it does. If the answer is the AI work, say so loudly</span> — that
+is what I am scored on for originality. <span class="c">I would rather cut a whole machine.</span></pre>
+  </div>
+</section>
+
+<!-- 17 plan artifact -->
+<section class="slide" data-notes="Point at four things. One: Sign in exists but the child never sees it — that came from Research. Two: the data model already separates user documents from shared data, which is what makes the security rules writable later. Three: T10 bundles the rules with shipping on purpose — rules are a shipping requirement, not a nice-to-have. Four: the last line — even at sixty hours it still cut something to fit.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan</div>
+  <div class="eyebrow">The artifact — every later stage reads this</div>
+  <h2>The plan</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-copy-label="COPY TEMPLATE"><span class="k">PART A — HOW</span>
+ Screens   Sign in <span class="c">(parent, once — the child never sees it)</span> · The Workshop
+           <span class="c">(fixed / locked / best streak)</span> · The Machine <span class="c">(the round)</span>
+ Stack     React (TS) + Tailwind, every value a CSS variable · Firebase Auth
+           + Cloud Firestore · @google/genai, current Flash, key in AI Studio
+ Data      users/{uid}             displayName, ageBand, wordLevel      <span class="c">← theirs</span>
+           users/{uid}/machines/   fixed, bestStreak, partsSeen[]        <span class="c">← theirs</span>
+           machines/{id}           name, year, parts[], faults[], blurb  <span class="c">← shared</span>
+<span class="k">PART B — TASKS</span>
+ T1  Round loop: parts, faults, gauge, timer  10h  —      a fault is fixable
+ T2  Difficulty curve, streak, win + lose      6h  T1     two faults after streak 10
+ T3  Workshop screen: locked / fixed / best    6h  T1     4 machines, 1 playable
+ T4  Google sign-in + user doc                 3h  T3     survives a reload
+ T5  Firestore: unlocks, streak, wordLevel     6h  T4     persists across devices
+ T6  Gemini: parts, faults, win text, cached   8h  T5     a machine generates once
+ T7  Vocabulary tiers, regenerated one up      5h  T6     beat it 3× → longer words
+ T8  Machine art + 4 seeded machines           6h  T1     four, one visual style
+ T9  States: empty, generating, offline, kbd   5h  T1–T8  a round done on keyboard
+ T10 Security rules + playground test + ship   4h  all    another account sees nothing
+     <span class="k">59h of a 60h budget.</span> <span class="c">Cut to fit: the parent progress screen (6h).</span></pre>
+  </div>
+</section>
+
+<!-- ===== BLOCK: STAGE-04 ===== -->
+
+<!-- 16 DESIGN divider -->
+<section class="slide divider" data-notes="Stage 4. The stage that most separates a good-looking MVP from a generic one. For a children's product it is also where accessibility gets decided — and accessibility is scored.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 04</div>
+  <h2>Design system &amp; UI</h2><div class="rule"></div>
+  <p>Tokens before screens. This is the single biggest difference between an MVP that looks designed and one that looks generated.</p>
+  <div class="stagerow">
+    <span>Research</span><span>Brainstorm</span><span>Plan</span><span class="on">Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- 17 why tokens -->
+<section class="slide" data-notes="Explain: 'make it look nice' has no memory. Tokens are the memory. Keep this to a minute — the next slide is the one that matters.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">Why this order</div>
+  <h2>"Make it look nice" has no memory</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>Screens first</h3><p>Each new screen invents its own blue, its own spacing, its own button. By screen three the app looks like three apps. Every fix is manual.</p></div>
+      <div class="card go"><h3>Tokens first</h3><p>One token list, then every screen references it. Consistency is structural, not something you police. Changing the brand colour is one line.</p></div>
+    </div>
+    <div class="callout"><p>A token set is also the thing you paste into the <em>code</em> prompt. Design and build stop drifting apart because they share one source.</p></div>
+  </div>
+</section>
+
+<!-- 18 tokens buy consistency, not taste -->
+<section class="slide" data-notes="The most important slide of the Design stage. A perfectly correct token set can still produce an app that looks like every other AI-generated kids' app. Point at the left card — that is what the model reaches for when you say 'for children' and nothing else.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">The trap in the previous slide</div>
+  <h2>Tokens buy consistency. They do not buy taste.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>What "for children" gets you by default</h3>
+        <p>Rainbow primaries. Everything rounded until nothing has a corner. A mascot nobody asked for. Confetti on every correct answer. Consistent, accessible, and identical to every other kids' app generated this year — because the model reached for the average.</p></div>
+      <div class="card go"><h3>What makes it yours</h3>
+        <ul class="check tight">
+          <li>An <b>atmosphere</b> you committed to, in one sentence</li>
+          <li>ONE accent, with a reason, used only where I can act</li>
+          <li>A <b>geometry</b> decision — and one you did not take</li>
+          <li>A <b>density</b> decision — for this user, in this posture</li>
+          <li>A list of the defaults you <b>forbade</b></li>
+        </ul></div>
+    </div>
+    <div class="callout"><p>Tokens are the memory. <strong>The principles are the taste.</strong> The next prompt asks for both — most people only ask for the first half.</p></div>
+  </div>
+</section>
+
+<!-- 19 design system prompt -->
+<section class="slide" data-notes="Point at three lines. Anti-feel. The DO/DON'T line — 'name the default an AI would reach for and forbid it', which is exactly the rainbow. And DESIGN.md as the output shape, because a file the agent re-reads survives a long chat where a pasted block does not.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — design system prompt</div>
+  <h2>Generate the system, not a screen</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-design-system-spark">
+You are a product designer who writes DESIGN.md files that AI agents
+read before generating UI.
+
+Input - the plan (screens, stack, data model). The product, the users
+and the screen list are already decided there; do not re-derive them.
+
+Product: Spark - a steam engine is running and coming apart. Six parts,
+each labelled with an English word. A fault appears - "THE VALVE IS
+LOOSE!" - and the child has three seconds to tap the right part. Miss,
+and the pressure gauge rises. Fill the gauge and the machine blows up,
+sootily, and restarts at once. Survive sixty seconds and the machine is
+fixed, the real invention is revealed, and the next one unlocks.
+The English words are the controls. A child who cannot read the label
+cannot play - that is the design, not a side effect.
+A parent signs in once; the child never fills in a form.
+Should feel: curious, sturdy, handmade.
+Anti-feel: must NOT feel like a worksheet, and must NOT feel like a
+toy that talks down to me.
+Platform: mobile-first web, most often a tablet, built in Google AI
+Studio (React + Tailwind).
+
+First commit to an aesthetic. Write 5 principles in this shape - each
+one a decision with a consequence, not an adjective:
+- The machine is the colour; everything around it is workshop. A warm
+  paper page and near-black text, so the only saturated colour on the
+  screen is the machine the child is looking at.
+- A surface ladder, not one flat background: paper page, machine
+  housing, and the part that is currently faulting raised above both.
+- ONE accent colour, reserved for "this is your next move" and
+  nothing else. A game that colours everything teaches a child that
+  colour means nothing - and in a three-second decision, that is the
+  difference between fixing it and not.
+- Generously rounded, but never a pill. Parts are objects, and
+  objects have corners.
+- Airy, not dense. One machine fills the screen and six parts is the
+  most that can ever be on it. A child under time pressure cannot
+  scan a crowd.
+
+Give me tokens, not prose:
+
+- Colour: page, surface, surface-raised, text-primary, text-secondary,
+  border, accent, plus semantic success / warning / danger. Hex values.
+  State the contrast ratio for every text-on-background pair and
+  confirm each passes WCAG AA. Compute it, do not assume it.
+- Type: one font stack with a real fallback chain, and exactly 6 sizes
+  in px with their use and their line-heights. Body must be at least
+  18px and line-height at least 1.6 - this is read by an eight-year-old,
+  not scanned by an adult.
+- Spacing: an 8px-based scale, 6 steps.
+- Radius: 4 steps plus a circle value. No pill value - I do not want
+  one available.
+- Shadows: 2 levels, tuned for a light warm surface.
+- Layout: container max-width, three breakpoints with what changes at
+  each, and a minimum touch target of 56px - this is a child's finger
+  on a tablet, not an adult's thumb on a phone. Plus one transition
+  duration.
+- Reading level, as real tokens: --reading-max-words and
+  --reading-cefr. The build stage passes these straight into the model
+  call, so they have to live in the token set or they get lost between
+  design and code.
+- Component rules for: button (3 states), the part label in its calm /
+  faulting / just-fixed states, the pressure gauge, and the fault
+  banner.
+- A fault must be readable WITHOUT colour. The banner names the part in
+  words, and the part itself moves. A child who cannot tell red from
+  green must be able to play this at full speed.
+- DO and DON'T: five rules each. For the DON'T list, name the defaults
+  an AI coding agent would reach for if I said only "a game for
+  children" - rainbow primaries, everything pill-rounded, a mascot,
+  confetti on every success, a big red WRONG - and forbid each one.
+
+Constraints: no gradients, max 2 font weights, ONE accent colour.
+
+Two kinds of failure, and they are not the same thing:
+- Losing a round is the fun part. It must be funny - soot, a shrug -
+  and it must restart in one tap with no score screen to dismiss.
+- Getting a word wrong must not be commented on at all. No red flash
+  on the label, no WRONG, no penalty spelled out in words. The gauge
+  rising is the world reacting, not the app judging.
+- Never a report card, never a percentage, never "you got 3 of 10
+  words wrong". This is a workshop, not a test.
+
+Output the whole thing as a DESIGN.md I can drop into the project
+root, with the tokens as CSS custom properties in a :root block. End
+with one line on why you chose that accent colour.
+</script>
+    <pre class="sm" data-full="#full-design-system-spark">You are a product designer who writes <span class="k">DESIGN.md</span> files that AI agents
+read before generating UI.
+Input: [the plan — <span class="c">slide 17</span>]. Should feel: curious, sturdy, handmade.
+<span class="k">Anti-feel: NOT a worksheet, NOT a toy that talks down to me.</span>
+<span class="k">FIRST commit to an aesthetic — 5 principles, each a decision with a
+consequence, not an adjective:</span> the machine is the colour, everything else
+is workshop · a surface ladder · ONE accent, only for "your next move" ·
+rounded but <span class="k">never a pill</span> · <span class="k">six parts max — a child under time pressure
+cannot scan a crowd.</span>
+
+<span class="k">THEN tokens, not prose:</span>
+- Colour: page, surface, surface-raised, text, border, accent + semantic.
+  Hex. <span class="k">Contrast for every pair — compute it, do not assume it.</span>
+- Type: 6 sizes, <span class="k">labels ≥18px</span> · spacing 8px · radius 4 steps, <span class="k">no pill</span>.
+- LAYOUT: container, 3 breakpoints, <span class="k">touch target ≥56px</span>, one duration.
+- <span class="k">Reading level as tokens: --reading-max-words, --reading-cefr.</span>
+- Components: part label <span class="c">(calm / faulting / just-fixed)</span>, gauge, banner.
+  <span class="k">A fault must read WITHOUT colour</span> — banner names it, the part moves.
+- DO / DON'T, 5 each. <span class="k">Name the defaults an AI reaches for on "a game for
+  children" — rainbow, pills, mascot, confetti, red WRONG — forbid each.</span>
+<span class="k">Two kinds of failure: losing a round is the fun part and must be funny.
+A wrong word is not commented on at all. Never a report card.</span>
+Output as a DESIGN.md with the tokens in :root. Ask me 3 questions first.</pre>
+  </div>
+</section>
+
+<!-- 20 the kid constraints -->
+<section class="slide" data-notes="This slide does not exist in the general version of this talk. Four numbers that change when your user is eight. The fourth card is the one to say out loud — for a children's product, accessibility is not a checklist item, it is the product. It is also 40% of the score.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">What changes when the user is eight</div>
+  <h2>Four numbers you would otherwise get wrong</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card sm"><span class="n">Touch</span><h3>56px minimum, not 44</h3><p>44px is an adult finger on a phone at a desk. This is a child on a tablet, on the floor, with three seconds on the clock.</p></div>
+      <div class="card sm"><span class="n">Reading</span><h3>18px labels, readable at a glance</h3><p>The label is not prose here — it is a button the child must recognise in under a second. Small type is not a style choice, it is a difficulty setting.</p></div>
+      <div class="card sm accent"><span class="n">Reading level</span><h3>A token, not a note</h3><p><code>--reading-max-words:40</code> and <code>--reading-cefr:"A2"</code>. Stage 05 passes these straight into the model call — so they live in the token set, or they get lost.</p></div>
+      <div class="card sm go"><span class="n">Failure</span><h3>Two kinds, and they differ</h3><p><b>Losing a round</b> is the fun part — make it funny, restart in one tap. <b>Getting a word wrong</b> is never commented on: no red, no WRONG, no report card.</p></div>
+    </div>
+    <div class="callout"><p>The fourth card is the one people get wrong. <strong>A game needs a fail state; a learner does not need to be told they failed.</strong> Decide that once, in the system, or every screen will invent its own punishment.</p></div>
+  </div>
+</section>
+
+<!-- 23 the token set -->
+<section class="slide" data-notes="The artifact. Point at two things: the contrast block at the bottom — it was computed, not assumed, because the prompt demanded it — and the two reading tokens, which are the ones that travel into Stage 05.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">The artifact — this is what the build prompt eats</div>
+  <h2>DESIGN.md, in one screen</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-tokens-spark">
+/* Spark - DESIGN.md tokens.
+   The machine is the colour; everything else is workshop. */
+
+:root{
+  --color-page:#FAF7F2;            --color-surface:#FFFFFF;
+  --color-surface-raised:#FFFDF9;
+  --color-text-primary:#1A1714;    --color-text-secondary:#5C544A;
+  --color-border:#E4DCCF;
+  --color-accent:#0E7C86;          --color-on-accent:#FFFFFF;
+  --color-success:#1B7F4B;  --color-warning:#8F5400;  --color-danger:#A32C1E;
+
+  --font-stack:"Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-weight-regular:400;  --font-weight-bold:700;
+  --text-display:40px;   --lh-display:1.15;
+  --text-title:28px;     --lh-title:1.25;
+  --text-subtitle:22px;  --lh-subtitle:1.35;
+  --text-body:18px;      --lh-body:1.6;      /* floor, not a default */
+  --text-small:16px;     --lh-small:1.5;
+  --text-micro:14px;     --lh-micro:1.45;
+  --measure-max:60ch;
+
+  --space-1:8px;  --space-2:16px; --space-3:24px;
+  --space-4:32px; --space-5:48px; --space-6:64px;
+
+  --radius-sm:10px; --radius:16px; --radius-lg:24px; --radius-xl:32px;
+  --radius-circle:50%;            /* no pill value: not available on purpose */
+  --shadow-1:0 2px 6px rgba(26,23,20,.06);
+  --shadow-2:0 12px 28px rgba(26,23,20,.12);
+
+  /* layout - stops every screen being a centred column */
+  --container-max:720px;   --grid-gap:var(--space-3);
+  --bp-sm:480px;  --bp-md:768px;  --bp-lg:1024px;
+  --touch-min:56px;        --motion:220ms cubic-bezier(.2,.8,.2,1);
+
+  /* read by the Stage 05 model call, not by CSS */
+  --reading-max-words:40;  --reading-cefr:"A2";
+
+  --btn-bg:var(--color-accent);   --btn-text:var(--color-on-accent);
+  --btn-radius:var(--radius);     --btn-padding:var(--space-2) var(--space-4);
+  --btn-min-height:var(--touch-min);
+  --btn-hover-bg:#0B646C;
+  --btn-disabled-bg:#E4DCCF;      --btn-disabled-text:#8C837A;
+  --input-bg:var(--color-surface);
+  --input-border:2px solid var(--color-border);
+  --input-radius:var(--radius);   --input-padding:var(--space-2);
+  --input-focus-outline:3px solid var(--color-accent);
+  --card-bg:var(--color-surface);
+  --card-border:1px solid var(--color-border);
+  --card-radius:var(--radius-lg); --card-padding:var(--space-4);
+  --card-shadow:var(--shadow-1);
+  --machine-locked-bg:#F3EEE6;    --machine-locked-text:var(--color-text-secondary);
+  --machine-fixed-mark:var(--color-success);
+
+  /* the round. A fault is never signalled by colour alone: the banner
+     names the part in words and the part itself shifts by --part-shake. */
+  --part-calm-bg:var(--color-surface-raised);
+  --part-fault-bg:#FFF1E0;        --part-fault-ring:3px solid var(--color-warning);
+  --part-shake:6px;               --part-fixed-flash:var(--color-success);
+  --banner-bg:var(--color-text-primary);  --banner-text:var(--color-page);
+  --gauge-track:var(--color-border);      --gauge-fill:var(--color-warning);
+  --gauge-critical:var(--color-danger);
+  --list-row-padding:var(--space-2) var(--space-3);
+  --size-icon:28px;  --size-avatar:48px;
+  --color-overlay:rgba(26,23,20,.45);
+  --focus-ring:3px solid var(--color-accent);
+}
+
+/* Contrast, computed and not assumed - all pass WCAG AA:
+   text-primary   on page 16.7:1
+   text-secondary on page  7.0:1
+   accent         on page  4.6:1   on-accent on accent 4.9:1
+   success on page 4.7:1 · warning on page 5.7:1 · danger on page 6.7:1
+
+   Why this accent: the invention art is warm - copper, brass, painted
+   metal, old paper. A deep teal is the one cool colour on the screen,
+   so "your next move" can never be mistaken for part of a card. */
+</script>
+    <pre class="sm" data-full="#full-tokens-spark"><span class="c">/* The machine is the colour; everything else is workshop. */</span>
+  --color-page:#FAF7F2;          --color-surface:#FFFFFF;
+  --color-text-primary:#1A1714;  --color-text-secondary:#5C544A;
+  --color-accent:#0E7C86;  <span class="c">← the ONE accent</span>   --color-border:#E4DCCF;
+
+  --font-stack:"Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --text-display:40px/1.15  <span class="c">…</span>  <span class="k">--text-body:18px/1.6</span>  <span class="c">← a floor, not a default</span>
+  --measure-max:60ch;   --space-1..6: 8 → 64px
+
+  --radius-sm/md/lg/xl:10/16/24/32px;  --radius-circle:50%;
+  <span class="k">/* no pill value: not available on purpose */</span>
+  --container-max:720px;  <span class="k">--touch-min:56px;</span>  --motion:220ms
+
+  <span class="k">/* read by the Stage 05 model call, not by CSS */
+  --reading-max-words:40;   --reading-cefr:"A2";</span>
+  <span class="c">/* the round — a fault is never signalled by colour alone */</span>
+  --part-fault-bg:#FFF1E0;  <span class="k">--part-shake:6px;</span>  --gauge-fill:…
+
+<span class="c">/* Contrast, computed and not assumed — all pass AA:
+   text-primary 16.7:1 · text-secondary 7.0:1 · accent 4.6:1 on page
+   Why teal: the machines are warm — copper, brass, old paper. The one cool
+   colour on screen can never be mistaken for a part of the machine. */</span>
+<span class="c">  ← full set, part states, gauge and banner tokens in COPY FULL</span></pre>
+  </div>
+</section>
+
+<!-- 24 screens prompt -->
+<section class="slide" data-notes="'Only these tokens' is the constraint doing the work. The last line stops silent drift — additions go back into DESIGN.md so there is still one source when the build prompt reads it.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — screens prompt</div>
+  <h2>Screens, constrained by the system</h2><div class="rule"></div>
+  <div class="body">
+    <pre><span class="k">Using ONLY the tokens above</span> — no new colours, no new sizes —
+design <span class="k">the screens listed in the plan</span>. Do not add or rename them.
+
+For each screen — its job is already fixed by the plan:
+- The layout as a text wireframe, top to bottom, naming which
+  token each block uses
+- The ONE primary action, and what happens after it
+- The empty state and the error state
+
+<span class="k">Then list every place the token set was not enough, and
+propose the smallest addition</span> rather than inventing freely.
+Fold those additions back into DESIGN.md so there is still
+<span class="k">one source</span> when I paste it into the build prompt.</pre>
+    <div class="callout green"><p>Empty and error states are where generated UIs fall apart. Here the empty state <em>is</em> the product on day one: a workshop with one machine and three locked silhouettes. Ask for it by name.</p></div>
+  </div>
+</section>
+
+<!-- 25 screens prompt, filled in -->
+<section class="slide" data-notes="The runnable version. Note the middle block — for a game you have to ask for the STATES by name, or you get three static screens and discover on demo day that nothing was designed for the two seconds after the machine explodes.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">The same prompt, filled in — runs right now</div>
+  <h2>With the three screens named</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-screens-filled">
+Using ONLY the tokens in the DESIGN.md above - no new colours, no new
+sizes - design these three screens. Do not add or rename them.
+
+1. Sign in - its job: a parent sets the child up, once. The child
+   never sees this screen again.
+2. The Workshop - its job: show which machines are fixed and which
+   are locked, and make the next one obvious.
+3. The Machine - its job: make the child read an English word fast
+   enough to fix the part before the gauge fills.
+
+For each screen:
+- The layout as a text wireframe, top to bottom, naming which token
+  each block uses
+- The ONE primary action, and what happens after it
+- The empty state and the error state
+
+For The Machine specifically, this is a game and the states are the
+design. Give me each one by name:
+- a part at rest, a part faulting, and a part in the half second
+  after it is fixed
+- the fault banner: where it sits, and what happens when a second
+  fault arrives while the first is still showing
+- the pressure gauge at zero, at half, and one step from full
+- what the child sees in the two seconds after the machine explodes,
+  and where the restart control is
+- the sixty-second win: what appears, and where the play-again
+  control sits relative to the reading
+
+Two rules I do not want you to break:
+- A fault must be identifiable without colour. Tell me what carries
+  it instead - position, motion, the words in the banner.
+- Nothing on the losing screen may read as punishment. No score
+  breakdown, no accuracy percentage, no "you missed 4".
+
+Then list every place the token set was not enough, and propose the
+smallest addition rather than inventing freely. Fold those additions
+back into DESIGN.md so there is still one source when I paste it
+into the build prompt.
+</script>
+    <pre class="sm" data-full="#full-screens-filled" data-copy-label="COPY — RUNS NOW"><span class="k">Using ONLY the tokens in the DESIGN.md above</span> — design these three screens.
+<span class="c">1. Sign in</span> — a parent sets the child up once; the child never sees it again
+<span class="c">2. The Workshop</span> — what is fixed, what is locked, what is next
+<span class="c">3. The Machine</span> — read the word fast enough to fix the part
+
+For each: text wireframe naming the token per block · the ONE primary
+action · the empty state and the error state.
+
+<span class="k">For The Machine — this is a game, and the states ARE the design:</span>
+ · a part at rest / faulting / <span class="k">the half second after it is fixed</span>
+ · the banner, and <span class="k">what happens when a second fault arrives during the first</span>
+ · the gauge at zero, at half, one step from full
+ · <span class="k">the two seconds after it explodes</span>, and where the restart control sits
+ · the 60-second win, and where play-again sits relative to the reading
+
+<span class="k">Two rules you may not break:</span> a fault must be identifiable <span class="k">without colour</span> —
+tell me what carries it instead · <span class="k">nothing on the losing screen may read as
+punishment</span> — no score breakdown, no accuracy %, no "you missed 4".</pre>
+  </div>
+</section>
+
+<!-- ===== BLOCK: STAGE-05 ===== -->
+
+<!-- 23 build in layers -->
+<section class="slide" data-notes="Stage 5. The build prompt is easy now, because it inherits four artifacts. Stress the red callout: this app has auth and a database, so a broken layer three is much harder to find if layers one and two were never tested alone.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 05 — Code</div>
+  <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">L1</span><h3>The round</h3><p>Machine, parts, faults, gauge. Tokens in the <em>first</em> message.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L2</span><h3>Sign in</h3><p>Google auth, a user document on first login.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L3</span><h3>The database</h3><p>Firestore reads and writes. Then, immediately, the rules.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">L4</span><h3>The AI</h3><p>Parts, faults, difficulty. Generated once, then cached.</p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>L5 — the states</h3><p>An empty workshop on day one, a machine mid-generation, offline, and the losing state the design system already decided had to be funny. Last, because now you know what can fail.</p></div>
+      <div class="card stop"><h3>Tokens are not a later layer</h3><p>Once the agent has committed to a component structure with its own hardcoded values, retrofitting a design system costs more turns than building with it did.</p></div>
+    </div>
+    <div class="callout"><p>Test after each layer. When you ask for everything at once and it breaks, you have no idea which instruction caused it — and with auth and a database in play, "it broke" has four possible homes.</p></div>
+  </div>
+</section>
+
+<!-- 24 L1 build prompt -->
+<section class="slide" data-notes="The middle block is the one that matters and the one everyone omits. Without it, 'use these tokens' is a wish: the agent writes your variables into a file and then styles the app with its own defaults on top.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — layer 1</div>
+  <h2>The build prompt inherits everything</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-l1">
+Build the round - the Machine screen of Spark. This is a real-time
+game, not a form.
+
+Stack, from the plan:
+- React (TypeScript), Tailwind, with every value coming from a CSS
+  custom property
+- For THIS layer: the game loop and local state only. No Firebase, no
+  model call. Those are the next two layers, once the round is fun on
+  its own with hardcoded parts.
+
+Use exactly these design tokens - introduce no colours, sizes or
+spacing outside this set:
+[paste the :root block from DESIGN.md]
+
+How to use them - this part is not optional:
+- Put them in index.css under :root, and register them in the Tailwind
+  theme so every utility class resolves to a token.
+- No raw hex and no arbitrary values anywhere in the markup: no
+  bg-[#...], no p-[13px], no text-[15px].
+- Write DESIGN.md to the project root and re-read it before every
+  later change I ask for.
+
+The round - its job: make the child read an English word fast enough
+to fix the machine.
+
+The machine fills the screen, container --container-max. Six parts
+around it, each a tappable target of at least --touch-min, each
+labelled with one English noun at --text-body.
+
+The loop:
+- Every 2 to 4 seconds, one part develops a fault. It takes
+  --part-fault-bg, gains --part-fault-ring, and shifts by --part-shake
+  on a loop. A banner appears in --banner-bg / --banner-text reading
+  "THE VALVE IS LOOSE!" - the part name in caps, the state after it.
+- The child has 3 seconds to tap that part.
+- Correct: the part flashes --part-fixed-flash, returns to
+  --part-calm-bg, streak goes up by one.
+- Wrong part, or 3 seconds elapse: the pressure gauge fills by one
+  step. Do not flash red on the label. Do not write WRONG anywhere.
+  Do not show a penalty. The gauge is the only feedback.
+- Gauge full: the machine blows up. Soot over everything, one
+  understated line, and a single --touch-min button that restarts the
+  round immediately. No score screen to dismiss.
+- Survive 60 seconds: the machine is fixed. Show the real invention,
+  its year, and three sentences about why it mattered, at --text-body
+  wrapped to --measure-max. This is the breather, and it is optional
+  reading - a button to go again is always visible.
+- Difficulty: the gap between faults shortens as the streak grows.
+  After streak 10, two parts can fault at once.
+
+Critical: a fault must be identifiable WITHOUT colour. The banner
+names the part in words, and the part moves. Test it in greyscale.
+
+Hardcode this first machine: a steam engine with the parts VALVE,
+PIPE, GEAR, BELT, LEVER, BOILER, and three fault states each (LOOSE,
+BLOCKED, HOT). Later layers generate these.
+Generate the machine art and its six parts - no grey placeholder
+boxes. Warm, sturdy, illustrated on paper. See my next message about
+where art may and may not come from.
+
+Accessibility: keyboard reachable, --focus-ring on every focusable
+element, WCAG AA contrast, tap targets at least --touch-min. A round
+must be completable using only the keyboard.
+
+Scope: one screen. No routing, no login, no database, no model call.
+Output complete working code. No placeholders.
+</script>
+    <pre class="sm" data-full="#full-build-l1">Build <span class="k">the round</span> — the Machine screen of Spark. <span class="k">This is a real-time game.</span>
+<span class="k">Stack (from the plan):</span> React (TS) + Tailwind, every value a CSS variable.
+Use exactly these design tokens: [paste the :root block — <span class="c">slide 23</span>]
+
+<span class="k">How to use them — not optional:</span> :root in index.css, <span class="k">registered in the
+Tailwind theme</span> · <span class="k">no raw hex, no arbitrary values</span> · <span class="k">write DESIGN.md and
+re-read it before every later change.</span>
+
+<span class="c">The loop:</span> six parts around the machine, each ≥ --touch-min, each labelled
+with one English noun. Every 2–4s a part faults — --part-fault-bg,
+--part-shake, and a banner: <span class="k">"THE VALVE IS LOOSE!"</span> The child has <span class="k">3 seconds</span>
+to tap it. Right → flash, streak +1. <span class="k">Wrong or late → the gauge fills. No
+red on the label, no WRONG, no penalty shown. The gauge is the only feedback.</span>
+Gauge full → it blows up, sootily, and <span class="k">one tap restarts. No score screen.</span>
+Survive 60s → the real invention, its year, 3 sentences. <span class="c">Optional reading.</span>
+Faults come faster as the streak grows; after 10, two at once.
+
+<span class="k">A fault must be identifiable WITHOUT colour</span> — the banner names the part
+and the part moves. <span class="k">Test it in greyscale.</span>
+
+Hardcode machine one: VALVE PIPE GEAR BELT LEVER BOILER × LOOSE/BLOCKED/HOT.
+Scope: one screen. No routing, no login, no database, no model call.</pre>
+  </div>
+</section>
+
+<!-- 25 the image slide -->
+<section class="slide" data-notes="Short and firm. Everyone in this room has a book like that on a shelf, and photographing it is the obvious shortcut. Say the last line slowly — being disqualified after winning is worse than not winning.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code</div>
+  <div class="eyebrow">Before you go looking for pictures</div>
+  <h2>The book is not your asset library</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">The illustrations that gave you the idea are copyrighted. So is most of what an image search returns for "old telephone".</p>
+    <div class="grid g3">
+      <div class="card go"><span class="n">Best</span><h3>Generate it</h3><p>AI Studio's build agent makes images on demand. Ask for the machine and its six parts in the same prompt that builds the round, and they arrive in one house style.</p></div>
+      <div class="card"><span class="n">Fine</span><h3>Public domain</h3><p>Wikimedia Commons, museum open-access collections. Check the licence <em>per image</em>, not per website.</p></div>
+      <div class="card stop"><span class="n">Never</span><h3>Photograph the book</h3><p>A submission that ships someone else's artwork is not a submission.</p></div>
+    </div>
+    <div class="callout red"><p>This is the kind of thing that disqualifies you <em>after</em> you have won — which is considerably worse than not winning.</p></div>
+  </div>
+</section>
+
+<!-- 26 L2 + L3 -->
+<section class="slide" data-notes="Two layers, one slide, two prompts in the copy. Auth before data, always — a database write with no signed-in user is a bug you cannot see until someone else has it. Note the last line of L3: it asks the model to say what it did not secure, which sets up the next slide.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool fb">Firebase</span></div>
+  <div class="eyebrow">Copy this — layers 2 and 3</div>
+  <h2>Sign in, then the database</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-l2l3">
+=========== LAYER 2 - SIGN IN ===========
+
+Add Google sign-in to Spark, using Firebase Auth.
+
+Re-read DESIGN.md and use only what is in it. No raw hex, no
+arbitrary values.
+
+This screen is for the PARENT, not the child. It is seen once, at
+setup, and never again on that device. Design it accordingly: plain
+language, no game styling, no mascot.
+- One button: "Sign in with Google", --btn-* tokens, at least
+  --touch-min tall
+- One line under it explaining, in a parent's words, what is stored:
+  which machines their child has fixed and their best streak, and
+  nothing else
+- On first sign-in, create users/{uid} with displayName and an
+  ageBand the parent picks from three options
+
+After sign-in the child lands on the Workshop and the sign-in screen
+is never shown again while the session is valid.
+
+Do not wire up Firestore reads or writes yet. Auth only.
+Test: signing out and back in returns to the same account.
+
+
+=========== LAYER 3 - THE DATABASE ===========
+
+Now persist progress in Cloud Firestore.
+
+Re-read DESIGN.md. Same tokens, no new values.
+
+Collections, from the plan:
+  users/{uid}                      the signed-in account
+  users/{uid}/machines/{machineId} fixed, bestStreak, partsSeen[]
+  machines/{id}                    seeded reference data, shared
+
+Behaviour:
+- On loading the Workshop, read that user's machines subcollection and
+  mark those fixed.
+- When a round ends, write once: whether it was fixed, and the streak
+  if it beat the stored best. Write at the END of a round, never
+  during one - a round is 60 seconds of real time and a network write
+  mid-round will be felt.
+- Never read another user's documents anywhere in the code.
+- If the read fails, show the Workshop with machine one playable and a
+  quiet retry, not an error page. A child should never see a stack
+  trace, and should never be blocked from playing by a failed read.
+
+Then tell me plainly: with the rules currently on this project, who
+can read this data? Do not fix it yet - I want to see the answer
+first.
+</script>
+    <pre class="sm" data-full="#full-build-l2l3"><span class="k">LAYER 2 — SIGN IN.</span> Firebase Auth, Google. Re-read DESIGN.md.
+<span class="k">This screen is for the PARENT, not the child.</span> Seen once, at setup.
+Plain language, no game styling, no mascot. One button ≥ --touch-min, and
+one line saying <span class="k">exactly what is stored: which machines their child fixed
+and their best streak, and nothing else.</span> On first sign-in create users/{uid}.
+<span class="c">Auth only — no Firestore reads yet. Test: sign out, sign back in.</span>
+
+<span class="k">LAYER 3 — THE DATABASE.</span> Persist progress in Cloud Firestore.
+  users/{uid}/machines/{machineId}   fixed, bestStreak, partsSeen[]
+  machines/{id}                      seeded, shared
+Read that user's machines on the Workshop. <span class="k">Write once at the END of a round,
+never during one</span> — a round is 60 seconds of real time. Never read another
+user's documents anywhere. <span class="k">If the read fails: machine one still playable and
+a quiet retry — a child is never blocked from playing by a failed read.</span>
+
+<span class="k">Then tell me plainly: with the rules currently on this project, who can
+read this data? Do not fix it yet — I want to see the answer first.</span></pre>
+  </div>
+</section>
+
+<!-- 27 the rules slide -->
+<section class="slide" data-notes="The technical heart of the talk. The model will happily build against an open database and never raise it. Then the second card: this is also why the parent signs in — Research found it, the Plan encoded it, and the rules enforce it. Three stages agreeing on one decision is the whole thesis in one slide.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool fb">Firebase</span></div>
+  <div class="eyebrow">The answer you just asked for</div>
+  <h2>A children's app on an open database</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Lock my Firestore. Right now the rules are the default.
+
+The data:
+  users/{uid}                       one doc per signed-in parent account
+  users/{uid}/machines/{machineId}  that account's progress and best streak
+  machines/{id}                     seeded reference data, same for everyone
+
+Write rules so that:
+- a signed-in user can read and write only documents under their own uid
+- <span class="k">nobody can read another user's documents, even signed in</span>
+- machines/ is readable by any signed-in user and writable by nobody
+- an unauthenticated request can do nothing at all
+<span class="k">Then tell me the exact steps to test this in the Firebase console rules
+playground, including the case that should FAIL.</span></pre>
+    <div class="grid g2">
+      <div class="card stop"><h3>Rules you have not seen fail are not rules</h3><p>Test mode is open, then expires and breaks everything at the worst moment. Watch a denied read with your own eyes.</p></div>
+      <div class="card accent"><h3>Why the parent signs in</h3><p>Decree 13/2023/ND-CP requires verified parental consent for a child under 16. Research found it, the Plan made it a screen, these rules enforce it. <strong>Three stages, one decision.</strong></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 the AI layer -->
+<section class="slide" data-notes="Two lessons here. Generate once and store — thirty children opening the same card is one generation, not thirty. And point at the two reading tokens: written in Stage 04, read by a prompt in Stage 05. That is what 'artifacts feed forward' means in practice, and it is the answer to 'elegant use of AI' on the rubric.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — layer 4</div>
+  <h2>The AI layer, and the mistake everyone makes</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Generate the machines. <span class="k">Before the round starts — never during it.</span>
+
+When a machine is opened <span class="k">for the first time</span>, call the model once:
+- 6 parts, each a noun a child can see and point at, at <span class="k">--reading-cefr</span>
+- for each part, 3 fault states as "THE &lt;PART&gt; IS &lt;STATE&gt;!",
+  at most <span class="k">--reading-max-words</span> words each
+- 3 sentences on why this invention mattered, for the win screen
+
+<span class="k">Write all of it into machines/{id} and serve every later play from
+Firestore. A round is 60 seconds of real time — a model call is not.</span>
+
+When the child beats a machine 3 times, regenerate the part names one
+level harder <span class="c">(PIPE → PRESSURE PIPE)</span> and store that as a second set.
+<span class="k">Never mix two levels inside one round.</span></pre>
+    <div class="grid g2">
+      <div class="card go"><h3>You cannot call a model mid-round</h3><p>This is the caching lesson with the excuse removed. A three-second timer and a two-second API call are incompatible. <strong>Generate up front, store, serve.</strong></p></div>
+      <div class="card accent"><h3>The game gets harder in English, not in speed</h3><p><code>--reading-cefr</code> was written in Stage 04 and is read by a prompt in Stage 05. The model raises the vocabulary as the child improves — <strong>a database cannot do that</strong>, and it is your answer on Creativity.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 29 design QA + states -->
+<section class="slide" data-notes="Design was the only stage with no check. Every other one has one: Research has 'delete on sight', Test has the checklist, Evaluation has the rubric. Gemini reads images — so screenshot the running app back at it and make it audit its own work against the file it wrote.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — design QA, then layer 5</div>
+  <h2>Screenshot it back, and make it audit itself</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Screenshot attached. Here is my DESIGN.md: [paste].
+
+Audit the screenshot against it, harshly:
+1. Every colour, size, spacing or radius on screen that is <span class="k">NOT in
+   the token set</span>. Name the element and the offending value.
+2. Every DON'T that got violated. <span class="c">(rainbow · pills · mascot · confetti · red WRONG)</span>
+3. Contrast: any text pair failing WCAG AA. <span class="k">Compute, don't assume.</span>
+4. Tap targets under 56px, any label under 18px. <span class="c">In a 3-second decision
+   these are not cosmetic — they are the difficulty.</span>
+5. <span class="k">Convert the screenshot to greyscale. Can you still tell which part is
+   faulting?</span> If not, the game is unplayable for a colour-blind child.
+6. Rate 1–5: does this look <span class="k">designed, or generated?</span> One specific reason.
+
+Then: the ONE prompt I should send AI Studio next to fix the worst.
+
+<span class="k">Layer 5 — the states:</span> an empty workshop · a machine generating · offline ·
+<span class="k">and losing, which has to stay funny.</span></pre>
+    <div class="callout green"><p>Every other stage has a check. <strong>Design had none</strong>, which is why nobody finds out the tokens never landed until the demo.</p></div>
+  </div>
+</section>
+
+<!-- ===== BLOCK: STAGE-06-09 ===== -->
+
+<!-- 30 test intro -->
+<section class="slide" data-notes="Reframe: you are not testing for correctness, you are testing for demo survival. Then the twist specific to this product — there are two audiences, and the eight-year-old finds things the judge never will.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test</div>
+  <div class="eyebrow">Stage 06 — Test</div>
+  <h2>Test for the demo, not for coverage</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">An MVP does not need 80% coverage. It needs to survive four minutes in front of someone who did not build it.</p>
+    <div class="grid g3">
+      <div class="card go"><span class="n">Test hard</span><h3>The happy path</h3><p>The exact sequence you will demo, on the venue's wifi, on the device you will actually hold up.</p></div>
+      <div class="card warn"><span class="n">Test some</span><h3>The obvious edges</h3><p>Two fingers at once, a tap a fraction after the timer, slow generation, no network, losing five rounds in a row.</p></div>
+      <div class="card"><span class="n">Skip</span><h3>Everything else</h3><p>Unit tests for code you will rewrite tomorrow. Not now.</p></div>
+    </div>
+    <div class="callout red"><p>This product has <strong>two</strong> audiences. A judge watches the demo; a child uses the app. <em>The child finds things the judge never will</em> — so test as the child, then demo for the judge.</p></div>
+  </div>
+</section>
+
+<!-- 31 test prompt -->
+<section class="slide" data-notes="Ordering by 'likely during this exact demo' is what makes the list actionable. Read out the third item — the explanation coming back above reading level is the killer assumption from Stage 01, arriving as a test case.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — test prompt</div>
+  <h2>Find what breaks on stage</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-test-spark">
+You are a QA engineer who finds the bugs that embarrass people in
+live demos - and who has watched a lot of eight-year-olds use software.
+
+My app, in three lines:
+- What it does: Spark. A steam engine comes apart while a child aged
+  8-11 watches. A banner names a broken part in English - "THE VALVE
+  IS LOOSE!" - and they have three seconds to tap that part. Miss, and
+  a pressure gauge fills. Fill it and the machine explodes.
+- The one input the child gives: taps, under time pressure. They never
+  type.
+- The one output they get: the part is fixed and the streak grows, or
+  the gauge rises and eventually the round ends.
+
+Built with: React single-page app, Tailwind driven by a fixed token
+set, Firebase Auth (Google) and Cloud Firestore, one model call per
+machine cached in Firestore. Running in Google AI Studio.
+
+What I will demo, step by step:
+1. Open the published link on a tablet, on venue wifi.
+2. Show the workshop: machine one open, three locked.
+3. Start a round. Fix four faults live.
+4. Deliberately miss one, so the room sees the gauge rise.
+5. Survive to 60 seconds. Show the invention reveal.
+6. Reload to show the streak persisted.
+
+List 12 things that could break, ordered by how likely they are to
+happen during that exact demo. For each: the trigger, what the CHILD
+sees, and the one-line fix.
+
+Cover at least:
+- the child taps two parts at once, with two fingers
+- a tap that lands a fraction after the three seconds expire
+- a new fault fires while the previous fix animation is still playing
+- two faults name the same part
+- a slow reader never fixes anything and the gauge fills in eight
+  seconds - is the first machine still fun for them, or unplayable?
+- the child loses five rounds in a row: does anything change, and does
+  anything shame them?
+- generating the next machine takes six seconds and the workshop looks
+  frozen
+- no network at all, mid-round
+- the tablet dims or sleeps mid-round
+- the parent signed in on a phone, the child plays on a tablet
+- the machine art fails to load and the parts are blank rectangles
+- the round is played entirely with a keyboard
+
+Then: a 6-item pre-demo checklist I can run in 3 minutes, in the
+order I should run it.
+</script>
+    <pre class="sm" data-full="#full-test-spark">You are a QA engineer who finds the bugs that embarrass people in live
+demos — <span class="k">and who has watched a lot of eight-year-olds use software.</span>
+
+<span class="k">My app, in three lines</span> — no code needed: what it does · the one input
+(taps, <span class="c">under time pressure — they never type</span>) · the one output.
+
+What I will demo, step by step: 1… 2… 3…
+
+List 12 things that could break, <span class="k">ordered by how likely they are during
+that exact demo.</span> For each: the trigger, <span class="k">what the CHILD sees</span>, the fix.
+
+Cover at least: two fingers at once · <span class="k">a tap a fraction after the 3 seconds</span> ·
+a fault firing mid-animation · two faults on the same part · <span class="k">a slow reader
+whose gauge fills in 8 seconds — is machine one still playable for them?</span> ·
+<span class="k">losing five rounds in a row — does anything shame them?</span> · six seconds of
+generation on venue wifi · no network mid-round · the tablet sleeping ·
+parent on a phone, child on a tablet · art failed to load · <span class="k">a whole round
+played on the keyboard.</span>
+
+Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
+  </div>
+</section>
+
+<!-- 32 evaluation rubric -->
+<section class="slide" data-notes="Get the real rubric before you build, not after. Then the line that matters for this product: everything on the Design stage's constraints slide is scored under Feasibility. You already built it — now claim it, in their words.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation</div>
+  <div class="eyebrow">Stage 07 — Evaluation</div>
+  <h2>Score it against the real rubric</h2><div class="rule"></div>
+  <div class="body">
+    <p class="lede">"Is it good?" is unanswerable. "Does it score on the criteria it will be judged against?" is answerable — and fixable.</p>
+    <div class="grid g3">
+      <div class="card accent"><div class="stat">40%</div><div class="stat-lbl"><strong>Feasibility</strong> — for a children's game, <em>accessibility is feasibility</em>: 56px targets, 18px labels, a fault you can read in greyscale, a round playable on a keyboard. You already built it. Claim it.</div></div>
+      <div class="card accent"><div class="stat">30%</div><div class="stat-lbl"><strong>Impact</strong> — <em>rounds replayed after a loss</em> is the metric. It is the whole thesis, and you can measure it in a week.</div></div>
+      <div class="card accent"><div class="stat">30%</div><div class="stat-lbl"><strong>Creativity</strong> — "elegant use of AI" is not "we called an API". It is that the <em>vocabulary gets harder as the child gets better</em>. A database cannot.</div></div>
+    </div>
+    <div class="callout"><p>Get the actual rubric <em>before</em> you build. It tells you where effort converts into score — and where it does not.</p></div>
+  </div>
+</section>
+
+<!-- 33 evaluation prompt -->
+<section class="slide" data-notes="The 'deliberately did NOT build' block comes straight from the NOT DOING line on slide 13. Judges reward a defended cut and punish a vague one. And the last line is what produces action instead of a report.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — evaluation prompt</div>
+  <h2>Make it grade you honestly</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-eval-spark">
+Score my MVP against the criteria it will actually be judged on.
+
+Criteria (AI Riser Vietnam 2026):
+- Feasibility 40% - does it work as intended; is the UI intuitive and
+  accessible; are there considerations for disabilities
+- Impact 30% - problem-solution fit; could it become a real business
+  or social project with a stable group of users; scalability
+- Creativity 30% - originality, avoid templates; elegant use of AI and
+  Google technologies
+
+Product: Spark - a real-time game. A steam engine comes apart, a banner
+names a broken part in English, and a child aged 8-11 has three seconds
+to tap that part. The English words are the controls: a child who
+cannot read the label cannot play. The model writes the parts and the
+faults, and raises the vocabulary a level each time the child beats the
+machine. A parent signs in once with Google; the child never fills in a
+form. Built in Google AI Studio: React + Tailwind driven by a fixed
+token set, Firebase Auth and Cloud Firestore, one model call per
+machine cached in Firestore. Published to a public URL. Screenshots
+attached.
+
+Accessibility decisions I made deliberately, because the user is eight
+and under time pressure: 56px minimum tap targets, 18px minimum labels,
+a fault signalled by a named banner and motion rather than colour alone
+so a colour-blind child can play, and a round completable on a keyboard.
+Losing a round is funny and restarts in one tap; getting a word wrong is
+never commented on at all - no red, no WRONG, no report card.
+
+What I deliberately did NOT build, and why:
+- No leaderboards - they turn a curious child into an anxious one
+- No audio - it doubles the build and halves the places it can be used
+- No several children per account - the data model would change shape,
+  and one child proves the idea
+- No offline - a first build that caches badly is worse than one that
+  asks you to reconnect
+
+For each criterion:
+- A score out of its weight, justified by something specific in the
+  product - not a general impression
+- The single change that would raise that score the most
+- Roughly how long that change takes
+
+Then: I have 6 hours left before the deadline. Give me the ordered
+list of what to do, and what to consciously not do.
+
+Be harsh. A 9/10 I cannot defend to a judge is worth less than a 6/10
+I can fix tonight.
+</script>
+    <pre class="sm" data-full="#full-eval-spark">Score my MVP against the criteria it will actually be judged on.
+
+Criteria: [paste the real rubric and its weights]
+Product: [describe it + attach screenshots]
+<span class="k">Accessibility decisions I made deliberately, because the user is eight
+and under time pressure:</span> [56px targets · 18px labels · <span class="k">a fault readable in
+greyscale</span> · a round playable on a keyboard · <span class="k">losing is funny, a wrong word
+is never commented on</span>]
+<span class="k">Deliberately not built:</span> [the NOT DOING line from <span class="c">slide 13</span>, with the why]
+
+For each criterion:
+- A score out of its weight, justified by something <span class="k">specific in the
+  product</span> — not a general impression
+- The single change that would raise that score the most
+- Roughly how long that change takes
+
+Then: <span class="k">if I only have [N] hours left, give me the ordered list of what
+to do, and what to consciously not do.</span>
+
+Be harsh. A 9/10 I cannot defend to a judge is worth less than a 6/10
+I can fix tonight.</pre>
+  </div>
+</section>
+
+<!-- 34 deploy -->
+<section class="slide" data-notes="⚠️ CHECK BEFORE THE TALK: publish a throwaway app from a fresh Google account the week you present. The Starter Tier / .ai.studio flow is not in the current official docs, which describe Cloud Run and GitHub export. If it has moved, fix this slide first — forty people stuck at minute 35 is the worst failure mode there is.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Deploy <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 08 — Deploy</div>
+  <h2>A live URL, free, no credit card</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">01</span><h3>Publish</h3><p>Top right → Publish → Get started</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">02</span><h3>Name it</h3><p>Set the description and the app URL</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">03</span><h3>Live</h3><p>You get a public link anyone can open</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card go"><h3>The free tier</h3><p>Publish with no credit card and no Cloud project. Check the current limits on the day — this moves.</p></div>
+      <div class="card warn"><h3>If it asks for a card</h3><p>You are not on the free tier. It generally only applies to an account that has never published before — try a fresh one.</p></div>
+      <div class="card accent"><h3>What makes this safe</h3><p>AI Studio keeps the API key server-side and never ships it to the browser. <strong>The rules from layer 3 are the other half</strong> — publish without them and the database is public too.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 35 publish -->
+<section class="slide" data-notes="Two links, and people submit the wrong one — say it out loud. Then the video: most demo videos spend forty seconds on sign-in. Here sign-in is a parent screen you can skip entirely. Film a child.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Publish</div>
+  <div class="eyebrow">Stage 09 — Publish</div>
+  <h2>Ship the artifacts, not just the app</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Artifact</th><th>Why it exists</th></tr>
+      <tr class="hl"><td><strong>Project link</strong></td><td>Usually the <em>mandatory</em> one — lets a judge open your actual project. Set sharing to public first.</td></tr>
+      <tr><td><strong>Live app URL</strong></td><td>Lets anyone use it without seeing your code. Often worth bonus points.</td></tr>
+      <tr><td><strong>Demo video</strong></td><td>The only artifact watched all the way through. 60–90 seconds.</td></tr>
+      <tr><td><strong>The written scope</strong></td><td>What you built and what you deliberately did not — the NOT DOING line, plus the cut from the plan.</td></tr>
+    </table>
+    <div class="grid g4">
+      <div class="card sm"><span class="n">0:00–0:15</span><h3>The problem</h3><p>Shown, not described. A child closing an English app after three days.</p></div>
+      <div class="card sm accent"><span class="n">0:15–0:40</span><h3>The magic moment</h3><p>A round. Chaos, a banner, a frantic tap, the fix. Get here fast.</p></div>
+      <div class="card sm"><span class="n">0:40–1:10</span><h3>One more angle</h3><p>The same child, one level up — the words are now longer.</p></div>
+      <div class="card sm"><span class="n">1:10–1:30</span><h3>What's next</h3><p>Who it is for, and where it goes.</p></div>
+    </div>
+    <div class="callout green"><p><strong>Film a child losing, then winning.</strong> Twenty seconds of a nine-year-old groaning at an explosion and immediately hitting replay proves your entire thesis better than any narration could.</p></div>
+  </div>
+</section>
+
+<!-- ===== BLOCK: CLOSE ===== -->
+
+<!-- 36 close -->
+<section class="slide cover" data-notes="Send them to stage 1 tonight, not to the code editor. The last line is the one to land: the product on this deck changed shape three times before any code existed, and every one of those changes was cheap.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Your turn</span>
+  <h1>Start at stage 01 tonight.</h1>
+  <p class="sub">Not the build prompt. Open the research prompt, paste your idea, and let it tell you what you do not know yet. Spark narrowed its audience, gained a parent screen, inherited a reading level, and stopped being a lesson — all before a line of code existed, and all of it cheap.</p>
+  <div class="meta"><span>9 STAGES</span><span>12 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
+</section>
+
+
+</div></div>
+
+<div id="notes"><b>Presenter notes</b><span id="notes-body"></span></div>
+<div id="hud">
+  <div class="hud-g">
+    <button id="prev" aria-label="Previous slide">← PREV</button>
+    <button id="next" aria-label="Next slide">NEXT →</button>
+    <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
+  </div>
+  <div><span id="counter">1 / 39</span></div>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var i=0, canvas=document.getElementById('canvas'),
+      notes=document.getElementById('notes'), nbody=document.getElementById('notes-body');
+
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i)});
+    document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+    document.getElementById('bar').style.width=((i+1)/slides.length*100)+'%';
+    nbody.textContent=slides[i].getAttribute('data-notes')||'—';
+    location.hash=i+1;
+  }
+  function fit(){
+    var s=Math.min((window.innerWidth-24)/1280,(window.innerHeight-54)/720);
+    canvas.style.transform='scale('+s+')';
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
+    else if(e.key==='n'||e.key==='N'){notes.classList.toggle('on')}
+  });
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  document.getElementById('notesbtn').onclick=function(){notes.classList.toggle('on')};
+  // No click-to-advance: the whole point of this deck is that people copy the
+  // prompts off the slides, and a stage click handler breaks drag-select.
+  // Clickers still work — they emit PageUp/PageDown or arrow keys.
+  // ---- copy buttons on every code block -------------------------------
+  // A slide may show an abridged prompt; data-full points at a hidden full
+  // version, so what lands on the clipboard is always the complete thing.
+  function flash(btn){
+    var o=btn.dataset.label; btn.textContent='COPIED ✓'; btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=o;btn.classList.remove('ok')},1400);
+  }
+  function writeClipboard(txt,btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){flash(btn)},function(){legacy(txt,btn)});
+    } else { legacy(txt,btn); }   // file:// is not a secure context — needs this
+  }
+  function legacy(txt,btn){
+    var ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); flash(btn); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref=pre.getAttribute('data-full'), src=ref&&document.querySelector(ref);
+    // capture BEFORE inserting the button, or the button's own text joins the copy
+    var txt=(src?src.textContent.replace(/^\n/,'').replace(/\s+$/,''):pre.innerText).trim();
+    var b=document.createElement('button');
+    b.type='button'; b.className='copybtn';
+    b.dataset.label = pre.getAttribute('data-copy-label') || (src ? 'COPY FULL' : 'COPY');
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label','Copy prompt to clipboard');
+    b.onclick=function(e){ e.stopPropagation(); writeClipboard(txt,b); };
+    pre.appendChild(b);
+    pre._copy=function(){ writeClipboard(txt,b); };
+  });
+  // C copies the current slide's prompt without reaching for the mouse
+  document.addEventListener('keydown',function(e){
+    if((e.key==='c'||e.key==='C') && !e.metaKey && !e.ctrlKey){
+      var p=slides[i].querySelector('pre'); if(p&&p._copy) p._copy();
+    }
+  });
+
+  window.addEventListener('resize',fit);
+  window.addEventListener('hashchange',function(){
+    var n=parseInt((location.hash||'#1').slice(1),10)-1;
+    if(!isNaN(n)&&n!==i) show(n);
+  });
+  fit();
+  show(parseInt((location.hash||'#1').slice(1),10)-1||0);
+})();
+</script>
+</body>
+</html>
