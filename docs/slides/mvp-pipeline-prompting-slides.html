@@ -199,7 +199,7 @@ pre .c{color:#8FA5BC}
       <tr class="hl"><td><strong>Research</strong></td><td>A problem brief — segments, status quo, killer assumptions</td><td>Brainstorm</td></tr>
       <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Plan</td></tr>
       <tr class="hl"><td><strong>Plan</strong></td><td>Feature cut · screen list · <strong>stack</strong> · data model</td><td>Design</td></tr>
-      <tr class="hl"><td><strong>Design system</strong></td><td>Token set + visual spec per screen</td><td>Code</td></tr>
+      <tr class="hl"><td><strong>Design</strong></td><td>Token set + visual spec per screen</td><td>Code</td></tr>
       <tr><td><strong>Code</strong></td><td>A working app</td><td>Test</td></tr>
       <tr><td><strong>Test</strong></td><td>Ranked bug list + pre-demo checklist</td><td>Evaluation</td></tr>
       <tr><td><strong>Evaluation</strong></td><td>Prioritised fix list against the real rubric</td><td>Deploy</td></tr>
@@ -471,7 +471,51 @@ Show the scores as a table with a total column. Then:
   <div class="eyebrow">The artifact</div>
   <h2>Write the decision down</h2><div class="rule"></div>
   <div class="body">
-    <pre>CHOSEN:    &lt;idea name&gt;
+    <script type="text/plain" id="full-decision-prd">
+=== 1. The decision itself — fill these five lines by hand ===
+
+CHOSEN:    <idea name>
+FOR:       <the segment, specifically>
+BECAUSE:   <the one reason it beat the runner-up>
+KILLS IT:  <the assumption that must hold>
+NOT DOING: <the 2 things I deliberately cut>
+
+
+=== 2. Then paste this into Gemini to expand it into a one-page PRD ===
+
+You are a product manager who writes one-page PRDs, not documents
+nobody reads.
+
+Input — the decision from Brainstorm:
+CHOSEN:    The Proof-of-Work Protocol
+FOR:       university students aged 18-22 in Vietnam
+BECAUSE:   it filters out noise and creates a high-trust network from
+           day one — everyone visible has already shipped something
+KILLS IT:  students having no artifact of past work to upload
+NOT DOING: payments, under-18 users, a mobile app
+
+Turn that into a PRD that fits on ONE page. Exactly these sections:
+
+1. Problem — one paragraph, in the user's words, not mine.
+2. Who it is for — the segment, and roughly how many of them
+   plausibly exist. Mark any number you are unsure of as [UNVERIFIED].
+3. What success looks like — 2 metrics I could actually measure within
+   a week of launching. No vanity numbers.
+4. User stories — at most 5, in the form "As a X, I want Y so that Z".
+   Order them so that cutting from the bottom still leaves a usable
+   product.
+5. Out of scope — the cuts, each with one line of why it can wait.
+6. Open questions — what I still do not know, and who could tell me.
+
+Rules:
+- No timelines, no team structure, no tech choices. The plan stage
+  handles those; keep this document about the product.
+- If a section needs more than 120 words, I have not decided enough
+  yet. Say so instead of padding it.
+- Write it so a stranger could read it in two minutes and then explain
+  my product back to me correctly.
+</script>
+    <pre data-full="#full-decision-prd">CHOSEN:    &lt;idea name&gt;
 FOR:       &lt;the segment, specifically&gt;
 BECAUSE:   &lt;the one reason it beat the runner-up&gt;
 KILLS IT:  &lt;the assumption that must hold&gt;
@@ -506,68 +550,120 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
 </section>
 
 <!-- Plan — vì sao + prompt -->
-<section class="slide" data-notes="Chỉ thẳng vào lỗ hổng: prompt build ghi React+Tailwind, nhưng không ai quyết định. Đó là chặng này.">
+<section class="slide" data-notes="Cấu trúc lấy từ Spec-Driven Development, rút gọn cho MVP 20 giờ. Nhấn PART A/B/C và luật cộng giờ.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — plan prompt</div>
-  <h2>Cut scope, then pick the stack</h2><div class="rule"></div>
+  <h2>The product is decided. Now: how, and does it fit?</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+    <script type="text/plain" id="full-plan-prompt">
+You are a technical product manager who cuts scope for a living.
 
-Input: [paste the decision from Brainstorm]
+Input — the product is already decided. Paste whichever you have:
+[the 5-line decision from Brainstorm, or the one-page PRD if you
+wrote one]
 
-Decide four things, and nothing else:
+Budget: [N] hours, working [solo / team of N].
 
-<span class="k">1. FEATURES</span> — what is in the MVP and what is cut. One line of why
-   for each cut. <span class="k">If the in-list is longer than 5 items, cut again.</span>
-<span class="k">2. SCREENS</span> — the minimum number. Each with its single job in one
-   sentence. If a screen has two jobs, split it or cut it.
-<span class="k">3. STACK</span> — frontend, data/auth, and how AI is called: which SDK,
-   which model, where the API key lives. One line of why for each.
-<span class="k">4. DATA</span> — the 2-3 entities and their fields. Nothing speculative.
+Do NOT restate the product, the users, or the features. That is
+already settled. Decide only HOW it gets built, and whether it fits.
 
-Rules: I have [N] hours, working [solo / team of N].
-Every choice must survive that. If something cannot be built in that
-time, say so and propose the smaller version.
-<span class="k">Prefer boring technology over interesting technology.</span></pre>
-    <div class="callout red"><p>Không có chặng này thì prompt build của bạn ghi "React, Tailwind" mà <strong>không ai từng quyết định như vậy</strong> — và số màn hình thì bỏ trống.</p></div>
+
+=== PART A - HOW ===
+
+## Screens
+The minimum number. Each with its single job in one sentence.
+If a screen needs the word "and" to describe, split it or cut it.
+
+## Stack
+- Frontend:
+- Data / auth:
+- AI: which SDK, which model, and where the API key lives
+One line of why for each. Prefer boring technology - something the
+world has already made every mistake with - over interesting
+technology, which the model has seen too few examples of to write
+reliably.
+
+## Data model
+The 2-3 entities and their fields. Nothing speculative.
+
+
+=== PART B - TASKS ===
+
+For each task: id, what it delivers, hours, what it depends on, and
+the one acceptance criterion that means it is done.
+
+Then SUM the hours.
+If the sum exceeds [N], do not hand the plan back to me. Cut the
+lowest-priority features until it fits, and tell me exactly what you
+cut and what that costs the product.
+
+If the sum is under half of [N], I have probably under-scoped or you
+have under-estimated. Say which.
+
+
+Rules:
+- No timelines, no team structure, no sprint names.
+- Mark anything you are unsure about as [UNVERIFIED].
+- If a section needs more than 150 words, I have not decided enough
+  yet. Say so instead of padding it.
+</script>
+    <pre class="sm" data-full="#full-plan-prompt">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+
+Input: [the 5-line decision from Brainstorm — or the PRD if you
+wrote one]. Budget: [N] hours, working [solo / team of N].
+
+<span class="k">Do NOT restate the product, the users, or the features.</span> That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+<span class="k">PART A — HOW</span>     screens (one job each) · stack: frontend, data/auth,
+                 AI — which SDK, which model, where the key lives
+                 · data model, 2–3 entities
+
+<span class="k">PART B — TASKS</span>   id · what it delivers · hours · depends on ·
+                 the one criterion that means it is done
+
+<span class="k">Then SUM the hours. If the sum exceeds [N], do not hand it back —
+cut the lowest-priority features until it fits, and say what you cut.</span>
+
+Prefer boring technology. Mark guesses as [UNVERIFIED].</pre>
+    <div class="callout red"><p>Không có chặng này, bạn <strong>không biết 20 giờ có đủ không</strong> cho tới khi hết giờ.</p></div>
   </div>
 </section>
 
-<!-- Plan — artifact thật -->
-<section class="slide" data-notes="Đây là artifact mà Design và Code sẽ ăn. Chỉ vào dòng STACK — đó là thứ dán thẳng vào prompt build.">
+<section class="slide" data-notes="Artifact theo đúng ba phần. Chỉ vào dòng tổng giờ cuối — đó là chỗ kế hoạch tự kiểm tra chính nó.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan</div>
   <div class="eyebrow">Worked example — from a real run</div>
   <h2>The plan artifact</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm"><span class="c">FEATURES — in</span>                  <span class="c">FEATURES — cut</span>
-  Upload proof link                Payments → pledges only
-  Auto-tag skills from the link    Under-18 → Decree 13 consent
-  Browse vetted network            Chat → team thread, later
-  Request to join a project        Mobile app → web first
+    <pre class="sm" data-copy-label="COPY TEMPLATE"><span class="c">Input: the PRD from Stage 02 — vision, user, features, out of scope.
+Not repeated here. This document only answers HOW, and whether it fits.</span>
 
-<span class="c">SCREENS — 3</span>
-  1. The Gate        force proof before access
-  2. The Network     show vetted peers and projects
-  3. Proof Detail    one-click collaboration request
+<span class="k">PART A — HOW</span>
+ Screens   The Gate — force proof before access
+           The Network — show vetted peers and projects
+           Proof Detail — one-click collaboration request
+ Stack     React (TypeScript) + CSS custom properties
+           Firebase Auth (Sign in with Google) + Cloud Firestore
+           @google/genai · Gemini 2.5 Flash · key in process.env
+ Data      User(uid, name, proofUrl, tags[])
+           Project(id, ownerUid, title, need, proofUrl)
+           Request(id, projectId, fromUid, status)
 
-<span class="k">STACK</span>
-  Frontend    React (TypeScript) + CSS custom properties
-  Auth/Data   Firebase Auth (Sign in with Google) + Cloud Firestore
-  AI          <span class="k">@google/genai</span> on a Node backend, <span class="k">Gemini 3.7 Flash</span>,
-              key in <span class="k">process.env.GEMINI_API_KEY</span>
-              → reads the portfolio link, tags competencies
+<span class="k">PART B — TASKS</span>
+ T1  Gate screen + link validation   5h   —       link accepted or rejected
+ T2  Network list + seed data        4h   T1      8 peers render
+ T3  Gemini tagging call             4h   T1      tags appear on a card
+ T4  Request-to-join flow            3h   T2      button flips to "sent"
+ T5  Publish + demo pass             2h   T1–T4   a stranger opens the URL
+                                    <span class="k">18h of a 20h budget</span>
 
-<span class="c">DATA</span>
-  User(uid, name, proofUrl, tags[])
-  Project(id, ownerUid, title, need, proofUrl)
-  Request(id, projectId, fromUid, status)</pre>
+<span class="c">Cut to fit: F5 "follow a peer" (3h) — the network works without it.</span></pre>
   </div>
 </section>
 
-<!-- THỰC HÀNH — Plan -->
 <section class="slide turn" data-notes="7 phút. Nhắc: danh sách 'in' quá 5 dòng là chưa cắt đủ.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
-  <div class="eyebrow">Thực hành 04</div>
+  <div class="eyebrow">Thực hành 03</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Dán quyết định từ chặng 2 vào prompt Plan, rồi chạy. <strong>Đếm số tính năng nó giữ lại — hơn 5 là chưa cắt đủ, bảo nó cắt tiếp.</strong></p>
   <div class="done"><b>Xong khi:</b> bạn có tính năng đã cắt, số màn hình, <b>stack</b>, và mô hình dữ liệu.</div>
@@ -655,8 +751,8 @@ prompt, then one line on why you chose that accent colour.
 </script>
     <pre class="sm" data-full="#full-design-system">You are a product designer who builds design systems before screens.
 
-Product: [one line]. Users: [who]. Should feel: [3 adjectives].
-Platform: mobile-first web.
+<span class="k">Input: [paste the plan from Stage 03]</span>
+Should feel: [3 adjectives]. Platform: mobile-first web.
 
 <span class="k">Give me tokens, not prose:</span>
 - Colour: bg, surface, text-primary, text-secondary, border, brand,
@@ -683,10 +779,9 @@ you chose the brand colour.</pre>
   <h2>Screens, constrained by the system</h2><div class="rule"></div>
   <div class="body">
     <pre><span class="k">Using ONLY the tokens above</span> — no new colours, no new sizes —
-design the [N] screens of this MVP.
+design <span class="k">the screens listed in the plan</span>. Do not add or rename them.
 
-For each screen:
-- Its single job, in one sentence
+For each screen — its job is already fixed by the plan:
 - The layout as a text wireframe, top to bottom, naming which
   token each block uses
 - The ONE primary action, and what happens after it
@@ -701,7 +796,7 @@ propose the smallest addition</span> rather than inventing freely.</pre>
 <!-- THỰC HÀNH 3 -->
 <section class="slide turn" data-notes="9 phút. Nhấn: giữ lại bộ token — lát nữa dán thẳng vào prompt build.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
-  <div class="eyebrow">Thực hành 03</div>
+  <div class="eyebrow">Thực hành 04</div>
   <h2>Đến lượt bạn</h2><div class="rule"></div>
   <p class="task">Chạy prompt design system. <strong>Lưu lại bộ CSS variables</strong> — lát nữa dán thẳng vào prompt build.</p>
   <div class="done"><b>Xong khi:</b> có bộ token dán được, và spec màn hình đầu kèm <b>empty + error state</b>.</div>
@@ -733,13 +828,14 @@ propose the smallest addition</span> rather than inventing freely.</pre>
   <div class="eyebrow">Copy this — build prompt</div>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
-    <pre>Build [screen 1] of [product] as a React single-page app, Tailwind.
+    <pre>Build [screen 1] of [product].
+<span class="k">Stack: [paste the STACK block from the plan — Stage 03]</span>
 
 <span class="k">Use exactly these design tokens — introduce no colours, sizes,
 or spacing outside this set:</span>
-[paste the CSS custom properties from Stage 3]
+[paste the CSS custom properties from Stage 04]
 
-This screen's job: [one sentence from the screen spec]
+This screen's job: [the job the plan already gave this screen]
 Primary action: [action] → [what happens]
 Include the empty state and the error state.
 
@@ -757,8 +853,17 @@ Output complete working code. No placeholders, no "add logic here".</pre>
   <h2>The same build prompt, filled in</h2><div class="rule"></div>
   <div class="body">
     <script type="text/plain" id="full-build-thegate">
-Build "The Gate" screen of The Proof-of-Work Protocol as a React
-single-page app, Tailwind.
+Build "The Gate" screen of The Proof-of-Work Protocol.
+
+Stack, taken from the plan in Stage 03:
+- React (TypeScript), single-page, styled with CSS custom properties
+- Firebase Auth (Sign in with Google) + Cloud Firestore
+- @google/genai on a Node backend, Gemini 2.5 Flash, key read from
+  process.env.GEMINI_API_KEY
+
+For THIS first layer, build the UI and local state only. Do not wire
+up Firebase or the Gemini call yet — those come in the next layer,
+once this screen looks and behaves correctly on its own.
 
 Use exactly these design tokens — introduce no colours, sizes, or
 spacing outside this set:
@@ -834,15 +939,15 @@ element, WCAG AA contrast, tap targets at least 44px.
 
 Output complete working code. No placeholders, no "add logic here".
 </script>
-    <pre class="sm" data-full="#full-build-thegate">Build <span class="k">"The Gate"</span> screen of <span class="k">The Proof-of-Work Protocol</span> — React SPA,
-Tailwind.
+    <pre class="sm" data-full="#full-build-thegate">Build <span class="k">"The Gate"</span> screen of <span class="k">The Proof-of-Work Protocol</span>.
+<span class="k">Stack (from the plan):</span> React (TypeScript) + CSS custom properties.
+<span class="c">Firebase + the Gemini call come later — this layer is UI and state only.</span>
 
 Use exactly these design tokens — no colours, sizes, or spacing
 outside this set:
-  --color-bg:#FAFAFA;   --color-surface:#FFFFFF;
-  --color-text-primary:#111827;   --color-brand:#4F46E5;
-  --text-display:48px/1.1;   --text-body:16px/1.5;
-  --space-3:24px;   --radius:12px;   <span class="c">← full set in COPY FULL</span>
+  --color-bg:#FAFAFA;  --color-surface:#FFFFFF;  --radius:12px;
+  --color-text-primary:#111827;  --color-brand:#4F46E5;
+  --text-display:48px/1.1;  --text-body:16px/1.5;  <span class="c">← full set in COPY FULL</span>
 
 <span class="c">Job:</span> force the user to submit verifiable proof of past work before
 they can view the network.
@@ -1056,7 +1161,7 @@ a 6/10 I can fix tonight.</pre>
       <tr class="hl"><td><strong>Project link</strong></td><td>Usually the <em>mandatory</em> one — lets a judge open your actual project. Set sharing to Public first.</td></tr>
       <tr><td><strong>Live app URL</strong></td><td>Lets anyone use it without seeing your code. Often worth bonus points.</td></tr>
       <tr><td><strong>Demo video</strong></td><td>The only artifact that is watched all the way through. 60–90 seconds.</td></tr>
-      <tr><td><strong>The written scope</strong></td><td>What you built, and what you deliberately did <em>not</em> build. This is your NOT DOING list from Stage 2.</td></tr>
+      <tr><td><strong>The written scope</strong></td><td>What you built, and what you deliberately did <em>not</em> build. This is your NOT DOING line from Stage 02, plus the cut column from the plan in Stage 03.</td></tr>
     </table>
     <div class="callout red"><p>The project link and the live URL are different things. Submitting one where the other was required is the most common way to lose points for free.</p></div>
   </div>
@@ -1195,7 +1300,7 @@ a 6/10 I can fix tonight.</pre>
     var txt=(src?src.textContent.replace(/^\n/,'').replace(/\s+$/,''):pre.innerText).trim();
     var b=document.createElement('button');
     b.type='button'; b.className='copybtn';
-    b.dataset.label = src ? 'COPY FULL' : 'COPY';
+    b.dataset.label = pre.getAttribute('data-copy-label') || (src ? 'COPY FULL' : 'COPY');
     b.textContent = b.dataset.label;
     b.setAttribute('aria-label','Copy prompt to clipboard');
     b.onclick=function(e){ e.stopPropagation(); writeClipboard(txt,b); };

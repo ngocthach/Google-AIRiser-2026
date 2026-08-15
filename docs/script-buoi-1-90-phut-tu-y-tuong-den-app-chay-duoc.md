@@ -269,6 +269,20 @@ Chỉ dòng in đậm:
 
 > "Dòng KHÔNG LÀM còn dùng lại hai lần nữa: nó là lá chắn phạm vi lúc code, và là câu 'những gì chúng tôi cố tình không làm' trong bài nộp."
 
+Chỉ nút **COPY FULL**, rồi nói:
+
+> "Năm dòng này là thứ *bạn* phải nhớ. Nhưng khi cần người khác hiểu sản phẩm của bạn — bạn đời, giám khảo, hay một người bạn muốn rủ vào nhóm — thì năm dòng là chưa đủ."
+
+> "Bấm COPY FULL, bạn được thêm một prompt biến năm dòng này thành **PRD một trang**. Sáu mục: vấn đề, cho ai, thế nào là thành công, user story, ngoài phạm vi, và câu hỏi còn bỏ ngỏ."
+
+Nhấn hai ràng buộc trong prompt đó — đây mới là phần đáng nói:
+
+> "Thứ nhất: **không có timeline, không có cơ cấu nhóm, không có lựa chọn công nghệ.** Mấy thứ đó là việc của chặng Plan. PRD chỉ nói về sản phẩm."
+
+> "Thứ hai: **mục nào cần hơn 120 chữ nghĩa là bạn chưa quyết định đủ** — và prompt bắt nó nói thẳng ra thay vì viết cho dài. PRD dài không phải là PRD tốt; nó thường là chỗ giấu những thứ mình chưa nghĩ xong."
+
+*(Nếu có người hỏi "PRD có bắt buộc không?" — không. Năm dòng là đủ để một mình bạn làm. PRD là khi có người thứ hai.)*
+
 ---
 
 ## 00:33–00:42 — THỰC HÀNH 2 (slide 15, 9 phút)
@@ -293,15 +307,31 @@ Chỉ callout đỏ trước, vì đó là lý do chặng này tồn tại:
 
 > "Nhìn trước tới prompt build ở cuối buổi: nó ghi 'React, Tailwind'. Nhưng **không chặng nào quyết định điều đó cả** — nó chỉ xuất hiện, như thể đương nhiên. Tương tự: Firebase hay lưu tạm trong trình duyệt? Model nào? Bao nhiêu màn hình? Không ai chốt."
 
-> "Đó chính là chặng này. Chốt *làm gì* và *dựng bằng gì*, trước khi bàn tới màu sắc."
+> "Và câu hỏi lớn hơn: **hai mươi giờ có đủ không?** Nếu không hỏi bây giờ, bạn sẽ biết câu trả lời vào lúc hết giờ."
 
-Chỉ bốn mục trong prompt:
+Chỉ dòng in đậm đầu prompt — đây là chỗ hay bị hiểu sai:
 
-> "Bốn thứ, không hơn. Tính năng — cái nào làm, cái nào cắt. Màn hình — ít nhất bao nhiêu cái, mỗi cái một việc. Stack — frontend, dữ liệu, và AI gọi thế nào. Dữ liệu — hai ba thực thể là đủ."
+> "Để ý dòng này: **'đừng nhắc lại sản phẩm, người dùng, hay tính năng'**. Mấy thứ đó chốt xong ở chặng 2 rồi. Chặng này chỉ trả lời hai câu: **dựng bằng gì**, và **có vừa không**."
 
-Dừng ở dòng *if the in-list is longer than 5 items, cut again*:
+> "Đây là cách chia của Spec-Driven Development: tách *cái gì* ra khỏi *làm thế nào*. Trộn hai thứ lại là lúc phạm vi âm thầm phình ra — vì mỗi lần bàn kỹ thuật, người ta lại nghĩ ra thêm tính năng."
 
-> "Dòng này làm việc nặng nhất. Ai cũng liệt kê mười hai tính năng rồi gọi đó là MVP. Bắt nó cắt xuống năm — vẫn thấy dài thì cắt tiếp."
+**PART A — HOW.**
+
+> "Màn hình, stack, mô hình dữ liệu. Ba thứ. Và dòng về AI phải ghi đủ ba mảnh: SDK nào, model nào, **key nằm ở đâu**."
+
+**PART B — TASKS.** Nói chậm phần này:
+
+> "Mỗi task bốn cột: làm ra cái gì, mấy giờ, phụ thuộc task nào, và **tiêu chí duy nhất nói rằng nó xong**."
+
+> "Cột cuối là cột hay bị bỏ. Không có nó, 'làm màn hình Gate' là một việc không bao giờ kết thúc — lúc nào cũng còn sửa được. Có nó — *'link được chấp nhận hoặc bị từ chối'* — thì có một khoảnh khắc rõ ràng để dừng."
+
+**Và đây là dòng đắt nhất cả prompt:**
+
+> "**'Cộng giờ lại. Nếu vượt quá ngân sách, đừng đưa kế hoạch cho tôi — hãy cắt bớt cho vừa, rồi nói rõ đã cắt gì.'**"
+
+> "Bình thường bạn hỏi 'kế hoạch này ổn không', model bảo ổn. Dòng này bắt nó **tự làm phép cộng** rồi đối chiếu với thời gian bạn có. Kế hoạch tự kiểm tra chính nó."
+
+> "Và tôi thêm cả chiều ngược lại: nếu tổng dưới một nửa ngân sách thì hoặc bạn đặt phạm vi quá nhỏ, hoặc nó ước lượng quá lạc quan — bắt nó nói rõ là cái nào."
 
 Dòng cuối — dòng này cần giải thích, vì hai chữ "boring" hay bị hiểu nhầm:
 
@@ -323,45 +353,41 @@ Dòng cuối — dòng này cần giải thích, vì hai chữ "boring" hay bị
 
 **Slide 18 — bản kế hoạch thật.**
 
-Đây là slide dày nhất chặng này. Đi theo bốn khối, mỗi khối một ý — đừng đọc hết một lượt.
+Đi theo ba khối, đừng đọc hết một lượt.
 
-> "Đây là thứ chạy ra từ prompt vừa nãy, trong một lần chạy thật. Cả bản kế hoạch nằm gọn trên một màn hình. Nếu của bạn dài hơn thế này, bạn chưa cắt đủ."
+> "Đây là thứ chạy ra từ prompt vừa nãy, trong một lần chạy thật. Cả bản kế hoạch nằm gọn một màn hình."
 
-**Khối 1 — hai cột tính năng.** Chỉ tay từ trái sang phải:
+**Khối đầu — hai dòng xám trên cùng.**
 
-> "Bên trái bốn dòng: nộp link chứng minh, tự động gắn thẻ kỹ năng, xem mạng lưới, xin tham gia. Đó là toàn bộ MVP. Bốn dòng."
+> "Để ý ngay dòng đầu: *'PRD ở chặng 2 — không nhắc lại ở đây.'* Tài liệu này **không** kể lại sản phẩm là gì. Nó chỉ trả lời: dựng bằng gì, và có vừa không."
 
-> "Nhưng cột **bên phải mới là cột làm việc.** Payments — bỏ, vì cộng đồng chỉ cam kết hỗ trợ chứ không giao dịch. Dưới 18 tuổi — bỏ, vì Nghị định 13. Chat — bỏ, để sau. App di động — bỏ, web trước."
+**PART A — HOW.**
 
-> "Để ý mỗi dòng cắt đều kèm **một lý do một câu**. Không phải 'chưa kịp làm' — mà một lý do bạn bảo vệ được. Cái đó lát nữa đi thẳng vào bài nộp."
+> "Ba màn hình, mỗi màn một việc. Đọc lại ba dòng đó xem — **không dòng nào có chữ 'và'**. Màn hình nào mà mô tả phải dùng chữ 'và' là màn hình làm hai việc, phải tách hoặc cắt."
 
-**Khối 2 — ba màn hình.**
+Chỉ dòng AI trong khối Stack:
 
-> "Ba màn hình, mỗi màn một việc. The Gate: chặn cho tới khi có bằng chứng. The Network: hiện những người đã qua cổng. Proof Detail: xin hợp tác một cú bấm."
+> "`@google/genai` — thư viện nào. `Gemini 2.5 Flash` — model nào, và Flash vì nó nhanh và rẻ, không phải vì mạnh nhất. `key in process.env` — **chìa khoá nằm ở biến môi trường trên server, không nằm trong code chạy ở trình duyệt.**"
 
-> "Đọc lại ba dòng đó xem — không dòng nào có chữ 'và'. Màn hình nào mà mô tả có chữ 'và' là màn hình làm hai việc, phải tách hoặc cắt."
+> "Dòng cuối đó là dòng về bảo mật. Nếu key nằm trong code frontend thì ai mở DevTools cũng lấy được, và hoá đơn là của bạn. Hỏi ngay từ chặng lập kế hoạch thì nó miễn phí. Phát hiện sau khi build xong thì phải sửa lại kiến trúc."
 
-**Khối 3 — STACK.** Đây là khối quan trọng nhất slide, nói chậm lại:
+**PART B — TASKS. Đây là khối mới, và là khối đáng giá nhất slide.**
 
-> "Đây là thứ mà chặng 5 sẽ ăn. Ba dòng."
+> "Năm task. Mỗi dòng: làm ra gì, mấy giờ, phụ thuộc cái nào, và tiêu chí xong."
 
-> "Frontend: React với TypeScript. Dữ liệu và đăng nhập: Firebase Auth cộng Firestore. Và dòng thứ ba — AI gọi thế nào."
+> "Cột phụ thuộc cho bạn thứ tự bắt buộc. T3 phụ thuộc T1 — nghĩa là đừng đụng vào phần gọi Gemini trước khi màn hình Gate chạy được. Không có cột này, người ta hay làm phần vui trước, rồi kẹt."
 
-Chỉ từng phần dòng AI:
+Chỉ dòng tổng:
 
-> "`@google/genai` — thư viện nào. `Gemini 2.5 Flash` — model nào, và Flash vì nó nhanh và rẻ, chứ không phải vì nó mạnh nhất. `process.env.GEMINI_API_KEY` — **chìa khoá nằm ở biến môi trường trên server, không nằm trong code chạy ở trình duyệt.**"
+> "**Mười tám giờ trên ngân sách hai mươi.** Đây là lúc bản kế hoạch tự kiểm tra chính nó. Nếu ra hai mươi tám giờ, nó phải quay lại cắt — chứ không được đưa cho bạn một kế hoạch không khả thi rồi để bạn tự phát hiện vào tối thứ Bảy."
 
-> "Dòng cuối cùng đó là dòng về bảo mật. Nếu key nằm trong code frontend thì bất kỳ ai mở DevTools cũng lấy được, và hoá đơn là của bạn. Hỏi ngay từ chặng lập kế hoạch thì nó miễn phí. Phát hiện sau khi build xong thì phải sửa lại kiến trúc."
+Chỉ dòng cuối cùng:
 
-> "Và dòng cuối: AI ở đây làm đúng một việc — đọc link portfolio rồi gắn thẻ năng lực. Không phải 'tích hợp AI' chung chung. Một việc, nói được thành câu."
-
-**Khối 4 — dữ liệu.**
-
-> "Ba thực thể, mỗi cái vài trường. User, Project, Request. Hết. Chưa có gì về thông báo, bình luận, hay lịch sử — vì chưa cắt thì không biết cần, mà đoán trước thì chín trên mười lần là đoán sai."
+> "Và nó ghi rõ **đã cắt gì để vừa**: tính năng 'follow a peer', ba giờ, vì mạng lưới vẫn chạy được mà không cần nó. Đó là câu bạn viết lại trong bài nộp."
 
 **Câu chốt slide:**
 
-> "Bản kế hoạch này mất bảy phút để làm ra. Nó tiết kiệm cho bạn cái cảnh ngồi giữa chặng code rồi tự hỏi 'ủa mình lưu cái này ở đâu nhỉ' — và trả lời bằng cách tự bịa ra một câu trả lời khác với câu hôm qua."
+> "Bản kế hoạch này mất bảy phút. Nó tiết kiệm cho bạn cái cảnh ngồi giữa chặng code rồi tự hỏi 'ủa mình lưu cái này ở đâu nhỉ' — và trả lời bằng một câu khác với câu hôm qua."
 
 ---
 
@@ -437,7 +463,19 @@ Chỉ dòng scope:
 
 **Slide 27 — ví dụ điền thật, từ một lần chạy có thật.**
 
-> "Đây là prompt build đó, điền bằng kết quả thật của chặng 1 đến 3."
+> "Đây là prompt build đó, điền bằng kết quả thật của chặng 1 đến 4."
+
+Chỉ dòng **Stack (from the plan)**:
+
+> "Để ý dòng này — nó không phải tôi tự nghĩ ra. Nó copy thẳng từ khối STACK trong bản kế hoạch ở chặng 3. Nếu bản kế hoạch ghi CSS custom properties thì ở đây là CSS custom properties, không phải Tailwind."
+
+Chỉ dòng xám ngay dưới — đây là chỗ hay bị hỏi:
+
+> "Và dòng này trả lời một câu chắc chắn có người thắc mắc: bản kế hoạch ghi Firebase và Gemini, sao ở đây lại 'no login, no database'?"
+
+> "Vì đây mới là **lớp một**. Bản kế hoạch mô tả sản phẩm hoàn chỉnh; prompt build đầu tiên chỉ dựng phần giao diện và trạng thái cục bộ. Firebase và lời gọi Gemini vào ở lớp sau, khi màn hình này đã chạy đúng."
+
+> "Xin cả bốn thứ trong một lượt thì nó vỡ, và bạn không biết chỉ thị nào gây ra."
 
 Chỉ vào tên sản phẩm:
 
