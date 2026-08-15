@@ -1,6 +1,6 @@
 # Script buổi 1 — 90 phút: "Từ ý tưởng đến app chạy được"
 
-Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (38 slide)
+Deck: `docs/slides/mvp-pipeline-prompting-slides.html` (39 slide)
 Khán giả: sinh viên / fresher / junior, có mang laptop
 Kết quả mong muốn: mỗi người rời phòng với **một app chạy được trên điện thoại của chính mình**, và 4 artifact viết ra giấy (problem brief, quyết định, bản kế hoạch, bộ token).
 
@@ -37,18 +37,18 @@ App làm ví dụ xuyên suốt: **Ươm Mầm** (`docs/newbie-guide-student-ide
 | 00:47–00:54 | 19 | **THỰC HÀNH 3** | Làm (7′) |
 | 00:54–01:02 | 20–23 | Design system | Nói (8′) |
 | 01:02–01:11 | 24 | **THỰC HÀNH 4** | Làm (9′) |
-| 01:11–01:16 | 25–27 | Code + ví dụ điền build prompt | Nói (5′) |
-| 01:16–01:29 | 28 | **THỰC HÀNH 5** | Làm (13′) |
-| 01:29–01:34 | 29–30 | Test | Nói (5′) |
-| 01:34–01:39 | 31–32 | Đánh giá | Nói (5′) |
-| 01:39–01:45 | 33 | Publish + publish tại chỗ | Làm (6′) |
-| 01:45–01:51 | 34–35 | Nộp bài & video demo | Nói (6′) |
-| 01:51–01:55 | 36–37 | Tổng kết | Nói (4′) |
-| 01:55–01:57 | 38 | Đóng + Q&A | Nói (2′) |
+| 01:11–01:18 | 25–28 | Code + hai ví dụ điền build prompt | Nói (7′) |
+| 01:18–01:31 | 29 | **THỰC HÀNH 5** | Làm (13′) |
+| 01:31–01:36 | 30–31 | Test | Nói (5′) |
+| 01:36–01:41 | 32–33 | Đánh giá | Nói (5′) |
+| 01:41–01:47 | 34 | Publish + publish tại chỗ | Làm (6′) |
+| 01:47–01:53 | 35–36 | Nộp bài & video demo | Nói (6′) |
+| 01:53–01:57 | 37–38 | Tổng kết | Nói (4′) |
+| 01:57–01:59 | 39 | Đóng + Q&A | Nói (2′) |
 
-**Bảng trên là bản đầy đủ — 117 phút**, chạy hết cả 9 chặng.
+**Bảng trên là bản đầy đủ — 119 phút**, chạy hết cả 9 chặng.
 
-Đến 01:29 là khung cứng: năm slide THỰC HÀNH đều có đồng hồ đếm phút hiện trên màn hình (10 / 9 / 7 / 9 / 13), lệch là slide nói dối anh giữa buổi.
+Đến 01:31 là khung cứng: năm slide THỰC HÀNH đều có đồng hồ đếm phút hiện trên màn hình (10 / 9 / 7 / 9 / 13), lệch là slide nói dối anh giữa buổi.
 
 **Để về 90 phút** thì cắt theo thứ tự này:
 
@@ -73,7 +73,7 @@ Cắt hết → **91 phút**. Đừng dạy trùng nội dung buổi 2 nếu hai
 | Tool | Chặng | Slide |
 |---|---|---|
 | **Gemini chat** — `gemini.google.com` | 01 Research · 02 Brainstorm · 03 Plan · 04 Design | 7, 9, **10** · 12, 13, **15** · 17, **19** · 22, 23, **24** |
-| **AI Studio** — `ai.dev` → Build | 05 Code · 08 Deploy | 25, 26, 27, **28** · 33 |
+| **AI Studio** — `ai.dev` → Build | 05 Code · 08 Deploy | 25, 26, 27, 28, **29** · 34 |
 
 Mỗi slide có việc phải làm đều mang **badge tool ở góc phải trên**. Khi chuyển tool thì chỉ tay lên đó, đừng chỉ nói.
 
@@ -447,7 +447,7 @@ Chỉ callout xanh:
 
 ---
 
-## 01:11–01:16 — Code (slide 25–27)
+## 01:11–01:18 — Code (slide 25–28)
 
 **Slide 25 — xây theo lớp.**
 
@@ -487,9 +487,25 @@ Chỉ nút COPY FULL:
 
 > "Trên màn hình tôi chỉ để phần rút gọn cho dễ đọc. Bấm nút này là copy đủ cả bộ token — đừng ngồi chép tay từ máy chiếu."
 
+**Slide 28 — hai màn hình còn lại.**
+
+> "Bản kế hoạch nói ba màn hình. Vừa rồi mới dựng một. Đây là hai cái còn lại — và điều đáng chú ý không phải nội dung, mà là **prompt gần như không đổi**."
+
+Chỉ hai dòng xám trên cùng:
+
+> "Stack, bộ token, scope, accessibility — **giống hệt màn 1, từng chữ**. Chỉ bốn dòng đổi: việc của màn, hành động chính, empty state, error state."
+
+> "Đó là toàn bộ điểm của bốn chặng đầu. Đến màn thứ ba, bạn không còn *viết* prompt nữa — bạn **điền vào một cái form đã có sẵn**."
+
+Chỉ dòng cuối trong khung:
+
+> "Và vẫn là luật cũ: **làm từng màn một**, test xong mới sang màn kế. Xin cả hai trong một tin nhắn thì nó vỡ, và bạn không biết chỗ nào hỏng."
+
+*(Nếu ai hỏi 'em có phải build cả ba màn không?' — không. Một màn chạy được đã đủ nộp bài. Hai màn còn lại là để về nhà.)*
+
 ---
 
-## 01:16–01:29 — THỰC HÀNH 5 (slide 28, 13 phút)
+## 01:18–01:31 — THỰC HÀNH 5 (slide 29, 13 phút)
 
 > "Mười ba phút — khối dài nhất. Mở ai.dev, vào Build, dán prompt build kèm bộ token của bạn."
 
@@ -499,9 +515,9 @@ Chỉ nút COPY FULL:
 
 ---
 
-## 01:29–01:34 — Test (slide 29–30)
+## 01:31–01:36 — Test (slide 30–31)
 
-**Slide 29 — test để sống sót, không phải để đủ coverage.**
+**Slide 30 — test để sống sót, không phải để đủ coverage.**
 
 > "Đổi lại cách nghĩ về test. App của bạn không cần 80% coverage. Nó cần sống sót bốn phút trước mặt **một người không phải bạn** — người không biết chỗ nào nên tránh bấm."
 
@@ -513,7 +529,7 @@ Câu chốt của slide:
 
 > "Người dựng app luôn bấm đúng chỗ mình đã quen. Người lạ thì không. Toàn bộ việc test ở giai đoạn này là đi tìm những chỗ mà chỉ người lạ mới bấm vào."
 
-**Slide 30 — prompt test.**
+**Slide 31 — prompt test.**
 
 Chỉ vào dòng "no code needed" trước tiên — đây là chỗ nhiều người vướng:
 
@@ -541,9 +557,9 @@ Chỉ dòng cuối:
 
 ---
 
-## 01:34–01:39 — Đánh giá (slide 31–32)
+## 01:36–01:41 — Đánh giá (slide 32–33)
 
-**Slide 31 — chấm theo thang điểm thật.**
+**Slide 32 — chấm theo thang điểm thật.**
 
 > "'App em ổn chưa ạ?' là câu không ai trả lời được — kể cả AI. Đổi thành: 'nó có ăn điểm theo đúng tiêu chí sẽ bị chấm không?' Câu đó trả lời được, và quan trọng hơn, **sửa được**."
 
@@ -557,7 +573,7 @@ Chỉ callout:
 
 > "Lấy thang điểm thật **trước khi build**, không phải sau. Nó cho bạn biết công sức bỏ vào đâu thì ra điểm — và quan trọng không kém, chỗ nào bỏ công vào cũng không ra điểm."
 
-**Slide 32 — prompt đánh giá.**
+**Slide 33 — prompt đánh giá.**
 
 Chỉ cụm "specific in the product":
 
@@ -573,7 +589,7 @@ Chỉ dòng cuối cùng:
 
 ---
 
-## 01:39–01:45 — Publish (slide 33)
+## 01:41–01:47 — Publish (slide 34)
 
 > "Bây giờ lấy link thật. Miễn phí, không cần thẻ."
 
@@ -589,9 +605,9 @@ Chỉ dòng cuối cùng:
 
 ---
 
-## 01:45–01:51 — Nộp bài & video demo (slide 34–35)
+## 01:47–01:53 — Nộp bài & video demo (slide 35–36)
 
-**Slide 34 — hai cái link, và người ta nộp nhầm.**
+**Slide 35 — hai cái link, và người ta nộp nhầm.**
 
 > "Chỗ này mất điểm oan nhiều nhất trong cả cuộc thi, và nó **không liên quan gì tới kỹ thuật**."
 
@@ -609,7 +625,7 @@ Chỉ dòng cuối bảng:
 
 > "Đừng ngại viết ra những gì mình đã cắt. Một người viết 'tôi cố tình không làm phần thanh toán vì đối tượng là học sinh dưới 16 tuổi, và luật không cho' — người đó nghe như một người hiểu việc. Người viết một danh sách tính năng dài dằng dặc mà nửa số đó không chạy thì ngược lại."
 
-**Slide 35 — video 90 giây.**
+**Slide 36 — video 90 giây.**
 
 > "Đây là artifact duy nhất được xem hết từ đầu đến cuối. Bài viết thì người ta lướt, code thì người ta mở ra rồi đóng lại — video thì xem hết."
 
@@ -627,19 +643,19 @@ Thêm một câu trấn an:
 
 ---
 
-## 01:51–01:55 — Tổng kết (slide 36–37)
+## 01:53–01:57 — Tổng kết (slide 37–38)
 
-**Slide 36 — ngân sách giờ.**
+**Slide 37 — ngân sách giờ.**
 
 > "Nếu bạn có một cuối tuần, đây là chỗ giờ thực sự đi. Để ý ba chặng đầu: một phần tư thời gian, không có dòng code nào."
 
-**Slide 37 — bỏ chặng.**
+**Slide 38 — bỏ chặng.**
 
 > "Và đây là phần thật lòng. Bỏ chặng không tiết kiệm được thời gian — nó quay lại dưới dạng làm lại, vào lúc tệ hơn, khi bạn còn ít thời gian hơn."
 
 ---
 
-## 01:55–01:57 — Đóng (slide 38)
+## 01:57–01:59 — Đóng (slide 39)
 
 > "Buổi sau chúng ta lấy chính app này, tìm chỗ nó vỡ, chấm điểm nó theo thang thật, rồi nộp — nộp ngay trong phòng, không phải 'về nhà rồi nộp'."
 
@@ -651,8 +667,8 @@ Thêm một câu trấn an:
 
 Cắt theo đúng thứ tự này:
 
-1. Slide 29–32 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
-2. Slide 37 (bỏ chặng) — gộp một câu vào slide 31
+1. Slide 30–33 (lướt test/đánh giá) — bỏ hẳn, để buổi sau
+2. Slide 38 (bỏ chặng) — gộp một câu vào slide 31
 3. THỰC HÀNH 3 từ 9′ → 6′, bảo họ chỉ lấy phần màu và chữ
 4. Slide 14 (artifact brainstorm) — nói miệng thay vì chiếu
 

@@ -164,7 +164,7 @@ pre .c{color:#8FA5BC}
 </section>
 
 <!-- 2 the nine stages -->
-<section class="slide" data-notes="Don't read all eight. Point out that the first three are where people skip, and where this talk spends its time.">
+<section class="slide" data-notes="Don't read all nine. Point out that the first four are where people skip, and where this talk spends its time.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
   <div class="eyebrow">The pipeline</div>
   <h2>Nine stages, in this order</h2><div class="rule"></div>
@@ -640,9 +640,9 @@ Not repeated here. This document only answers HOW, and whether it fits.</span>
  Screens   The Gate — force proof before access
            The Network — show vetted peers and projects
            Proof Detail — one-click collaboration request
- Stack     React (TypeScript) + CSS custom properties
+ Stack     React (TypeScript) + Tailwind, every value a CSS variable
            Firebase Auth (Sign in with Google) + Cloud Firestore
-           @google/genai · Gemini 2.5 Flash · key in process.env
+           @google/genai · current Flash model · AI Studio holds the key
  Data      User(uid, name, proofUrl, tags[])
            Project(id, ownerUid, title, need, proofUrl)
            Request(id, projectId, fromUid, status)
@@ -694,6 +694,28 @@ Not repeated here. This document only answers HOW, and whether it fits.</span>
   </div>
 </section>
 
+<!-- tokens buy consistency, not taste -->
+<section class="slide" data-notes="Slide quan trọng nhất của chặng Design. Nói thẳng: bộ token đúng chuẩn vẫn có thể ra một app trông y hệt mọi app AI khác. Chỉ vào bảng bên trái — đó là màu mặc định model sẽ tự chọn nếu mình không chốt gì.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">The trap in the previous slide</div>
+  <h2>Tokens buy consistency. They do not buy taste.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>What you get by default</h3>
+        <p>Indigo <code>#4F46E5</code> · near-white page · <code>#111827</code> text · Inter · radius 12 · a soft grey shadow. Consistent, accessible, and identical to every other app generated this year. The model reached for the average because you gave it nothing to reach for.</p></div>
+      <div class="card go"><h3>What makes it yours</h3>
+        <ul class="check tight">
+          <li>An <b>atmosphere</b> you committed to, in one sentence</li>
+          <li>ONE accent, with a reason, used only where I can click</li>
+          <li>A <b>geometry</b> decision — pill or rectangular, not both</li>
+          <li>A <b>density</b> decision — compact or breathing</li>
+          <li>A list of the defaults you <b>forbade</b></li>
+        </ul></div>
+    </div>
+    <div class="callout"><p>Tokens are the memory. <strong>The principles are the taste.</strong> The next prompt asks for both — most people only ask for the first half.</p></div>
+  </div>
+</section>
+
 <!-- 15 design system prompt -->
 <section class="slide" data-notes="Point at the WCAG line — it forces accessibility, which is usually a scored criterion.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
@@ -703,7 +725,7 @@ Not repeated here. This document only answers HOW, and whether it fits.</span>
     <script type="text/plain" id="full-design-system">
 You are a product designer who builds design systems before screens.
 
-Input — the plan (slide 17). The product, the users and
+Input — the plan (slide 18). The product, the users and
 the screen list are already decided there; do not re-derive them.
 
 Product: The Proof-of-Work Protocol — university students aged 18-22
@@ -712,8 +734,10 @@ file, a slide deck) before the network of other students and their
 projects is revealed to them.
 Users: students entering a competitive job market, building a
 portfolio under time pressure.
-Should feel: serious, dense, earned — not playful, not corporate.
-Platform: web first, mobile-first layout.
+Should feel: serious, dense, earned.
+Anti-feel: must NOT feel playful, and must NOT feel corporate-SaaS.
+Platform: web first, mobile-first layout, built in Google AI Studio
+(React + Tailwind).
 
 Reference aesthetic — follow these PRINCIPLES, do not copy any brand:
 - Content-first darkness: the interface recedes into near-black so
@@ -742,34 +766,49 @@ Give me tokens, not prose:
 - Spacing: an 8px-based scale, 6 steps.
 - Radius: 5 steps, including a pill value and a circle value.
 - Shadows: 2 levels, tuned for a dark surface.
+- Layout: container max-width, grid columns and gap, three breakpoints
+  with what actually changes at each one, minimum touch target size,
+  and one transition duration. Without these every screen comes back
+  as a centred column with even gaps, which is the look I am trying
+  to avoid.
 - Component rules for: button (3 states, pill geometry), input,
   card, list row.
+- DO and DON'T: five rules each, specific to this system. For the
+  DON'T list, name the defaults an AI coding agent would reach for
+  if I said nothing — the indigo accent, the near-white page, the
+  uniform 12px radius, the soft grey shadow, the evenly spaced
+  centred column — and forbid each one explicitly.
 
 Constraints: no gradients, max 2 font weights, ONE accent colour.
 
-Output as CSS custom properties I can paste straight into a build
-prompt, then one line on why you chose that accent colour.
+Output the whole thing as a DESIGN.md I can drop into the project
+root, with the tokens as CSS custom properties in a :root block so I
+can paste them straight into a build prompt. End with one line on why
+you chose that accent colour.
 </script>
-    <pre class="sm" data-full="#full-design-system">You are a product designer who builds design systems before screens.
+    <pre class="sm" data-full="#full-design-system">You are a product designer who writes <span class="k">DESIGN.md</span> files that AI agents
+read before generating UI.
+Input: [the plan — <span class="c">slide 18</span>]. Should feel: [3 adjectives].
+<span class="k">Anti-feel: [2 adjectives it must NOT feel].</span> AI Studio, React + Tailwind.
 
-<span class="k">Input: [paste the plan — <span class="k">slide 17</span>]</span>
-Should feel: [3 adjectives]. Platform: mobile-first web.
+<span class="k">FIRST commit to an aesthetic — 5 principles, each a decision with a
+consequence, not an adjective:</span> light or dark, and why <em>this</em> product ·
+the surface ladder, not one flat background · ONE accent, functional
+only · geometry: pill or rectangular · density: compact or airy.
 
-<span class="k">Give me tokens, not prose:</span>
-- Colour: bg, surface, text-primary, text-secondary, border, brand,
-  + semantic success / warning / danger. Hex values.
-  <span class="k">State the contrast ratio for every text-on-background pair
-  and confirm each passes WCAG AA.</span>
-- Type: one font stack + exactly 6 sizes in px with their use
-  (display, title, subtitle, body, small, micro) and line-heights.
-- Spacing: an 8px-based scale, 6 steps.
-- Radius, border width, one shadow.
-- Rules for: button (3 states), input, card, list row.
+<span class="k">THEN tokens, not prose:</span>
+- Colour: page, surface, surface-raised, text-primary/secondary, border,
+  accent + success/warning/danger. Hex. <span class="k">Contrast for every
+  text-on-bg pair — compute it, do not assume it.</span>
+- Type: one stack + fallback, 6 sizes with use + line-height.
+  Spacing 8px · radius 5 steps · 2 shadows.
+- <span class="k">LAYOUT: container max-width, grid, 3 breakpoints and what changes
+  at each, min touch target, one transition duration.</span>
+- Components: button (3 states), input, card, list row.
+- <span class="k">DO / DON'T, 5 each. Name the default an AI would reach for — forbid it.</span>
 
-Constraints: no gradients, max 2 font weights, ONE accent colour.
-
-Output as CSS custom properties I can paste, then one line on why
-you chose the brand colour.</pre>
+Output as CSS custom properties inside a DESIGN.md. And ask me the
+3 questions that would most change your answer before you start.</pre>
   </div>
 </section>
 
@@ -789,7 +828,9 @@ For each screen — its job is already fixed by the plan:
 - The empty state and the error state
 
 <span class="k">Then list every place the token set was not enough, and
-propose the smallest addition</span> rather than inventing freely.</pre>
+propose the smallest addition</span> rather than inventing freely.
+Fold those additions back into DESIGN.md so there is still
+<span class="k">one source</span> when I paste it into the build prompt.</pre>
     <div class="callout green"><p>Empty and error states are where generated UIs fall apart — and where a judge or user lands first. Ask for them by name.</p></div>
   </div>
 </section>
@@ -811,15 +852,16 @@ propose the smallest addition</span> rather than inventing freely.</pre>
   <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
   <div class="body">
     <div class="flow">
-      <div class="step"><span class="n">L1</span><h3>Core logic</h3><p>The one thing the app does. Ugly is fine.</p></div>
+      <div class="step"><span class="n">L1</span><h3>Screen 1, with the system</h3><p>Tokens go in the <em>first</em> message. Never "pretty later".</p></div>
       <div class="arw">→</div>
-      <div class="step"><span class="n">L2</span><h3>The system</h3><p>Apply the tokens. Now it looks designed.</p></div>
+      <div class="step"><span class="n">L2</span><h3>The other screens</h3><p>Same tokens, byte for byte.</p></div>
       <div class="arw">→</div>
       <div class="step"><span class="n">L3</span><h3>AI features</h3><p>The part that needs the model.</p></div>
       <div class="arw">→</div>
       <div class="step"><span class="n">L4</span><h3>States</h3><p>Empty, loading, error, accessibility.</p></div>
     </div>
     <div class="callout"><p>Test after each layer. When you ask for everything at once and it breaks, you have no idea which instruction caused it.</p></div>
+    <div class="callout red"><p><strong>Tokens are not a later layer.</strong> Once the agent has committed to a component structure with its own hardcoded values, retrofitting a design system costs more turns than building with it did.</p></div>
   </div>
 </section>
 
@@ -829,21 +871,24 @@ propose the smallest addition</span> rather than inventing freely.</pre>
   <div class="eyebrow">Copy this — build prompt</div>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
-    <pre>Build [screen 1] of [product].
-<span class="k">Stack: [the STACK block from the plan — <span class="k">slide 17</span>]</span>
+    <pre class="sm">Build [screen 1] of [product].
+<span class="k">Stack: [the STACK block from the plan — <span class="c">slide 18</span>]</span>
+<span class="k">Use exactly these design tokens — no colours, sizes or spacing
+outside this set:</span> [paste the CSS custom properties — <span class="c">slide 23</span>]
 
-<span class="k">Use exactly these design tokens — introduce no colours, sizes,
-or spacing outside this set:</span>
-[paste the CSS custom properties — <span class="k">slide 22</span>]
+<span class="k">How to use them — this part is not optional:</span>
+- :root in index.css, <span class="k">registered in the Tailwind theme</span> so every
+  utility class resolves to a token.
+- <span class="k">No raw hex, no arbitrary values</span> — no bg-[#…], no p-[13px].
+- <span class="k">Write DESIGN.md to the project root and re-read it before
+  every later change I ask for.</span>
 
-This screen's job: [the job the plan already gave this screen]
-Primary action: [action] → [what happens]
-Include the empty state and the error state.
-
+Job: [the job the plan gave this screen]. Primary action: [action] →
+[what happens]. Include the empty state and the error state.
 <span class="k">Scope: single screen. No routing, no login, no database.</span>
-Seed with [N] realistic sample items so it is never empty.
-
-Output complete working code. No placeholders, no "add logic here".</pre>
+Seed [N] realistic items and <span class="k">generate the images they need</span>.
+Output complete working code. No placeholders.</pre>
+    <div class="callout red"><p>Without the middle block, "use these tokens" is a wish. The agent writes your CSS variables into a file, then styles the app with its own defaults on top. <strong>That is why the output looks nothing like the system you just designed.</strong></p></div>
   </div>
 </section>
 
@@ -856,11 +901,12 @@ Output complete working code. No placeholders, no "add logic here".</pre>
     <script type="text/plain" id="full-build-thegate">
 Build "The Gate" screen of The Proof-of-Work Protocol.
 
-Stack, taken from the plan (slide 17):
-- React (TypeScript), single-page, styled with CSS custom properties
+Stack, taken from the plan (slide 18):
+- React (TypeScript), single-page, Tailwind, with every value coming
+  from a CSS custom property
 - Firebase Auth (Sign in with Google) + Cloud Firestore
-- @google/genai on a Node backend, Gemini 2.5 Flash, key read from
-  process.env.GEMINI_API_KEY
+- @google/genai on a Node backend, the current Flash model, with the
+  API key left in AI Studio's server-side secret — never in client code
 
 For THIS first layer, build the UI and local state only. Do not wire
 up Firebase or the Gemini call yet — those come in the next layer,
@@ -869,49 +915,81 @@ once this screen looks and behaves correctly on its own.
 Use exactly these design tokens — introduce no colours, sizes, or
 spacing outside this set:
 
-  --color-bg:#FAFAFA;            --color-surface:#FFFFFF;
-  --color-text-primary:#111827;  --color-text-secondary:#4B5563;
-  --color-border:#E5E7EB;        --color-brand:#4F46E5;
-  --color-success:#10B981;  --color-warning:#F59E0B;  --color-danger:#EF4444;
+  /* content-first darkness: the page recedes, the users' work is the
+     only source of colour. One accent, functional only. */
+  --color-bg:#0B0C0E;              --color-surface:#141618;
+  --color-surface-raised:#1C1F22;  --color-surface-interactive:#25292D;
+  --color-text-primary:#F2F4F6;    --color-text-secondary:#9BA3AB;
+  --color-border:#2A2E33;
+  --color-brand:#C6F24E;           --color-on-brand:#0B0C0E;
+  --color-success:#4ADE80;  --color-warning:#FBBF24;  --color-danger:#F87171;
 
-  --font-stack:"Inter", system-ui, -apple-system, sans-serif;
-  --font-weight-regular:400;  --font-weight-bold:600;
-  --text-display:48px;   --lh-display:1.1;
-  --text-title:32px;     --lh-title:1.2;
-  --text-subtitle:20px;  --lh-subtitle:1.4;
-  --text-body:16px;      --lh-body:1.5;
-  --text-small:14px;     --lh-small:1.5;
-  --text-micro:12px;     --lh-micro:1.5;
+  /* compact scale — density over breathing room */
+  --font-stack:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-weight-regular:400;  --font-weight-bold:700;
+  --text-display:32px;   --lh-display:1.15;
+  --text-title:24px;     --lh-title:1.2;
+  --text-subtitle:18px;  --lh-subtitle:1.35;
+  --text-body:15px;      --lh-body:1.5;
+  --text-small:13px;     --lh-small:1.45;
+  --text-micro:11px;     --lh-micro:1.4;
 
-  --space-1:8px; --space-2:16px; --space-3:24px;
-  --space-4:32px; --space-5:48px; --space-6:64px;
-  --radius:12px; --border-width:1px;
-  --shadow:0 4px 12px rgba(17,24,39,0.05);
+  --space-1:4px;  --space-2:8px;   --space-3:12px;
+  --space-4:16px; --space-5:24px;  --space-6:40px;
 
-  --btn-default-bg:var(--color-brand);  --btn-default-text:#FFFFFF;
-  --btn-default-radius:var(--radius);
-  --btn-default-padding:var(--space-2) var(--space-3);
-  --btn-hover-bg:#4338CA;  --btn-hover-transform:translateY(-1px);
-  --btn-disabled-bg:#D1D5DB; --btn-disabled-text:#9CA3AF;
-  --input-bg:var(--color-bg);
-  --input-border:var(--border-width) solid var(--color-border);
-  --input-radius:var(--radius);  --input-padding:var(--space-2);
+  --radius-sm:6px; --radius:10px; --radius-lg:14px;
+  --radius-pill:999px; --radius-circle:50%;
+  /* shadows carry elevation, because 1px borders disappear on dark */
+  --shadow-1:0 1px 2px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-2:0 12px 32px rgba(0,0,0,.7);
+
+  /* layout — the tokens that stop every screen being a centred column */
+  --container-max:960px;  --grid-gap:var(--space-4);
+  --bp-sm:480px;  --bp-md:768px;  --bp-lg:1024px;
+  --touch-min:44px;  --motion:160ms cubic-bezier(.2,.8,.2,1);
+
+  --btn-default-bg:var(--color-brand);
+  --btn-default-text:var(--color-on-brand);
+  --btn-default-radius:var(--radius-pill);
+  --btn-default-padding:var(--space-3) var(--space-5);
+  --btn-min-height:var(--touch-min);
+  --btn-hover-bg:#D7FF6B;
+  --btn-disabled-bg:var(--color-surface-interactive);
+  --btn-disabled-text:#5C646C;
+  --input-bg:var(--color-surface-raised);
+  --input-border:1px solid var(--color-border);
+  --input-radius:var(--radius);
+  --input-padding:var(--space-3) var(--space-4);
   --input-focus-outline:2px solid var(--color-brand);
   --card-bg:var(--color-surface);
-  --card-border:var(--border-width) solid var(--color-border);
-  --card-radius:var(--radius);  --card-padding:var(--space-3);
-  --card-shadow:var(--shadow);
+  --card-border:1px solid var(--color-border);
+  --card-radius:var(--radius-lg);  --card-padding:var(--space-5);
+  --card-shadow:var(--shadow-1);
+  --list-row-padding:var(--space-3) var(--space-4);
 
-  /* the three gaps the design stage flagged */
-  --size-icon:24px;  --size-avatar:40px;
-  --color-overlay:rgba(17,24,39,0.4);
+  /* the gaps the design stage flagged */
+  --size-icon:20px;  --size-avatar:36px;
+  --color-overlay:rgba(0,0,0,.6);
   --focus-ring:2px solid var(--color-brand);
+
+  /* contrast, computed not assumed — all pass WCAG AA:
+     text-primary   on bg 17.8:1   on surface 16.5:1
+     text-secondary on bg  7.7:1   on surface  7.1:1
+     brand on bg 15.1:1 · on-brand on brand 15.1:1 */
+
+How to use them — this part is not optional:
+- Put them in index.css under :root, and register them in the Tailwind
+  theme so every utility class resolves to a token.
+- No raw hex and no arbitrary values anywhere in the markup: no
+  bg-[#...], no p-[13px], no text-[15px].
+- Write DESIGN.md to the project root containing this token set and
+  the rules above, and re-read it before every later change I ask for.
 
 This screen's job: force the user to submit verifiable proof of past
 work before they can view the network.
 
 Layout, top to bottom:
-- Background --color-bg, centered container, padding --space-5
+- Background --color-bg, container --container-max, padding --space-5
 - Title --text-display / bold / --color-text-primary: "Prove Your Work."
 - Subtitle --text-subtitle / --color-text-secondary, margin-bottom
   --space-3: "Upload a Figma link, GitHub repo, or slide deck to
@@ -934,31 +1012,32 @@ private."
 
 Scope: single screen. No routing, no login, no database.
 Seed with 8 realistic verified-peer entries so the revealed network is
-never empty.
+never empty, and generate the avatar and project thumbnail images they
+need — no grey placeholder boxes.
 Accessibility: keyboard reachable, --focus-ring on every focusable
-element, WCAG AA contrast, tap targets at least 44px.
+element, WCAG AA contrast, tap targets at least --touch-min.
 
 Output complete working code. No placeholders, no "add logic here".
 </script>
     <pre class="sm" data-full="#full-build-thegate">Build <span class="k">"The Gate"</span> screen of <span class="k">The Proof-of-Work Protocol</span>.
-<span class="k">Stack (from the plan):</span> React (TypeScript) + CSS custom properties.
+<span class="k">Stack (from the plan):</span> React (TS) + Tailwind, every value a CSS variable.
 <span class="c">Firebase + the Gemini call come later — this layer is UI and state only.</span>
 
 Use exactly these design tokens — no colours, sizes, or spacing
 outside this set:
-  --color-bg:#FAFAFA;  --color-surface:#FFFFFF;  --radius:12px;
-  --color-text-primary:#111827;  --color-brand:#4F46E5;
-  --text-display:48px/1.1;  --text-body:16px/1.5;  <span class="c">← full set in COPY FULL</span>
+  --color-bg:#0B0C0E;  --color-surface:#141618;  --radius-pill:999px;
+  --color-text-primary:#F2F4F6;  --color-brand:#C6F24E;  <span class="c">← the ONE accent</span>
+  --text-display:32px/1.15;  --text-body:15px/1.5;  --touch-min:44px;
+  <span class="c">← full set, layout tokens and contrast ratios in COPY FULL</span>
 
-<span class="c">Job:</span> force the user to submit verifiable proof of past work before
-they can view the network.
-<span class="c">Primary action:</span> "Submit Proof" → loading → verify link → reveal network.
-<span class="c">Empty state:</span> default; the user cannot proceed without input.
-<span class="c">Error state:</span> input border --color-danger, "Invalid URL format or
-repository is private."
+<span class="k">How to use them:</span> :root in index.css + registered in the Tailwind theme.
+<span class="k">No raw hex, no arbitrary values.</span> Write DESIGN.md and re-read it every time.
 
+<span class="c">Job:</span> force the user to submit verifiable proof before they see the network.
+<span class="c">Action:</span> "Submit Proof" → loading → verify link → reveal network.
+<span class="c">Error:</span> input border --color-danger, "Invalid URL format."
 <span class="k">Scope: single screen. No routing, no login, no database.</span>
-Seed with 8 verified-peer entries. Output complete working code.</pre>
+Seed 8 verified-peer entries. Output complete working code.</pre>
     <div class="callout green"><p>Notice the product changed name and audience after Research. <strong>That is the pipeline working</strong> — not drifting.</p></div>
   </div>
 </section>
@@ -970,9 +1049,9 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
   <h2>Same prompt. Four lines change.</h2><div class="rule"></div>
   <div class="body">
     <script type="text/plain" id="full-build-screens23">
-Both prompts below reuse the Stage 03 stack and the Stage 04 tokens
-byte for byte. Only the four screen-specific lines differ. Build them
-one at a time, testing after each — not both in one message.
+Both prompts below reuse the Stage 03 stack and the Stage 04 DESIGN.md.
+Only the four screen-specific lines differ. Build them one at a time,
+testing after each — not both in one message.
 
 
 =========== SCREEN 2 — "The Network" ===========
@@ -981,8 +1060,9 @@ Build "The Network" screen of The Proof-of-Work Protocol.
 Stack (from the plan): React (TypeScript) + CSS custom properties.
 Firebase + the Gemini call come later — this layer is UI and state only.
 
-Use exactly the same design tokens as the previous screen. Introduce
-no colours, sizes, or spacing outside that set.
+Re-read DESIGN.md and use only what is in it. Introduce no colours,
+sizes, or spacing outside that set, and no raw hex or arbitrary values
+in the markup.
 
 This screen's job: display vetted peers and their projects in a
 high-density layout, without distracting navigation structures.
@@ -1024,7 +1104,7 @@ Output complete working code. No placeholders.
 =========== SCREEN 3 — "Proof Detail" ===========
 
 Build the "Proof Detail" view of The Proof-of-Work Protocol.
-Same stack, same tokens as the previous two screens.
+Same stack. Re-read DESIGN.md and use only what is in it.
 
 This screen's job: showcase one peer's competence, and make the
 collaboration request a single tap.
@@ -1080,12 +1160,35 @@ Only these four lines change per screen.</span>
   </div>
 </section>
 
-<section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Ai xong sớm thì bảo publish luôn.">
+<!-- design QA — the only stage that had no check -->
+<section class="slide" data-notes="Chặng Design là chặng DUY NHẤT trước đây không có bước kiểm. Research có 'xoá ngay', Test có checklist, Eval có rubric — Design thì không, nên không ai biết token có vào được hay không cho tới lúc demo. Gemini đọc ảnh được: chụp màn hình app, dán lại, bắt nó tự soi.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — design QA prompt</div>
+  <h2>Screenshot it back, and make it audit itself</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Screenshot attached. Here is my DESIGN.md: [paste].
+
+Audit the screenshot against it, harshly:
+1. Every colour, size, spacing or radius on screen that is <span class="k">NOT in
+   the token set</span>. Name the element and the offending value.
+2. Every DON'T that got violated.
+3. Contrast: any text pair failing WCAG AA. <span class="k">Compute, don't assume.</span>
+4. Layout: where is this just <span class="k">"a centred column with even gaps"</span>?
+   Name the one change that would give it a density hierarchy.
+5. Rate 1–5: does this look <span class="k">designed, or generated?</span> Justify with
+   one specific thing on screen — not an impression.
+
+Then: the ONE prompt I should send AI Studio next to fix the worst.</pre>
+    <div class="callout green"><p>Every other stage has a check — Research has "delete on sight", Test has the checklist, Eval has the rubric. <strong>Design had none</strong>, which is why nobody finds out the tokens never landed until the demo.</p></div>
+  </div>
+</section>
+
+<section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Nhắc mọi người chạy prompt design QA ít nhất một lần. Ai xong sớm thì bảo publish luôn.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Thực hành 05 — dài nhất</div>
   <h2>Build đi</h2><div class="rule"></div>
   <p class="task">Mở <code>ai.dev</code> → Build. Dán prompt build kèm bộ token của bạn. Chạy. Rồi sửa từng lớp một.</p>
-  <div class="done"><b>Xong khi:</b> app chạy được trên <b>máy của bạn</b>. Xong sớm thì bấm Publish luôn.</div>
+  <div class="done"><b>Xong khi:</b> app chạy được trên <b>máy của bạn</b>, và bạn đã chụp màn hình chạy <b>prompt design QA</b> một lần. Xong sớm thì bấm Publish luôn.</div>
   <div class="clock"><div class="n">13</div><div class="u">phút</div></div>
 </section>
 
@@ -1124,8 +1227,9 @@ My app, in three lines:
 - The one output they get: either the network unlocks, or an inline
   error explaining why the link was rejected.
 
-Built with: React single-page app, Tailwind, running in Google AI
-Studio. One screen. No login, no database, no routing.
+Built with: React single-page app, Tailwind driven by a fixed token
+set, running in Google AI Studio. One screen. No login, no database,
+no routing.
 
 What I will demo, step by step:
 1. Open the published .ai.studio link on my phone, on venue wifi.
@@ -1204,9 +1308,9 @@ Criteria (AI Riser Vietnam 2026):
 Product: "The Proof-of-Work Protocol" — university students aged 18-22
 must upload verifiable proof of past work (a GitHub repo, a Figma
 file, a slide deck) before they can see or recruit from the network of
-other students' projects. Built in Google AI Studio, React + Tailwind,
-one screen working end to end, published to a public .ai.studio URL.
-Screenshots attached.
+other students' projects. Built in Google AI Studio, React + Tailwind
+driven by a fixed token set, one screen working end to end, published
+to a public URL. Screenshots attached.
 
 What I deliberately did NOT build, and why:
 - No payments — the community pledges support, it does not transact
@@ -1248,7 +1352,7 @@ a 6/10 I can fix tonight.</pre>
 </section>
 
 <!-- 23 deploy -->
-<section class="slide" data-notes="Starter Tier: free, no card. The condition is a never-published account. This trips up most of the room.">
+<section class="slide" data-notes="⚠️ KIỂM TRA TRƯỚC BUỔI HỌC: publish thử một app rác bằng tài khoản mới, tuần diễn ra workshop. Luồng Starter Tier / .ai.studio không còn nằm trong tài liệu chính thức của AI Studio (tài liệu hiện tại nói Cloud Run + export GitHub). Nếu luồng đã đổi, sửa slide này TRƯỚC — 40 người kẹt ở phút 70 là kiểu hỏng nặng nhất. Starter Tier: free, no card, điều kiện là tài khoản chưa từng publish.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Deploy <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Stage 08 — Deploy</div>
   <h2>A live URL, free, no credit card</h2><div class="rule"></div>
@@ -1358,7 +1462,7 @@ a 6/10 I can fix tonight.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 34</span></div>
+  <div><span id="counter">1 / 41</span></div>
 </div>
 
 <script>
