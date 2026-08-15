@@ -425,7 +425,7 @@ mentoring, hours. Pledges only, no payment processing).
   <div class="body">
     <pre>You are a product designer who is good at unusual angles.
 
-Input: [paste the problem brief from Research]
+Input: [paste the problem brief — slide 7]
 
 Generate 8 solutions. <span class="k">Force variety — 2 from each bucket:</span>
   A. The obvious approach, done unusually well
@@ -559,8 +559,7 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
 You are a technical product manager who cuts scope for a living.
 
 Input — the product is already decided. Paste whichever you have:
-[the 5-line decision from Brainstorm, or the one-page PRD if you
-wrote one]
+[the 5-line decision or the one-page PRD — slide 14]
 
 Budget: [N] hours, working [solo / team of N].
 
@@ -609,8 +608,7 @@ Rules:
 </script>
     <pre class="sm" data-full="#full-plan-prompt">You are a technical product manager who <span class="k">cuts scope for a living</span>.
 
-Input: [the 5-line decision from Brainstorm — or the PRD if you
-wrote one]. Budget: [N] hours, working [solo / team of N].
+Input: [the 5-line decision or the PRD — <span class="c">slide 14</span>]. Budget: [N] hours, working [solo / team of N].
 
 <span class="k">Do NOT restate the product, the users, or the features.</span> That is
 already settled. Decide only HOW it gets built, and whether it fits.
@@ -635,7 +633,7 @@ Prefer boring technology. Mark guesses as [UNVERIFIED].</pre>
   <div class="eyebrow">Worked example — from a real run</div>
   <h2>The plan artifact</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm" data-copy-label="COPY TEMPLATE"><span class="c">Input: the PRD from Stage 02 — vision, user, features, out of scope.
+    <pre class="sm" data-copy-label="COPY TEMPLATE"><span class="c">Input: the PRD (slide 14) — vision, user, features, scope.
 Not repeated here. This document only answers HOW, and whether it fits.</span>
 
 <span class="k">PART A — HOW</span>
@@ -705,6 +703,9 @@ Not repeated here. This document only answers HOW, and whether it fits.</span>
     <script type="text/plain" id="full-design-system">
 You are a product designer who builds design systems before screens.
 
+Input — the plan (slide 17). The product, the users and
+the screen list are already decided there; do not re-derive them.
+
 Product: The Proof-of-Work Protocol — university students aged 18-22
 must upload verifiable proof of past work (a GitHub repo, a Figma
 file, a slide deck) before the network of other students and their
@@ -751,7 +752,7 @@ prompt, then one line on why you chose that accent colour.
 </script>
     <pre class="sm" data-full="#full-design-system">You are a product designer who builds design systems before screens.
 
-<span class="k">Input: [paste the plan from Stage 03]</span>
+<span class="k">Input: [paste the plan — <span class="k">slide 17</span>]</span>
 Should feel: [3 adjectives]. Platform: mobile-first web.
 
 <span class="k">Give me tokens, not prose:</span>
@@ -829,11 +830,11 @@ propose the smallest addition</span> rather than inventing freely.</pre>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
     <pre>Build [screen 1] of [product].
-<span class="k">Stack: [paste the STACK block from the plan — Stage 03]</span>
+<span class="k">Stack: [the STACK block from the plan — <span class="k">slide 17</span>]</span>
 
 <span class="k">Use exactly these design tokens — introduce no colours, sizes,
 or spacing outside this set:</span>
-[paste the CSS custom properties from Stage 04]
+[paste the CSS custom properties — <span class="k">slide 22</span>]
 
 This screen's job: [the job the plan already gave this screen]
 Primary action: [action] → [what happens]
@@ -855,7 +856,7 @@ Output complete working code. No placeholders, no "add logic here".</pre>
     <script type="text/plain" id="full-build-thegate">
 Build "The Gate" screen of The Proof-of-Work Protocol.
 
-Stack, taken from the plan in Stage 03:
+Stack, taken from the plan (slide 17):
 - React (TypeScript), single-page, styled with CSS custom properties
 - Firebase Auth (Sign in with Google) + Cloud Firestore
 - @google/genai on a Node backend, Gemini 2.5 Flash, key read from
@@ -963,6 +964,122 @@ Seed with 8 verified-peer entries. Output complete working code.</pre>
 </section>
 
 <!-- THỰC HÀNH 4 -->
+<section class="slide" data-notes="Điểm chính: prompt build không đổi hình dạng. Chỉ 4 dòng đổi cho mỗi màn. Đây là lúc khán giả thấy quy trình lặp lại được.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">The next two screens</div>
+  <h2>Same prompt. Four lines change.</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-screens23">
+Both prompts below reuse the Stage 03 stack and the Stage 04 tokens
+byte for byte. Only the four screen-specific lines differ. Build them
+one at a time, testing after each — not both in one message.
+
+
+=========== SCREEN 2 — "The Network" ===========
+
+Build "The Network" screen of The Proof-of-Work Protocol.
+Stack (from the plan): React (TypeScript) + CSS custom properties.
+Firebase + the Gemini call come later — this layer is UI and state only.
+
+Use exactly the same design tokens as the previous screen. Introduce
+no colours, sizes, or spacing outside that set.
+
+This screen's job: display vetted peers and their projects in a
+high-density layout, without distracting navigation structures.
+
+Layout, top to bottom:
+- Background --color-bg
+- Top menu as a single one-row island: --color-surface, bottom border
+  --color-border. No left sidebar, no top search bar.
+  Active tab   --text-body / bold / --color-brand      "Projects"
+  Inactive tab --text-body / regular / --color-text-secondary  "My Profile"
+- Main content area, padding --space-4
+- Section title --text-title / bold / --color-text-primary  "Verified Peers"
+- Project list: grid, gap --space-3
+- Project card (repeated): --card-bg / --card-border / --card-radius /
+  padding --card-padding, containing
+    Role badge   --text-micro / bold / --color-brand   "Requires Developer"
+    Title        --text-subtitle / bold / --color-text-primary
+    Description  --text-body / --color-text-secondary
+    Divider      1px --color-border
+    Proof link   --text-small / --color-text-primary
+
+Primary action: tapping anywhere on a project card opens the Proof
+Detail panel. Single screen — open it in place, do not add routing.
+
+Empty state: one centred card, --text-subtitle / --color-text-secondary,
+reading "No new projects match your skill tier yet."
+Error state: a banner at the top of the content area, background
+--color-danger, text --color-surface, --text-small, reading
+"Failed to sync the network. Refresh the page."
+
+Scope: single screen. No routing, no login, no database.
+Seed with 8 realistic student projects across different skill needs.
+Accessibility: keyboard reachable, --focus-ring on every focusable
+element, WCAG AA contrast, tap targets at least 44px.
+
+Output complete working code. No placeholders.
+
+
+=========== SCREEN 3 — "Proof Detail" ===========
+
+Build the "Proof Detail" view of The Proof-of-Work Protocol.
+Same stack, same tokens as the previous two screens.
+
+This screen's job: showcase one peer's competence, and make the
+collaboration request a single tap.
+
+Layout, top to bottom:
+- Background --color-bg, top menu identical to The Network
+- Back link --text-small / --color-text-secondary   "← Back to Network"
+- Header: name --text-display / bold / --color-text-primary,
+  metadata --text-small / --color-text-secondary, margin-bottom --space-4
+- Proof section as a card: --card-bg / --card-border / --card-radius /
+  --card-padding, with section title --text-subtitle / bold and
+  body --text-body / --color-text-secondary / --lh-body
+- Action bar, list-row styling: padding --list-row-padding, top border
+  --color-border, margin-top --space-5
+    Status  --text-small / --color-success
+            "Currently accepting technical co-founders"
+    Button  --btn-default-bg / --btn-default-text / --btn-default-radius
+            / --text-body     "Request to Join"
+
+Primary action: pressing "Request to Join" immediately switches the
+button to its disabled state (--btn-disabled-bg, --btn-disabled-text)
+and the label becomes "Request Sent."
+
+Empty state: not applicable — this view is never reached without a
+project payload.
+Error state: --text-micro in --color-warning directly below the proof
+section, reading "We couldn't verify this user's latest commits.
+Proceed with caution."
+
+Scope: single view, opened in place. No routing, no login, no database.
+Accessibility: same rules as the previous screens.
+
+Output complete working code. No placeholders.
+</script>
+    <pre class="sm" data-full="#full-build-screens23"><span class="c">Stack, tokens, scope, accessibility — identical to screen 1.
+Only these four lines change per screen.</span>
+
+<span class="k">SCREEN 2 — "The Network"</span>
+ Job     display vetted peers and their projects in a high-density
+         layout, without distracting navigation
+ Action  tap a project card → open Proof Detail <span class="c">in place, no routing</span>
+ Empty   "No new projects match your skill tier yet."
+ Error   banner --color-danger "Failed to sync the network."
+
+<span class="k">SCREEN 3 — "Proof Detail"</span>
+ Job     showcase one peer's competence, make the request one tap
+ Action  "Request to Join" → button locks, label becomes "Request Sent"
+ Empty   n/a — never reached without a project
+ Error   --color-warning "We couldn't verify this user's commits."
+
+<span class="k">Build them one at a time.</span> Test after each — not both in one message.</pre>
+    <div class="callout green"><p>By screen 3 you are not writing prompts any more, you are <strong>filling in a form you already have</strong>. That is what the first four stages bought you.</p></div>
+  </div>
+</section>
+
 <section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Ai xong sớm thì bảo publish luôn.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Thực hành 05 — dài nhất</div>
