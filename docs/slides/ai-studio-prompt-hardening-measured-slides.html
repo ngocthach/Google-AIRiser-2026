@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why Your AI Studio App Looks Generated — A Measured Prompt Comparison</title>
+<style>
+/* ============================================================
+   Google deck — tokens measured from Vibe_Coding_Handbook.pptx
+   Self-contained: no webfonts, no CDN, no network requests.
+   ============================================================ */
+:root{
+  --ink:#20344B; --ink-2:#2F4C6F; --muted:#80868B; --line:#DFE3E8; --white:#fff;
+  --cyan:#57CAFF; --blue:#4285F4; --blue-2:#3186FF; --tint:#E8F0FE; --tint-2:#F0F4FA;
+  --red:#EA4335; --yellow:#FBBC04; --green:#34A853; --amber:#E37400; --orange:#F97316;
+  --sans:"Google Sans","Product Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0E1721;font-family:var(--sans);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#canvas{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--white);padding:64px 76px 72px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+.dots{position:absolute;top:34px;left:40px;display:flex;gap:7px}
+.dots i{width:9px;height:9px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:var(--blue)}
+.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}
+.dots i:nth-child(4){background:var(--green)}
+.folio{position:absolute;top:32px;right:44px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+h1{font-size:56px;line-height:1.06;letter-spacing:-.02em;font-weight:700}
+h2{font-size:38px;line-height:1.14;letter-spacing:-.015em;font-weight:700;margin-bottom:8px}
+h3{font-size:20px;font-weight:600;margin-bottom:6px}
+p{font-size:18px;line-height:1.55;color:var(--ink-2)}
+.lede{font-size:22px;line-height:1.5;color:var(--ink-2);max-width:64ch}
+.small{font-size:15px;color:var(--muted);line-height:1.5}
+.rule{height:4px;width:76px;background:var(--cyan);border-radius:2px;margin:16px 0 24px}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.body.top{justify-content:flex-start}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--tint-2);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.card.accent{background:var(--tint);border-color:#C9DDFB}
+.card.warn{background:#FFF6E5;border-color:#F5D98A}
+.card.stop{background:#FDECEA;border-color:#F5B7B1}
+.card.go{background:#E9F7EF;border-color:#A9DFBF}
+.card.dark{background:#16222E;border-color:#2B3E52;color:#DCE6F0}
+.card.dark h3{color:#57CAFF}
+.card.dark p{color:#A9BACB}
+.card h3{color:var(--ink)}
+.card p{font-size:15.5px;line-height:1.5}
+.card .n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;margin-bottom:6px;display:block}
+.card.sm{padding:14px 16px;border-radius:14px}
+.card.sm h3{font-size:16.5px;margin-bottom:3px}
+.card.sm p{font-size:13.5px;line-height:1.4}
+ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul li{position:relative;padding-left:24px;font-size:17px;line-height:1.5;color:var(--ink-2)}
+ul li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+ul.check li::before{content:"✓";background:none;color:var(--green);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.no li::before{content:"✕";background:none;color:var(--red);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.tight li{font-size:15px;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:400;border-bottom:2px solid var(--line)}
+td{color:var(--ink-2);line-height:1.45}
+td strong{color:var(--ink)}
+tr.hl td{background:var(--tint)}
+table.sm{font-size:14px}
+table.sm th,table.sm td{padding:7px 10px}
+code,.mono{font-family:var(--mono);font-size:.92em;background:var(--tint);padding:2px 6px;border-radius:4px;color:var(--ink-2)}
+pre{position:relative;background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.52;white-space:pre-wrap}
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
+pre.sm{font-size:11.8px;line-height:1.44;padding:11px 20px}
+pre .k{color:var(--cyan);font-weight:600}
+pre .c{color:#8FA5BC}
+.pill{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--blue);margin-right:6px}
+.flow{display:flex;align-items:stretch;gap:10px}
+.flow .step{flex:1;background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:16px 14px}
+.flow .step .n{font-family:var(--mono);font-size:11.5px;color:var(--blue);letter-spacing:.12em}
+.flow .step h3{font-size:16px;margin:6px 0 4px}
+.flow .step p{font-size:13.5px;line-height:1.4}
+.flow .arw{display:grid;place-items:center;color:var(--cyan);font-size:20px;font-weight:700}
+.callout{border-left:5px solid var(--cyan);background:var(--tint-2);padding:14px 18px;border-radius:0 12px 12px 0}
+.callout.red{border-left-color:var(--red);background:#FDECEA}
+.callout.green{border-left-color:var(--green);background:#E9F7EF}
+.callout.amber{border-left-color:var(--amber);background:#FFF6E5}
+.callout p{font-size:16px}
+.slide.cover{background:radial-gradient(900px 460px at 82% 12%,#EAF3FF 0%,rgba(234,243,255,0) 70%),var(--white);justify-content:center}
+.badge{display:inline-block;align-self:flex-start;padding:8px 18px;border-radius:999px;color:#fff;font-weight:600;font-size:14px;letter-spacing:.04em;margin-bottom:22px;background:linear-gradient(90deg,#4285F4,#57CAFF,#34A853,#FBBC04,#EA4335)}
+.cover h1{max-width:20ch}
+.cover .sub{font-size:21px;color:var(--ink-2);margin-top:18px;max-width:62ch;line-height:1.5}
+.meta{position:absolute;left:76px;bottom:54px;display:flex;gap:30px;font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.06em}
+
+/* stage divider */
+.slide.divider{background:#16222E;justify-content:center}
+.divider h2{color:#fff;font-size:52px}
+.divider .eyebrow{color:var(--cyan)}
+.divider p{color:#A9BACB;font-size:20px;max-width:58ch;margin-top:12px}
+.divider .rule{background:var(--cyan)}
+.divider .dots i{opacity:.85}
+.stagerow{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+.stagerow span{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border:1px solid #2B3E52;border-radius:999px;color:#7E93A8}
+.stagerow span.on{background:var(--cyan);color:#0E1721;border-color:var(--cyan);font-weight:700}
+#notes{position:fixed;right:16px;bottom:56px;width:340px;max-height:44vh;overflow:auto;background:#16222E;color:#C9D6E2;border:1px solid #2B3E52;border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.55;display:none;z-index:7}
+#notes.on{display:block}
+#notes b{color:var(--cyan);display:block;margin-bottom:6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+#hud{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#7C8FA6;font-family:var(--mono);font-size:12px;letter-spacing:.1em;pointer-events:none;z-index:5}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--cyan);width:0;z-index:6;transition:width .25s ease}
+#hud button{pointer-events:auto;background:none;border:1px solid #33475C;color:#7C8FA6;border-radius:7px;padding:5px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em}
+#hud button:hover{color:#DCE6F0;border-color:#5C7A96}
+#hud button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.hud-g{display:flex;gap:9px;align-items:center}
+@media print{
+  body{background:#fff;overflow:visible}
+  #stage{position:static;display:block}
+  #canvas{transform:none!important;width:100%;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
+  #hud,#bar,#notes{display:none}
+}
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
+.folio .tool.fb{border-color:#F5D98A;color:#8F5400}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.metric{background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:15px 17px}
+.metric .big{font-family:var(--mono);font-size:29px;font-weight:700;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.metric .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:7px;display:block;line-height:1.35}
+.metric.good .big{color:#1E7E42}
+.metric.bad .big{color:var(--red)}
+.metric.dark{background:#16222E;border-color:#2B3E52}
+.metric.dark .big{color:var(--cyan)}
+.metric.dark .lbl{color:#8FA5BC}
+table.ab td.was{color:var(--red);font-family:var(--mono);font-weight:700}
+table.ab td.now{color:#1E7E42;font-family:var(--mono);font-weight:700}
+table.ab td.mono{font-family:var(--mono)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+</style>
+</head>
+<body>
+
+<div id="stage"><div id="canvas">
+
+<!-- 01 cover -->
+<section class="slide cover active" data-notes="This deck is short and it is entirely about one thing: the same model, given the same feature to build, produces either a professional app or a generated-looking mess depending on about forty lines of prompt. I ran the experiment. Here are the numbers.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Measured on Gemini · same model, same feature</span>
+  <h1>Why your AI Studio app looks generated</h1>
+  <p class="sub">One feature, two prompts, one model. Half the code, zero CDN dependencies, and a real design system — bought with about forty extra lines of instruction.</p>
+  <div class="meta"><span>7 DEFECTS</span><span>7 PROMPT BLOCKS</span><span>REUSABLE ON ANY BUILD</span></div>
+</section>
+
+<!-- 02 the experiment -->
+<section class="slide" data-notes="Method matters, so state it plainly. Same model, same feature, back to back. The only variable is the prompt. I ran this through a Gemini CLI rather than the AI Studio web UI — say so, and say which findings that affects.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Method</div>
+  <div class="eyebrow">The experiment</div>
+  <h2>One variable: the prompt</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop">
+        <span class="n">Prompt A — the polite one</span>
+        <h3>990 characters</h3>
+        <p>Feature list, a palette written as prose, and "return complete, runnable code with zero placeholders." The kind of prompt everybody writes.</p>
+      </div>
+      <div class="card go">
+        <span class="n">Prompt B — the hardened one</span>
+        <h3>3,880 characters</h3>
+        <p>Same feature list, plus a runtime target, a scope fence, a token-consumption rule, an accessibility contract, and a self-check.</p>
+      </div>
+    </div>
+    <div class="callout"><p><strong>Both asked for exactly one thing:</strong> Layer 1 of PistonCraft — a header, a blueprint board with seven empty slots, and an inventory tray. No audio. No physics. No dyno.</p></div>
+    <div class="callout amber"><p><strong>Honest caveat:</strong> this ran through a Gemini CLI, not the AI Studio Build UI. That affects one finding — the file-shape result — and I flag it where it lands. The other six are properties of the prompt and travel anywhere.</p></div>
+  </div>
+</section>
+
+<!-- 03 the scoreboard -->
+<section class="slide" data-notes="This is the slide to leave up while you talk. Every one of these numbers came from grepping the two outputs, not from an impression. The last row is the one that surprises people: it wrote less code, and the code was better.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Method</div>
+  <div class="eyebrow">Measured, not felt</div>
+  <h2>The scoreboard</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm ab">
+      <tr><th>What was counted</th><th>Prompt A</th><th>Prompt B</th><th>What it means</th></tr>
+      <tr class="hl"><td><strong>CSS custom properties defined</strong></td><td class="was">0</td><td class="now">24</td><td>A design system existed, or it did not</td></tr>
+      <tr><td><strong>Raw hex codes in the output</strong></td><td class="was">221</td><td class="now">11</td><td>All 11 sit in <code>:root</code>, which is where they belong</td></tr>
+      <tr class="hl"><td><strong>Arbitrary Tailwind values</strong></td><td class="was">31</td><td class="now">0</td><td><code>text-[10px]</code>, <code>shadow-[0_0_8px_#00F0FF]</code></td></tr>
+      <tr><td><strong>Text smaller than 14px</strong></td><td class="was">55</td><td class="now">0</td><td>One label was 9px. In a game for children.</td></tr>
+      <tr class="hl"><td><strong>Accessibility attributes</strong></td><td class="was">0</td><td class="now">29</td><td>Keyboard-unplayable, or playable</td></tr>
+      <tr><td><strong>External CDN / font requests</strong></td><td class="was">5</td><td class="now">0</td><td>Survives the venue wifi dying</td></tr>
+      <tr class="hl"><td><strong>Out-of-scope feature markers</strong></td><td class="was">12</td><td class="now">0</td><td>Audio and animation it was told not to build</td></tr>
+      <tr><td><strong>Lines of code returned</strong></td><td class="was">1,875</td><td class="now">827</td><td>Less code, and better code</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 04 headline metrics -->
+<section class="slide" data-notes="If you remember four numbers from this talk, these are the four. Four times the prompt, less than half the code, and every defect class gone.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Method</div>
+  <div class="eyebrow">The trade</div>
+  <h2>Four times the prompt. Half the code.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="metrics">
+      <div class="metric dark"><div class="big">3.9×</div><span class="lbl">Longer prompt<br>990 → 3,880 chars</span></div>
+      <div class="metric good"><div class="big">−56%</div><span class="lbl">Less code returned<br>1,875 → 827 lines</span></div>
+      <div class="metric good"><div class="big">0 → 24</div><span class="lbl">Design tokens<br>actually defined</span></div>
+      <div class="metric good"><div class="big">7 / 7</div><span class="lbl">Self-checks passed<br>5 verified independently</span></div>
+    </div>
+    <div class="callout green"><p><strong>The counterintuitive result:</strong> constraining the model made it produce <em>less</em>. The extra 2,900 characters were spent almost entirely on telling it what <strong>not</strong> to do, and that is where the value was.</p></div>
+    <div class="callout"><p>Writing prompt B took about six minutes. Reviewing 1,875 lines of prompt-A code to find the 221 hardcoded colours takes considerably longer than six minutes.</p></div>
+  </div>
+</section>
+
+<!-- 05 defect 1 -->
+<section class="slide" data-notes="Defect one, and the one the user actually complained about. Giving a model a palette is not giving it a design system. Prompt A listed five hex codes in prose and got 221 hardcoded colours back and zero variables.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · The defects</div>
+  <div class="eyebrow">Defect 1 — the big one</div>
+  <h2>A palette is not a design system</h2><div class="rule"></div>
+  <div class="body">
+    <div class="two">
+      <div class="card stop">
+        <span class="n">Prompt A said</span>
+        <h3>A list of colours</h3>
+        <pre class="sm" style="background:#3A1F1C;margin-top:10px">[THEME &amp; PALETTE]
+- Background: #0B0F17 | Panels: #161F2E
+  | Blueprint: #00F0FF | Steel: #94A3B8</pre>
+        <p style="margin-top:10px"><strong>Result:</strong> 221 raw hex codes sprayed through the components. Zero variables. Change the accent and you are editing 221 places.</p>
+      </div>
+      <div class="card go">
+        <span class="n">Prompt B added</span>
+        <h3>How they must be consumed</h3>
+        <pre class="sm" style="background:#12301F;margin-top:10px">- tokens in :root in index.css,
+  registered in the Tailwind theme so
+  every utility resolves to a token
+- no raw hex in any component file
+- no arbitrary values: no bg-[#00F0FF]</pre>
+        <p style="margin-top:10px"><strong>Result:</strong> 24 tokens, hex only in <code>:root</code>, and a real theme config.</p>
+      </div>
+    </div>
+    <div class="callout amber"><p><strong>The rule:</strong> tokens without a consumption mechanism are decoration. The clause that does the work is <em>"registered in the Tailwind theme"</em> plus an explicit ban.</p></div>
+  </div>
+</section>
+
+<!-- 06 proof -->
+<section class="slide" data-notes="This is the file prompt B produced unprompted — I never described a Tailwind config, I only said tokens must be registered so utilities resolve to them. Showing the artifact is more convincing than describing it.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · The defects</div>
+  <div class="eyebrow">The proof — its own output, abridged</div>
+  <h2>It wrote the mechanism itself</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">export default {
+  theme: { extend: {
+    colors: {
+      bg: 'var(--color-bg)',            panel: 'var(--color-panel)',
+      blueprint: 'var(--color-blueprint)', combustion: 'var(--color-combustion)',
+      steel: 'var(--color-steel)',      ink: 'var(--color-ink)',
+      danger: 'var(--color-danger)',    ok: 'var(--color-ok)',
+    },
+    fontSize: {
+      hud: ['var(--text-hud)', { lineHeight: '1.2' }],
+      body: ['var(--text-body)', { lineHeight: '1.4' }],
+      title: ['var(--text-title)', { lineHeight: '1.3' }],
+    },
+    minHeight: { touch: 'var(--touch-min)', slot: 'var(--slot-size)' },
+    minWidth:  { touch: 'var(--touch-min)', slot: 'var(--slot-size)' },
+  } },
+} satisfies Config;</pre>
+    <div class="callout green"><p>I never asked for a <code>tailwind.config.ts</code>. I asked for tokens to be <em>registered so every utility class resolves to a token</em> — and it worked out that this file is how you do that. Describe the constraint, not the file.</p></div>
+  </div>
+</section>
+
+<!-- 07 defect 2 -->
+<section class="slide" data-notes="Defect two kills the entire four-layer method, and almost every AI Studio deck teaches four layers. Prompt A asked for the shell. It got the shell plus a Web Audio synthesiser, a four-stroke animation loop, a dyno graph and a P-V thermodynamic diagram.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · The defects</div>
+  <div class="eyebrow">Defect 2 — the method killer</div>
+  <h2>It built all four layers at once</h2><div class="rule"></div>
+  <div class="body">
+    <div class="callout red"><p><strong>Asked for:</strong> a header, a static blueprint board, an inventory tray. <strong>Delivered:</strong> all of that, plus Web Audio synthesis, four-stroke piston kinematics, a Diagnostic Lab, a Dyno Chamber, an Otto-cycle P–V diagram and live horsepower curves — in the first message.</p></div>
+    <div class="grid g2">
+      <div class="card stop">
+        <h3>Why it happens</h3>
+        <ul class="tight no">
+          <li>"Complete, runnable, zero placeholders" reads as <em>build everything</em></li>
+          <li>Naming the Lab and Dyno tabs invited it to fill them</li>
+          <li>The prompt never once used the word <em>not</em></li>
+        </ul>
+      </div>
+      <div class="card warn">
+        <h3>Why it is expensive</h3>
+        <ul class="tight">
+          <li>Layer 2 is now an edit to bad code, not a clean addition</li>
+          <li>You cannot review 1,875 lines, so you accept it unread</li>
+          <li>Every later prompt rewrites features you never approved</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><p><strong>Layering is not free.</strong> "Build layer 1" is a hope. A scope fence is a mechanism.</p></div>
+  </div>
+</section>
+
+<!-- 08 the scope fence -->
+<section class="slide" data-notes="Three parts, and the tripwire is the one people leave out. Naming the forbidden features individually works far better than a general 'keep it minimal' — the model needs nouns it can check itself against.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · The fixes</div>
+  <div class="eyebrow">Fix 2 — anatomy of a scope fence</div>
+  <h2>Three sentences that hold a layer</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">=== SCOPE FENCE - READ THIS TWICE ===
+Layer 1 is the shell and the blueprint board. Nothing moves yet.
+
+<span class="c">// 1. NAME THE FORBIDDEN FEATURES, ONE BY ONE</span>
+DO NOT build, and do not stub in passing: drag and drop, snapping,
+sequence rules, minigames, the Diagnostic Lab, the Dyno Chamber, RPM,
+horsepower, Web Audio, canvas animation, particles, or any Gemini call.
+
+<span class="c">// 2. SAY WHAT THE EMPTY THING RENDERS INSTEAD</span>
+The Diagnostic Lab and Dyno Chamber tabs must render one centred panel
+reading "Unlocks in the next build step." That is the whole feature.
+
+<span class="c">// 3. GIVE IT A TRIPWIRE IT CAN CHECK ITSELF AGAINST</span>
+If you find yourself writing an oscillator or a requestAnimationFrame
+loop, you have left Layer 1. Stop and delete it.</pre>
+    <div class="callout green"><p><strong>Part 2 is the one people skip.</strong> A tab with nothing behind it is an invitation. Give the model something boring and specific to build there and it stops improvising.</p></div>
+  </div>
+</section>
+
+<!-- 09 defect 3 -->
+<section class="slide" data-notes="This is the finding that depends on my test harness, so be straight about it. But the fix is worth applying regardless, because a CDN build is the one that dies when the venue wifi does.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · The defects</div>
+  <div class="eyebrow">Defect 3 — the shape of the project</div>
+  <h2>One HTML file, five CDN requests</h2><div class="rule"></div>
+  <div class="body">
+    <div class="two">
+      <div class="card stop">
+        <h3>Prompt A produced</h3>
+        <p><strong>One <code>index.html</code></strong> pulling React, ReactDOM, Babel standalone, Tailwind and Google Fonts from CDNs — transpiling JSX in the browser at runtime.</p>
+        <ul class="tight no">
+          <li>Dies with no network</li>
+          <li>Slow first paint, every load</li>
+          <li>Not what you would deploy</li>
+        </ul>
+      </div>
+      <div class="card go">
+        <h3>Prompt B produced</h3>
+        <p><strong>17 files</strong> — a real module project: components, types, data, a Tailwind config, an entry point. Imports, not script tags.</p>
+        <ul class="tight check">
+          <li>Runs with the network off</li>
+          <li>Each file small enough to review</li>
+          <li>Layer 2 has somewhere to go</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout amber"><p><strong>Caveat, stated plainly:</strong> AI Studio Build already tends toward a multi-file project, so this gap is narrower there than in my CLI test. Keep the clause anyway — it costs three lines and it forbids the CDN fallback everywhere.</p></div>
+  </div>
+</section>
+
+<!-- 10 defect 4 + 5 -->
+<section class="slide" data-notes="Two defects that nobody writes a prompt line for, and both are visible to a judge in the first ten seconds. Nine pixel type on a children's game, and an app you cannot operate without a mouse.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · The defects</div>
+  <div class="eyebrow">Defects 4 &amp; 5 — the invisible ones</div>
+  <h2>Too small to read, impossible to tab</h2><div class="rule"></div>
+  <div class="body">
+    <div class="metrics">
+      <div class="metric bad"><div class="big">55</div><span class="lbl">Prompt A: text runs<br>below 14px</span></div>
+      <div class="metric bad"><div class="big">9px</div><span class="lbl">Smallest label<br>in a kids' game</span></div>
+      <div class="metric bad"><div class="big">0</div><span class="lbl">Prompt A: aria, role,<br>tabIndex, onKeyDown</span></div>
+      <div class="metric good"><div class="big">29</div><span class="lbl">Prompt B: same,<br>after one clause</span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card go"><h3>The type floor</h3><p>"Smallest permitted font size is 14px. This is a game for children; 10px and 11px labels are a defect, not a style choice." Give the rule <em>and</em> the reason — the reason is what makes it stick.</p></div>
+      <div class="card go"><h3>The a11y contract</h3><p>Put it under a heading that says <strong>part of the definition of done</strong>. Name the keys: Tab reaches, Enter and Space activate, a visible focus ring. "Make it accessible" produces nothing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 self-check -->
+<section class="slide" data-notes="The cheapest clause in the whole prompt. It makes the model re-read its own output against your constraints before it hands it over, and when it fails it usually tells you rather than hiding it.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · The fixes</div>
+  <div class="eyebrow">Fix — make it grade itself</div>
+  <h2>The self-check clause</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">=== BEFORE YOU ANSWER, CHECK YOURSELF ===
+1. Zero CDN script tags, zero external fonts, zero network requests.
+2. Zero raw hex outside index.css.
+3. Zero arbitrary Tailwind values in any component.
+4. No font below 14px.
+5. No audio, no animation loop, no minigame, no dyno anywhere.
+6. Every button reachable and activatable by keyboard.
+7. Layout holds at 1280x720 and at 390x844 without clipping.
+State each of the 7 as PASS or FAIL, then list the files you created.</pre>
+    <div class="callout green"><p><strong>It returned 7 PASS.</strong> I independently verified checks 1 through 5 by grepping the output — they were true.</p></div>
+    <div class="callout red"><p><strong>And here is the limit.</strong> Checks 6 and 7 — keyboard operation and responsive layout — cannot be verified by grep, and the model has no browser. Those two are a claim, not a result. <strong>Open the app and press Tab.</strong> A self-check makes a model careful; it does not make it right.</p></div>
+  </div>
+</section>
+
+<!-- 12 the skeleton -->
+<section class="slide" data-notes="This is the reusable artifact. Seven blocks, in this order, for any AI Studio build — not just this game. Blocks 2, 3 and 7 are the ones almost nobody writes, and they are where the whole difference came from.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Reuse</div>
+  <div class="eyebrow">The reusable skeleton</div>
+  <h2>Seven blocks, in this order</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>#</th><th>Block</th><th>What it prevents</th><th>Usually written?</th></tr>
+      <tr><td class="mono">1</td><td><strong>TARGET RUNTIME</strong></td><td>CDN single-file builds, external fonts</td><td>Rarely</td></tr>
+      <tr class="hl"><td class="mono">2</td><td><strong>SCOPE FENCE</strong></td><td>Building all four layers in message one</td><td><strong>Almost never</strong></td></tr>
+      <tr><td class="mono">3</td><td><strong>TOKENS + HOW CONSUMED</strong></td><td>221 hardcoded colours, no system</td><td><strong>Almost never</strong></td></tr>
+      <tr class="hl"><td class="mono">4</td><td><strong>WHAT IT RENDERS</strong></td><td>Guessed layout, missing pieces</td><td>Always</td></tr>
+      <tr><td class="mono">5</td><td><strong>ACCESSIBILITY CONTRACT</strong></td><td>Mouse-only apps, invisible focus</td><td>Rarely</td></tr>
+      <tr class="hl"><td class="mono">6</td><td><strong>TYPE &amp; TOUCH FLOORS</strong></td><td>9px labels, 20px tap targets</td><td>Rarely</td></tr>
+      <tr><td class="mono">7</td><td><strong>SELF-CHECK</strong></td><td>Silent violations of blocks 1–6</td><td><strong>Almost never</strong></td></tr>
+    </table>
+    <div class="callout"><p>Block 4 is the one everybody writes, and it is the only one that was already fine.</p></div>
+  </div>
+</section>
+
+<!-- 13 the template -->
+<section class="slide" data-notes="Paste this, fill the four brackets, and you have prompt B for whatever you are building. Press C to copy the full version with all seven blocks expanded.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Reuse</div>
+  <div class="eyebrow">Copy this — the blank template</div>
+  <h2>The skeleton, ready to fill</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-skeleton">Build <span class="k">[LAYER N] ONLY</span> of "<span class="k">[APP]</span>", <span class="k">[one line: who it is for]</span>.
+
+<span class="k">=== TARGET RUNTIME ===</span>
+Multi-file React + TypeScript + Tailwind, real ES module imports.
+No CDN tags, no external fonts. Must run with the network off.
+
+<span class="k">=== SCOPE FENCE - READ THIS TWICE ===</span>
+This layer is <span class="k">[one sentence]</span>. DO NOT build, or stub in passing:
+<span class="k">[every feature from later layers, by name]</span>.
+<span class="k">[Empty screens]</span> render: "Unlocks in the next build step."
+If you are writing <span class="k">[the giveaway thing]</span>, you have left this layer.
+
+<span class="k">=== TOKENS - AND HOW THEY ARE CONSUMED ===</span>   <span class="c">[paste :root here]</span>
+- declared in :root, registered in the Tailwind theme so every
+  utility class resolves to a token
+- no raw hex in components; no arbitrary values: no text-[10px]
+- smallest font <span class="k">[N]</span>px; every clickable >= --touch-min square
+
+<span class="k">=== WHAT THIS LAYER RENDERS ===</span>  <span class="c">[the part you write well already]</span>
+
+<span class="k">=== ACCESSIBILITY - PART OF THE DEFINITION OF DONE ===</span>
+Tab reaches every control, Enter/Space activate, focus ring visible.
+
+<span class="k">=== BEFORE YOU ANSWER, CHECK YOURSELF ===</span>
+<span class="k">[restate blocks 1-3 and 5-6 as numbered yes/no checks]</span>
+State each as PASS or FAIL, then list the files you created.</pre>
+  </div>
+</section>
+
+<!-- 14 repair prompts -->
+<section class="slide" data-notes="When a layer comes back wrong, do not describe your disappointment. Name the violated constraint and the file. These four cover most of what actually goes wrong.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Reuse</div>
+  <div class="eyebrow">When it still goes wrong</div>
+  <h2>Repair by naming the violated rule</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card sm stop"><span class="n">It built too much</span><h3>Scope creep</h3><p>"You built features from a later layer. Remove the audio, animation and dyno entirely and restore the placeholder panel. This layer is the shell only."</p></div>
+      <div class="card sm warn"><span class="n">It looks generated</span><h3>Tokens ignored</h3><p>"Raw hex appears in components. Re-read DESIGN.md, move every colour to a token, and list each replacement you made."</p></div>
+      <div class="card sm stop"><span class="n">It rewrote working code</span><h3>Collateral damage</h3><p>"You changed files this layer should not touch. Revert them and apply your change only to the files listed in the brief."</p></div>
+      <div class="card sm warn"><span class="n">It claimed PASS falsely</span><h3>Unverifiable check</h3><p>"Self-check 6 says PASS but Tab does not reach the inventory cards. Re-run that check honestly and fix what fails."</p></div>
+    </div>
+    <div class="callout"><p><strong>"It looks bad" gets you a different bad.</strong> "DESIGN.md forbids arbitrary values and line 40 has <code>text-[10px]</code>" gets you a fix.</p></div>
+  </div>
+</section>
+
+<!-- 15 run it yourself -->
+<section class="slide" data-notes="Encourage people to re-run this rather than trust my numbers. Models change, and a finding from one week may not hold the next. The method is the durable part, not the table.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Method</div>
+  <div class="eyebrow">Do not trust my numbers</div>
+  <h2>Run the experiment yourself</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm"><span class="c"># 1. Two prompts, same feature, same model, back to back</span>
+omp -p --no-tools "$(cat prompt-a.txt)" &gt; out-a.md
+omp -p --no-tools "$(cat prompt-b.txt)" &gt; out-b.md
+
+<span class="c"># 2. Count the defects instead of forming an impression</span>
+for f in out-a.md out-b.md; do
+  echo "== $f"
+  echo -n "css vars:  "; grep -cE '^\s*--[a-z0-9-]+\s*:'        $f
+  echo -n "raw hex:   "; grep -oE '#[0-9A-Fa-f]{6}'             $f | wc -l
+  echo -n "arbitrary: "; grep -oE '(text|bg|shadow)-\[[^]]*\]'  $f | wc -l
+  echo -n "tiny type: "; grep -oE 'text-\[(9|10|11|12|13)px\]|text-xs' $f | wc -l
+  echo -n "a11y:      "; grep -oE 'aria-[a-z]+|role=|tabIndex'  $f | wc -l
+  echo -n "cdn:       "; grep -oE 'https?://[^"]+' $f | grep -v w3.org | sort -u | wc -l
+done</pre>
+    <div class="callout amber"><p><strong>Models move.</strong> These numbers are one model on one day. The seven blocks are the durable part; re-measure before you quote the table.</p></div>
+  </div>
+</section>
+
+<!-- 16 what this does not fix -->
+<section class="slide" data-notes="The honesty slide, and the one that earns you credibility. A hardened prompt fixes craft defects. It does not make a boring game fun, and no clause you write will.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Method</div>
+  <div class="eyebrow">The limits</div>
+  <h2>What forty lines cannot buy you</h2><div class="rule"></div>
+  <div class="body">
+    <div class="two">
+      <div class="card go">
+        <h3>A hardened prompt reliably fixes</h3>
+        <ul class="tight check">
+          <li>Colour and spacing consistency</li>
+          <li>Readable type and reachable targets</li>
+          <li>Keyboard access existing at all</li>
+          <li>Scope, so layers stay layers</li>
+          <li>Dependencies that survive no wifi</li>
+        </ul>
+      </div>
+      <div class="card stop">
+        <h3>It does nothing at all for</h3>
+        <ul class="tight no">
+          <li>Whether the game is fun</li>
+          <li>Whether the snap feels satisfying</li>
+          <li>Whether a child learns anything</li>
+          <li>Whether the idea is worth building</li>
+          <li>Whether the pacing works on a real kid</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout red"><p><strong>Tokens buy consistency. They do not buy taste.</strong> The prompt-B app is well-built. Whether it is a good game is a question you answer by handing a tablet to a nine-year-old and watching their face — not by writing a better prompt.</p></div>
+  </div>
+</section>
+
+<!-- 17 close -->
+<section class="slide cover" data-notes="Close on the trade. Six minutes of writing, three defect classes that judges see immediately, and a template that works on the next build too.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Six minutes, seven blocks</span>
+  <h1>Spend the words on what it must <em>not</em> do.</h1>
+  <p class="sub">The features you want are the part you already write well. Every measurable gain here came from the runtime target, the scope fence, the consumption rule and the self-check — the four blocks almost nobody writes.</p>
+  <div class="meta"><span>0 → 24 TOKENS</span><span>55 → 0 TINY LABELS</span><span>0 → 29 A11Y</span></div>
+</section>
+
+</div></div>
+
+<div id="notes"><b>Presenter notes</b><span id="notes-body"></span></div>
+
+<div id="hud">
+  <div class="hud-g">
+    <button id="prev" aria-label="Previous slide">← PREV</button>
+    <button id="next" aria-label="Next slide">NEXT →</button>
+    <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
+  </div>
+  <div><span id="counter">1 / 17</span></div>
+</div>
+<div id="bar"></div>
+
+<script type="text/plain" id="full-skeleton">
+Build [LAYER N] ONLY of "[APP NAME]", [one line: what it is and who it is for].
+
+=== TARGET RUNTIME ===
+A multi-file React + TypeScript project with Tailwind, using real ES module
+imports across files. Do NOT emit a single index.html that loads React, Babel
+or Tailwind from a CDN. Do NOT link Google Fonts or any external asset.
+The app must run with the network switched off.
+
+=== SCOPE FENCE - READ THIS TWICE ===
+This layer is [one sentence describing the whole of it].
+DO NOT build, and do not stub in passing:
+[list every feature belonging to a later layer, by name, one by one].
+[Any screen that is not in this layer] must render one centred panel reading
+"Unlocks in the next build step." That is the whole feature.
+If you find yourself writing [the giveaway artefact - an oscillator, a
+requestAnimationFrame loop, a fetch call], you have left this layer.
+Stop and delete it.
+
+=== DESIGN TOKENS - AND HOW THEY MUST BE CONSUMED ===
+[paste the :root block from DESIGN.md]
+
+Hard rules, not preferences:
+- Tokens are declared once in :root in index.css, and registered in the
+  Tailwind theme so that every utility class resolves to a token.
+- No raw hex anywhere in a component file.
+- No arbitrary Tailwind values at all: no bg-[#123456], no text-[10px],
+  no shadow-[0_0_8px_#123456]. If you need a glow, add a named token.
+- Smallest permitted font size is [N]px. [State the reason - a reason makes
+  the rule stick where a number alone does not.]
+- Every clickable element is at least --touch-min tall AND wide.
+
+=== WHAT THIS LAYER RENDERS ===
+[The screen-by-screen description you already know how to write. Be concrete
+about layout, content and state. This is the one block most people get right.]
+
+=== ACCESSIBILITY - PART OF THE DEFINITION OF DONE ===
+Every control is a real button or has a role. Tab reaches all of them, Enter
+and Space activate them, and the focus ring is visible against the background.
+This layer must be fully operable with the keyboard alone.
+
+=== BEFORE YOU ANSWER, CHECK YOURSELF ===
+1. Zero CDN script tags, zero external fonts, zero network requests.
+2. Zero raw hex outside index.css.
+3. Zero arbitrary Tailwind values in any component.
+4. No font below [N]px.
+5. None of the forbidden features from the scope fence appear anywhere.
+6. Every control reachable and activatable by keyboard.
+7. Layout holds at 1280x720 and at 390x844 without clipping.
+State each of the 7 as PASS or FAIL at the end of your answer, then list the
+files you created.
+
+NOTE TO YOURSELF: checks 6 and 7 cannot be verified by reading code alone.
+Say so if you are inferring rather than confirming.
+</script>
+<!-- =========================================================================
+     Interactive Deck Navigation & Clipboard Copy JavaScript Runtime
+     ========================================================================= -->
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var i = 0;
+  var canvas = document.getElementById('canvas');
+  var notes = document.getElementById('notes');
+  var nbody = document.getElementById('notes-body');
+  var counter = document.getElementById('counter');
+  var bar = document.getElementById('bar');
+
+  function show(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function(s, k){
+      s.classList.toggle('active', k === i);
+    });
+    if(counter) counter.textContent = (i + 1) + ' / ' + slides.length;
+    if(bar) bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    if(nbody) nbody.textContent = slides[i].getAttribute('data-notes') || '—';
+    location.hash = i + 1;
+  }
+
+  function fit(){
+    var s = Math.min((window.innerWidth - 24) / 1280, (window.innerHeight - 54) / 720);
+    canvas.style.transform = 'scale(' + s + ')';
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){
+      e.preventDefault(); show(i + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){
+      e.preventDefault(); show(i - 1);
+    } else if(e.key === 'Home'){
+      show(0);
+    } else if(e.key === 'End'){
+      show(slides.length - 1);
+    } else if(e.key === 'n' || e.key === 'N'){
+      if(notes) notes.classList.toggle('on');
+    }
+  });
+
+  var nextBtn = document.getElementById('next');
+  var prevBtn = document.getElementById('prev');
+  var notesBtn = document.getElementById('notesbtn');
+
+  if(nextBtn) nextBtn.onclick = function(){ show(i + 1); };
+  if(prevBtn) prevBtn.onclick = function(){ show(i - 1); };
+  if(notesBtn) notesBtn.onclick = function(){ if(notes) notes.classList.toggle('on'); };
+
+  function flash(btn){
+    var o = btn.dataset.label;
+    btn.textContent = 'COPIED ✓';
+    btn.classList.add('ok');
+    setTimeout(function(){
+      btn.textContent = o;
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+
+  function writeClipboard(txt, btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){ flash(btn); }, function(){ legacy(txt, btn); });
+    } else {
+      legacy(txt, btn);
+    }
+  }
+
+  function legacy(txt, btn){
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      flash(btn);
+    } catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref = pre.getAttribute('data-full');
+    var src = ref && document.querySelector(ref);
+    var txt = (src ? src.textContent.replace(/^\n/, '').replace(/\s+$/, '') : pre.innerText).trim();
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'copybtn';
+    b.dataset.label = pre.getAttribute('data-copy-label') || (src ? 'COPY FULL' : 'COPY');
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label', 'Copy prompt to clipboard');
+    b.onclick = function(e){
+      e.stopPropagation();
+      writeClipboard(txt, b);
+    };
+    pre.appendChild(b);
+    pre._copy = function(){ writeClipboard(txt, b); };
+  });
+
+  document.addEventListener('keydown', function(e){
+    if((e.key === 'c' || e.key === 'C') && !e.metaKey && !e.ctrlKey){
+      var p = slides[i].querySelector('pre');
+      if(p && p._copy) p._copy();
+    }
+  });
+
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function(){
+    var n = parseInt((location.hash || '#1').slice(1), 10) - 1;
+    if(!isNaN(n) && n !== i) show(n);
+  });
+
+  fit();
+  show(parseInt((location.hash || '#1').slice(1), 10) - 1 || 0);
+})();
+</script>
+
+</body>
+</html>
