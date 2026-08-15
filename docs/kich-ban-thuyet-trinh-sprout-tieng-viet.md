@@ -1,6 +1,6 @@
 # Kịch bản thuyết trình — Sprout (tiếng Việt)
 
-Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 32 slide, khoảng **51 phút** nếu nói hết.
+Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 32 slide, khoảng **55 phút** nếu nói hết.
 
 **Quy ước trong file này**
 - `[HÀNH ĐỘNG]` = việc cần làm (bấm phím, đổi tab, copy prompt), không đọc lên.
@@ -13,11 +13,11 @@ Dùng cho `docs/slides/sprout-student-team-funding-pipeline-slides.html` — 32 
 |---|---|---|
 | Mở đầu + vấn đề + phạm vi | 1–8 | 13 phút |
 | Stage 1 — Ý tưởng | 9–11 | 4 phút |
-| Stage 2 — Bản thiết kế | 12–15 | 6 phút |
-| Stage 3 — Build 4 lớp | 16–26 | 21 phút |
+| Stage 2 — Bản thiết kế | 12–15 | 7 phút |
+| Stage 3 — Build 4 lớp | 16–26 | 24 phút |
 | Stage 4 — Kiểm thử | 27–29 | 4 phút |
 | Stage 5 — Deploy + kết | 30–32 | 3 phút |
-| | | **51 phút** |
+| | | **55 phút** |
 
 **Nếu chỉ có 40 phút:** rút gọn slide 22, 23, 24 xuống mỗi slide 1 phút (chỉ đọc tiêu đề khối, không giải thích từng mục) và bỏ slide 26. Vẫn giữ nguyên slide 4, 5, **19**, 20, 25 — đó là năm slide có nội dung mà người khác không nói được.
 
@@ -183,7 +183,7 @@ Bước hai. Ở đây có ba sản phẩm trung gian, và cái security rules l
 
 ---
 
-## Slide 13 — Prompt Stage 2 · 2 phút 30
+## Slide 13 — Prompt Stage 2 · 3 phút
 
 [HÀNH ĐỘNG] Bấm `C`, dán vào Gemini chat, đừng chờ — nói tiếp luôn.
 
@@ -200,6 +200,14 @@ Nhưng đoạn quan trọng nhất là phần cuối mục 4: **"cách token đ�
 Đây chính là thứ sửa được lời phàn nàn mà ai cũng có về giao diện do AI sinh ra. **Một bảng màu không phải là một design system.** Đưa cho model năm mã màu hex, nó sẽ rắc hai trăm mã hex vào khắp code. Còn nói với nó rằng token phải khai báo trong `:root`, phải đăng ký vào Tailwind theme, và **cấm mã hex thô trong component** — thì nó mới sinh ra một hệ thống.
 
 Và cái danh sách "KHÔNG ĐƯỢC" cũng vậy. Không tím, không gradient xanh-tím, không glassmorphism, không đổ bóng mọi thẻ. **Một danh sách cấm cụ thể có sức nặng hơn mười tính từ khen ngợi.**
+
+[HÀNH ĐỘNG] Chỉ vào mục cuối cùng: LAYOUT RULES, WITH NUMBERS.
+
+Còn mục cuối cùng này thì mình **thêm vào sau**, sau khi build hỏng một lần. Slide 19 mình sẽ kể chuyện đó.
+
+Ý chính: **màu và chữ có token để bám vào. Layout thì không có token nào cả.** Nên nếu bạn không đưa con số, model tự chọn, và nó chọn dở.
+
+Và lý do luật layout phải nằm **trong DESIGN.md**, chứ không phải chỉ trong prompt Layer 1: vì Layer 2, 3, 4 đều mở đầu bằng câu "đọc lại DESIGN.md và tuân theo". Nếu luật chỉ nằm ở prompt Layer 1, thì màn hình Discover đẹp — còn màn inbox thêm ở Layer 3 sẽ hỏng đúng y như cũ. **Viết vào DESIGN.md một lần, bốn lớp đều được hưởng.**
 
 ---
 
@@ -275,7 +283,7 @@ Nửa dưới mới là phần làm việc: danh sách **KHÔNG**. Không tím, 
 
 ---
 
-## Slide 19 — "Responsive" không phải là spec · 2 phút 30
+## Slide 19 — "Responsive" không phải là spec · 4 phút
 
 Slide này có mặt ở đây vì **mình đã làm sai**, và mình nghĩ đây là bài học đáng giá nhất trong cả phần build.
 
@@ -299,6 +307,14 @@ Và đây là quy luật rút ra: **token sửa được màu và chữ, vì tok
 
 Nói rộng ra: **mỗi tính từ trong prompt là một chỗ bạn nhường quyền quyết định cho model.** "Responsive", "đẹp", "hiện đại", "sạch sẽ" — bốn chỗ nhường. Đổi chúng thành số thì bạn lấy lại quyền.
 
+Sửa xong thì có một câu hỏi tiếp theo, và mình nghĩ đây mới là câu hỏi hay: **sửa Layer 1 thì các layer sau có giữ được không?** Layer 3 thêm màn inbox — một màn hình mà lúc viết luật mình chưa hề mô tả.
+
+Mình đã thử thật: đưa DESIGN.md kèm luật layout, cộng với **đúng nguyên văn prompt Layer 3** — cái prompt chỉ nói vỏn vẹn "đọc lại DESIGN.md và tuân theo", không nhắc lại một chữ nào về layout.
+
+Kết quả: **luật lan được.** Màn inbox không có sidebar, không có lưới bốn cột, có `mt-auto`, có `line-clamp-2`, và model tự viết vào code một dòng: *"Ở 1440px, hộp thư hiển thị 8 đơn ứng tuyển trước khi phải cuộn."* Đó là luật được áp dụng cho màn hình mình chưa từng mô tả.
+
+Nhưng nó cũng lộ ra hai chuyện. Thứ nhất, **có trôi**: luật ghi 1200px, model dùng `max-w-6xl` — tức 1152px. Đúng tinh thần, sai con số. Thứ hai, và cái này mới đáng lo: **Layer 2, 3, 4 lúc đó không có mục self-check nào về layout.** Lần này lan đúng, nhưng nếu lan sai thì **không có gì bắt được**. Nên mình đã thêm mục kiểm tra layout vào cả ba layer sau — và viết thẳng con số 1152 vào prompt, vì gọi tên đúng cái lỗi model vừa mắc thì hiệu quả hơn là dặn "phải chính xác 1200".
+
 ---
 
 ## Slide 20 — Kết quả đo được · 2 phút
@@ -321,7 +337,7 @@ Nhưng phải nói cho sòng phẳng: **grep chứng minh được luật đã �
 
 ---
 
-## Slide 21 — Nghiệm thu Layer 1 · 1 phút 30
+## Slide 21 — Nghiệm thu Layer 1 · 1 phút 45
 
 Sáu mươi giây kiểm tra trước khi dán Layer 2.
 
@@ -333,9 +349,11 @@ Và đây là câu quan trọng: **đừng chấp nhận "tạm được" ở ph
 
 Layer 2, 3, 4 sẽ thêm màn hình mới **theo đúng phong cách mà Layer 1 đã đặt ra**. Sửa thẩm mỹ ở đây tốn một cái prompt. Sửa ở Layer 4 tốn nguyên một lần viết lại mọi màn hình.
 
+Riêng về layout, có ba thứ kiểm trong ba mươi giây: **kéo cửa sổ hẹp lại** xem lưới có tụt từ ba xuống hai rồi xuống một cột không; **lọc còn đúng một dự án** xem cái thẻ có giãn ra chiếm cả hàng không — nó phải giữ nguyên bề rộng một cột; và **nhìn vào giữa thẻ** xem có lỗ trống nào không.
+
 ---
 
-## Slide 22 — Prompt Layer 2 · 2 phút
+## Slide 22 — Prompt Layer 2 · 2 phút 15
 
 Layer 2 là lúc app trở thành thật: đăng nhập Google, hồ sơ, tạo dự án, và dữ liệu seed chuyển vào Firestore.
 
@@ -349,9 +367,11 @@ Và luật của cả layer này: **deploy rules TRƯỚC lần ghi đầu tiên
 
 Nếu một truy vấn lỗi, thường là truy vấn sai, không phải rule sai. Một database bị mở "tạm thời" trong lúc build là một database sẽ đi thẳng lên production trong tình trạng mở.
 
+Và ở cuối prompt này có **mục self-check số 7 về layout** — mục mình thêm vào sau vụ hỏng ở slide 19. Layer 2 thêm hai màn mới là hồ sơ và tạo dự án, nên nó phải tự khai: cột nội dung có đúng 1200px không, có lưới bốn cột nào không, thẻ có rỗng ruột không.
+
 ---
 
-## Slide 23 — Prompt Layer 3 · 2 phút 30
+## Slide 23 — Prompt Layer 3 · 2 phút 45
 
 Đây là lớp quan trọng nhất. Mọi thứ trước nó chỉ là một trang đăng tin.
 
@@ -369,9 +389,11 @@ Cách xử lý: bọc thao tác nhận trong một **Firestore transaction** —
 
 Còn một chi tiết nhỏ mà mình nghĩ là quan trọng: **lời từ chối không bao giờ được viết nặng nề.** Đây là bạn cùng lớp, thứ Hai tuần sau còn gặp nhau trong giảng đường. "Vai trò này đã có người" là đủ rồi. Đó là chi tiết mà phần mềm doanh nghiệp thường quên, còn sản phẩm cho sinh viên thì không được quên.
 
+Và mục self-check số 7 ở cuối là dành riêng cho **màn inbox** — đây chính là màn hình mình đem đi test ở slide 19. Nó phải tự khai số đơn ứng tuyển nhìn thấy được ở 1440px trước khi phải cuộn.
+
 ---
 
-## Slide 24 — Prompt Layer 4 · 2 phút
+## Slide 24 — Prompt Layer 4 · 2 phút 15
 
 Layer 4: pledge và hoàn thiện.
 
@@ -384,6 +406,8 @@ Không có ô nhập thẻ, không ví, không SDK thanh toán, không checkout,
 **Đây không phải là bắt bẻ câu chữ.** Đó là ranh giới giữa một nền tảng ghi nhận cam kết và một dịch vụ thanh toán không phép.
 
 Còn về kỹ thuật: pledge **bất biến**. Rút lại thì đánh dấu là đã rút, chứ không xoá — để lịch sử còn trung thực. Và `pledgedTotal` với `backerCount` cập nhật trong **cùng một transaction** với pledge, không bao giờ từ client.
+
+Cuối cùng, mục self-check số 7 của Layer 4 khác ba layer trước: nó bắt model **quét lại cả bốn lớp**, không chỉ lớp này, và **liệt kê ra mọi màn hình phải sửa**. Đây là lưới an toàn cuối — chỗ bắt được những gì đã trôi qua bốn lượt prompt mà không ai để ý.
 
 ---
 

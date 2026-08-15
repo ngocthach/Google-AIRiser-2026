@@ -1283,7 +1283,12 @@ Do not, under any circumstances, set allow read, write: if true.
 4. Applying, accepting and pledging are all still disabled.
 5. Loading, empty and error states exist on every screen that reads data.
 6. Zero raw hex and zero arbitrary Tailwind values were added.
-7. Layer 1 files were extended, not rewritten. List every file you changed.
+7. Every NEW screen obeys the LAYOUT RULES in DESIGN.md: content column
+   capped at exactly 1200px (not "roughly" - not max-w-6xl, which is 1152),
+   card grids never four-wide, margin-top:auto and line-clamp-2 so no card
+   hollows out, chip rows rather than sidebars, one primary action.
+   For each new list screen, state how many items are visible at 1440px.
+8. Layer 1 files were extended, not rewritten. List every file you changed.
 </script>
 
 <script type="text/plain" id="full-sp-l3">
@@ -1335,6 +1340,11 @@ role and decrements the count in a transaction.
 4. A declined applicant sees a neutral message, never a harsh one.
 5. No funding, pledge or update code was added.
 6. Zero raw hex and zero arbitrary Tailwind values were added.
+7. The owner's inbox obeys the LAYOUT RULES in DESIGN.md: content column
+   capped at exactly 1200px (not "roughly" - not max-w-6xl, which is 1152),
+   never four columns, margin-top:auto and line-clamp-2 so no row hollows
+   out, no full-height sidebar, one primary action.
+   State how many applications are visible at 1440px before scrolling.
 </script>
 
 <script type="text/plain" id="full-sp-l4">
@@ -1390,6 +1400,11 @@ project page, newest first. No email, no notification centre.
 4. Only the project owner can see backer contact emails.
 5. Every data-reading screen has loading, empty and error states.
 6. Zero raw hex outside index.css across the entire project.
+7. Every screen in the finished app obeys the LAYOUT RULES in DESIGN.md.
+   Sweep all four layers, not just this one: content column capped at
+   exactly 1200px (not max-w-6xl, which is 1152), no four-column grid, no
+   card with a hollow middle, no full-height sidebar, one primary action
+   per screen. List every screen you had to correct.
 </script>
 
 <script type="text/plain" id="full-sp-s4">
