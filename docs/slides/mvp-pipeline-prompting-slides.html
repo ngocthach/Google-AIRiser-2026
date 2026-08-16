@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Idea → Shipped: the 8-stage MVP pipeline, and how to prompt each one</title>
+<title>Idea → Shipped: the 9-stage MVP pipeline, and how to prompt each one</title>
 <style>
 /* ============================================================
    Google deck — tokens measured from Vibe_Coding_Handbook.pptx
@@ -70,7 +70,16 @@ tr.hl td{background:var(--tint)}
 table.sm{font-size:14.5px}
 table.sm th,table.sm td{padding:8px 12px}
 code,.mono{font-family:var(--mono);font-size:.93em;background:var(--tint);padding:2px 7px;border-radius:5px;color:var(--ink-2)}
-pre{background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+pre{position:relative;background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap}
+/* Copy button. Slides often show an abridged prompt — the button copies the
+   FULL text so nobody transcribes from a projector. */
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
 pre.sm{font-size:12px;line-height:1.5;padding:18px 22px}
 pre .k{color:var(--cyan);font-weight:600}
 pre .c{color:#8FA5BC}
@@ -92,6 +101,19 @@ pre .c{color:#8FA5BC}
 .cover h1{max-width:19ch}
 .cover .sub{font-size:22px;color:var(--ink-2);margin-top:20px;max-width:60ch;line-height:1.5}
 .meta{position:absolute;left:76px;bottom:60px;display:flex;gap:34px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+/* hands-on checkpoint — deliberately loud, so the room knows it has stopped
+   being a talk and started being a workshop */
+.slide.turn{background:var(--tint);justify-content:center}
+.turn .eyebrow{color:#1A62C9}
+.turn h2{font-size:52px}
+.turn .task{font-size:24px;line-height:1.5;color:var(--ink-2);max-width:60ch;margin-top:6px}
+.turn .clock{position:absolute;right:76px;top:50%;transform:translateY(-50%);text-align:center}
+.turn .clock .n{font-size:104px;font-weight:700;color:var(--blue);line-height:1}
+.turn .clock .u{font-family:var(--mono);font-size:14px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.turn .done{margin-top:22px;font-size:17px;color:var(--ink);background:#fff;border:1px solid #C9DDFB;
+  border-radius:12px;padding:14px 20px;max-width:880px}
+.turn .done b{color:#1A62C9}
+
 /* stage divider */
 .slide.divider{background:#16222E;justify-content:center}
 .divider h2{color:#fff;font-size:56px}
@@ -118,6 +140,14 @@ pre .c{color:#8FA5BC}
   .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
   #hud,#bar,#notes{display:none}
 }
+
+/* Tool badge in the folio. A workshop that switches between tools loses people
+   silently — showing the current tool on every actionable slide fixes that.
+   White fill + border so it reads on both white slides and tinted .turn slides. */
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
 </style>
 </head>
 <body>
@@ -129,29 +159,32 @@ pre .c{color:#8FA5BC}
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <span class="badge">#BuildwithGoogleAI · MVP Pipeline</span>
   <h1>Idea → Shipped</h1>
-  <p class="sub">Eight stages, and the exact prompt that gets you through each one. The prompts are the deck — copy them.</p>
-  <div class="meta"><span>STEP-BY-STEP</span><span>8 STAGES</span><span>BEGINNER → INTERMEDIATE</span></div>
+  <p class="sub">Nine stages, and the exact prompt that gets you through each one. The prompts are the deck — copy them.</p>
+  <div class="meta"><span>STEP-BY-STEP</span><span>9 STAGES</span><span>BEGINNER → INTERMEDIATE</span></div>
 </section>
 
-<!-- 2 the eight stages -->
-<section class="slide" data-notes="Don't read all eight. Point out that the first three are where people skip, and where this talk spends its time.">
+<!-- 2 the nine stages -->
+<section class="slide" data-notes="Don't read all nine. Point out that the first four are where people skip, and where this talk spends its time.">
   <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
   <div class="eyebrow">The pipeline</div>
-  <h2>Eight stages, in this order</h2><div class="rule"></div>
+  <h2>Nine stages, in this order</h2><div class="rule"></div>
   <div class="body">
-    <div class="grid g4">
+    <div class="grid g3">
       <div class="card sm accent"><span class="n">01</span><h3>Research</h3><p>Is the problem real?</p></div>
       <div class="card sm accent"><span class="n">02</span><h3>Brainstorm</h3><p>Which solution?</p></div>
-      <div class="card sm accent"><span class="n">03</span><h3>Design system</h3><p>What does it look like?</p></div>
-      <div class="card sm"><span class="n">04</span><h3>Code</h3><p>Build the thing</p></div>
+      <div class="card sm accent"><span class="n">03</span><h3>Plan</h3><p>What, and built with what?</p></div>
     </div>
-    <div class="grid g4">
-      <div class="card sm"><span class="n">05</span><h3>Test</h3><p>What breaks?</p></div>
-      <div class="card sm"><span class="n">06</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
-      <div class="card sm"><span class="n">07</span><h3>Deploy</h3><p>Get a live URL</p></div>
-      <div class="card sm"><span class="n">08</span><h3>Publish</h3><p>Ship it to people</p></div>
+    <div class="grid g3">
+      <div class="card sm accent"><span class="n">04</span><h3>Design system</h3><p>What does it look like?</p></div>
+      <div class="card sm"><span class="n">05</span><h3>Code</h3><p>Build the thing</p></div>
+      <div class="card sm"><span class="n">06</span><h3>Test</h3><p>What breaks?</p></div>
     </div>
-    <div class="callout"><p>Most people start at <strong>04</strong>. That is why their MVP looks like everyone else's — and why they can't answer "why this?"</p></div>
+    <div class="grid g3">
+      <div class="card sm"><span class="n">07</span><h3>Evaluation</h3><p>Is it good enough?</p></div>
+      <div class="card sm"><span class="n">08</span><h3>Deploy</h3><p>Get a live URL</p></div>
+      <div class="card sm"><span class="n">09</span><h3>Publish</h3><p>Ship it to people</p></div>
+    </div>
+    <div class="callout"><p>Most people start at <strong>05</strong>. That is why their MVP looks like everyone else's — and why they can't answer "why this?"</p></div>
   </div>
 </section>
 
@@ -164,15 +197,16 @@ pre .c{color:#8FA5BC}
     <table class="sm">
       <tr><th>Stage</th><th>What comes out</th><th>Feeds</th></tr>
       <tr class="hl"><td><strong>Research</strong></td><td>A problem brief — segments, status quo, killer assumptions</td><td>Brainstorm</td></tr>
-      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Design</td></tr>
-      <tr class="hl"><td><strong>Design system</strong></td><td>Token set + screen specs</td><td>Code</td></tr>
+      <tr class="hl"><td><strong>Brainstorm</strong></td><td>One chosen idea + the reason + what would kill it</td><td>Plan</td></tr>
+      <tr class="hl"><td><strong>Plan</strong></td><td>Feature cut · screen list · <strong>stack</strong> · data model</td><td>Design</td></tr>
+      <tr class="hl"><td><strong>Design</strong></td><td>Token set + visual spec per screen</td><td>Code</td></tr>
       <tr><td><strong>Code</strong></td><td>A working app</td><td>Test</td></tr>
       <tr><td><strong>Test</strong></td><td>Ranked bug list + pre-demo checklist</td><td>Evaluation</td></tr>
       <tr><td><strong>Evaluation</strong></td><td>Prioritised fix list against the real rubric</td><td>Deploy</td></tr>
       <tr><td><strong>Deploy</strong></td><td>A live URL</td><td>Publish</td></tr>
       <tr><td><strong>Publish</strong></td><td>Submission + demo video</td><td>—</td></tr>
     </table>
-    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 4 output good — not a cleverer build prompt.</p></div>
+    <div class="callout"><p><strong>Each prompt eats the previous artifact.</strong> That is what makes stage 5 output good — not a cleverer build prompt.</p></div>
   </div>
 </section>
 
@@ -221,14 +255,14 @@ most change your response. Wait for my answers.</pre>
   <h2>Research</h2><div class="rule"></div>
   <p>Decide whether the problem is real <em>before</em> you fall in love with a solution. Output: a problem brief you can hand to the next stage.</p>
   <div class="stagerow">
-    <span class="on">Research</span><span>Brainstorm</span><span>Design</span><span>Code</span>
+    <span class="on">Research</span><span>Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
 
 <!-- 7 research prompt -->
 <section class="slide" data-notes="Point at line 3 — 'what do they do today instead'. The status quo is the real competitor, not other apps.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — research prompt</div>
   <h2>Interrogate the problem</h2><div class="rule"></div>
   <div class="body">
@@ -280,27 +314,118 @@ Never invent statistics, market sizes, or company names.</pre>
   </div>
 </section>
 
-<!-- 9 BRAINSTORM divider -->
+<!-- 9 ví dụ điền cho Ươm Mầm -->
+<section class="slide" data-notes="Đây là prompt slide trước, điền thật. Nói: bước 1–6 y nguyên, chỉ phần bối cảnh đổi. Rồi chỉ vào câu 7 và 8 — hai câu này có thể giết ý tưởng, nên hỏi trước khi build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Worked example — Ươm Mầm</div>
+  <h2>The same prompt, filled in</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-research-uommam">
+You are a product researcher who is skeptical by default.
+
+Goal: decide whether this problem is real and worth building for,
+before I write any code.
+
+  PROBLEM: Students have project ideas but never build them. They
+  can't find teammates with complementary skills, they have no way
+  to show the idea to anyone outside their class, and nobody funds
+  or supports a student project that has no track record. So the
+  idea stays in a notebook and dies.
+
+  The product I'm considering: "Ươm Mầm" — students post an idea,
+  others ask to join, a team forms, the team posts progress, and
+  when ready the team opens a campaign where the community pledges
+  support (money, materials, mentoring, or hours — pledges only,
+  no payment processing).
+
+Context: MVP for students in Vietnam, ages 6 to 22, spanning primary
+school through university. Market: Vietnam. I have roughly 15-25
+hours total across evenings, deadline 30/08/2026, working solo.
+
+Do this:
+1. Restate the problem in one sentence, as a USER would say it —
+   not as I said it. Give me two versions: one as a 10-year-old
+   would say it, one as a 20-year-old would say it.
+2. Split who has it into 3 segments. Say which segment feels it
+   most acutely, and why.
+3. For each segment: what do they do today instead?
+   (the status quo is the real competitor, not other apps)
+   Be specific about Vietnam — school clubs, Facebook groups,
+   Zalo, doan/hoi activities, existing school programs.
+4. List 5 existing solutions. For each: what it does well, and
+   the specific gap it leaves. Include non-app answers — a teacher
+   running a club, a school science fair, a Facebook group.
+5. List the 3 assumptions that, if wrong, kill this idea.
+6. The cheapest way to test the riskiest one this week, without
+   building anything.
+
+Then two more, specific to this product:
+7. I have written "ages 6 to 22" as one audience. Argue that this
+   is wrong. What breaks if a 7-year-old and a 21-year-old use the
+   same product? If you think I should narrow it, name the single
+   age band you'd keep and what I lose by cutting the rest.
+8. Who actually has to say yes for this to reach users — the
+   student, the parent, the teacher, or the school? Whoever it is,
+   what do they need to see before they say yes?
+
+Rules: mark anything you are unsure about as [UNVERIFIED].
+Never invent statistics, market sizes, or company names.
+Before you answer, ask me the 3 questions whose answers would most
+change your response. Wait for my answers.
+</script>
+    <pre class="sm" data-full="#full-research-uommam"><span class="c">PROBLEM:</span> Students have project ideas but never build them. They can't
+find teammates, can't show the idea outside their class, and nobody backs
+a project with no track record. The idea dies in a notebook.
+
+<span class="c">PRODUCT:</span> "Ươm Mầm" — post an idea → others ask to join → team forms →
+team posts progress → community pledges support (money, materials,
+mentoring, hours. Pledges only, no payment processing).
+
+<span class="c">CONTEXT:</span> students in Vietnam, ages 6–22. Solo, ~20h, deadline 30/08.
+
+[ steps 1–6 unchanged ] · 3. …grounded in Vietnam: school clubs, Zalo, đoàn/hội
+
+<span class="k">Then two more, specific to this product:</span>
+<span class="k">7.</span> I wrote "ages 6 to 22" as ONE audience. <span class="k">Argue that this is wrong.</span>
+   What breaks if a 7-year-old and a 21-year-old use the same product?
+   Name the single age band you would keep, and what I lose.
+<span class="k">8.</span> Who actually has to say yes — student, parent, teacher, or school?
+   What do they need to see before they say yes?</pre>
+    <div class="callout red"><p>Both added questions could kill the idea — which is exactly why they go in <em>before</em> you build.</p></div>
+  </div>
+</section>
+
+<!-- 10 THỰC HÀNH 1 -->
+<section class="slide turn" data-notes="10 phút. Đi vòng quanh phòng. Ai chưa có ý tưởng thì cho họ mượn một cái — quan trọng là chạy được prompt.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Research <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Thực hành 01</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Mở Gemini. Dán prompt Research, điền ý tưởng của <em>chính bạn</em> vào <code>[PROBLEM]</code> và <code>[AUDIENCE]</code>. Chạy.</p>
+  <div class="done"><b>Xong khi:</b> bạn nói được nhóm nào đau nhất, và <b>hôm nay họ xoay xở bằng cách gì.</b></div>
+  <div class="clock"><div class="n">10</div><div class="u">phút</div></div>
+</section>
+
+<!-- 10 BRAINSTORM divider -->
 <section class="slide divider" data-notes="Stage 2. Two prompts: one to open up, one to cut down. Never in the same message.">
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow">Stage 02</div>
   <h2>Brainstorm</h2><div class="rule"></div>
   <p>Two separate prompts: one to <em>diverge</em>, one to <em>converge</em>. Asking for both at once gets you three ideas and a premature favourite.</p>
   <div class="stagerow">
-    <span>Research</span><span class="on">Brainstorm</span><span>Design</span><span>Code</span>
+    <span>Research</span><span class="on">Brainstorm</span><span>Plan</span><span>Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
 
 <!-- 10 diverge prompt -->
 <section class="slide" data-notes="The forced variety buckets are what stop all 8 ideas being the same idea in different clothes.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — diverge prompt</div>
   <h2>Force variety, forbid ranking</h2><div class="rule"></div>
   <div class="body">
     <pre>You are a product designer who is good at unusual angles.
 
-Input: [paste the problem brief from Research]
+Input: [paste the problem brief — slide 7]
 
 Generate 8 solutions. <span class="k">Force variety — 2 from each bucket:</span>
   A. The obvious approach, done unusually well
@@ -318,7 +443,7 @@ why it might fail.
 
 <!-- 11 converge prompt -->
 <section class="slide" data-notes="Line about emotional attachment — this is the one that saves people from building the wrong thing.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — converge prompt</div>
   <h2>Now be brutal</h2><div class="rule"></div>
   <div class="body">
@@ -346,7 +471,51 @@ Show the scores as a table with a total column. Then:
   <div class="eyebrow">The artifact</div>
   <h2>Write the decision down</h2><div class="rule"></div>
   <div class="body">
-    <pre>CHOSEN:    &lt;idea name&gt;
+    <script type="text/plain" id="full-decision-prd">
+=== 1. The decision itself — fill these five lines by hand ===
+
+CHOSEN:    <idea name>
+FOR:       <the segment, specifically>
+BECAUSE:   <the one reason it beat the runner-up>
+KILLS IT:  <the assumption that must hold>
+NOT DOING: <the 2 things I deliberately cut>
+
+
+=== 2. Then paste this into Gemini to expand it into a one-page PRD ===
+
+You are a product manager who writes one-page PRDs, not documents
+nobody reads.
+
+Input — the decision from Brainstorm:
+CHOSEN:    The Proof-of-Work Protocol
+FOR:       university students aged 18-22 in Vietnam
+BECAUSE:   it filters out noise and creates a high-trust network from
+           day one — everyone visible has already shipped something
+KILLS IT:  students having no artifact of past work to upload
+NOT DOING: payments, under-18 users, a mobile app
+
+Turn that into a PRD that fits on ONE page. Exactly these sections:
+
+1. Problem — one paragraph, in the user's words, not mine.
+2. Who it is for — the segment, and roughly how many of them
+   plausibly exist. Mark any number you are unsure of as [UNVERIFIED].
+3. What success looks like — 2 metrics I could actually measure within
+   a week of launching. No vanity numbers.
+4. User stories — at most 5, in the form "As a X, I want Y so that Z".
+   Order them so that cutting from the bottom still leaves a usable
+   product.
+5. Out of scope — the cuts, each with one line of why it can wait.
+6. Open questions — what I still do not know, and who could tell me.
+
+Rules:
+- No timelines, no team structure, no tech choices. The plan stage
+  handles those; keep this document about the product.
+- If a section needs more than 120 words, I have not decided enough
+  yet. Say so instead of padding it.
+- Write it so a stranger could read it in two minutes and then explain
+  my product back to me correctly.
+</script>
+    <pre data-full="#full-decision-prd">CHOSEN:    &lt;idea name&gt;
 FOR:       &lt;the segment, specifically&gt;
 BECAUSE:   &lt;the one reason it beat the runner-up&gt;
 KILLS IT:  &lt;the assumption that must hold&gt;
@@ -358,21 +527,162 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   </div>
 </section>
 
-<!-- 13 DESIGN divider -->
-<section class="slide divider" data-notes="Stage 3. The stage that most separates a good-looking MVP from a generic one.">
+<!-- THỰC HÀNH 2 -->
+<section class="slide turn" data-notes="9 phút. Nhắc: chạy prompt diverge TRƯỚC, đọc hết 8 ý tưởng, rồi mới chạy prompt converge. Đừng gộp.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Brainstorm <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Thực hành 02</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Dán problem brief vừa có vào prompt <strong>diverge</strong>. Đọc hết 8 ý tưởng. Rồi mới chạy prompt <strong>converge</strong>.</p>
+  <div class="done"><b>Xong khi:</b> bạn viết được 5 dòng — <b>CHỌN / CHO AI / VÌ / FAIL NẾU / KHÔNG LÀM</b>.</div>
+  <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
+</section>
+
+<!-- PLAN divider -->
+<section class="slide divider" data-notes="Chặng 03. Chặng này em thêm vào sau khi soát lại — vì prompt build đang ghi 'React, Tailwind' mà chưa chặng nào chốt điều đó.">
   <div class="dots"><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow">Stage 03</div>
+  <h2>Plan</h2><div class="rule"></div>
+  <p>Decide <em>what</em> you are building and <em>what you are building it with</em> — before anyone talks about colour. Output: a cut feature list, a screen list, the stack, and the data model.</p>
+  <div class="stagerow">
+    <span>Research</span><span>Brainstorm</span><span class="on">Plan</span><span>Design</span><span>Code</span>
+    <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
+  </div>
+</section>
+
+<!-- Plan — vì sao + prompt -->
+<section class="slide" data-notes="Cấu trúc lấy từ Spec-Driven Development, rút gọn cho MVP 20 giờ. Nhấn PART A/B/C và luật cộng giờ.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — plan prompt</div>
+  <h2>The product is decided. Now: how, and does it fit?</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-plan-prompt">
+You are a technical product manager who cuts scope for a living.
+
+Input — the product is already decided. Paste whichever you have:
+[the 5-line decision or the one-page PRD — slide 14]
+
+Budget: [N] hours, working [solo / team of N].
+
+Do NOT restate the product, the users, or the features. That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+
+=== PART A - HOW ===
+
+## Screens
+The minimum number. Each with its single job in one sentence.
+If a screen needs the word "and" to describe, split it or cut it.
+
+## Stack
+- Frontend:
+- Data / auth:
+- AI: which SDK, which model, and where the API key lives
+One line of why for each. Prefer boring technology - something the
+world has already made every mistake with - over interesting
+technology, which the model has seen too few examples of to write
+reliably.
+
+## Data model
+The 2-3 entities and their fields. Nothing speculative.
+
+
+=== PART B - TASKS ===
+
+For each task: id, what it delivers, hours, what it depends on, and
+the one acceptance criterion that means it is done.
+
+Then SUM the hours.
+If the sum exceeds [N], do not hand the plan back to me. Cut the
+lowest-priority features until it fits, and tell me exactly what you
+cut and what that costs the product.
+
+If the sum is under half of [N], I have probably under-scoped or you
+have under-estimated. Say which.
+
+
+Rules:
+- No timelines, no team structure, no sprint names.
+- Mark anything you are unsure about as [UNVERIFIED].
+- If a section needs more than 150 words, I have not decided enough
+  yet. Say so instead of padding it.
+</script>
+    <pre class="sm" data-full="#full-plan-prompt">You are a technical product manager who <span class="k">cuts scope for a living</span>.
+
+Input: [the 5-line decision or the PRD — <span class="c">slide 14</span>]. Budget: [N] hours, working [solo / team of N].
+
+<span class="k">Do NOT restate the product, the users, or the features.</span> That is
+already settled. Decide only HOW it gets built, and whether it fits.
+
+<span class="k">PART A — HOW</span>     screens (one job each) · stack: frontend, data/auth,
+                 AI — which SDK, which model, where the key lives
+                 · data model, 2–3 entities
+
+<span class="k">PART B — TASKS</span>   id · what it delivers · hours · depends on ·
+                 the one criterion that means it is done
+
+<span class="k">Then SUM the hours. If the sum exceeds [N], do not hand it back —
+cut the lowest-priority features until it fits, and say what you cut.</span>
+
+Prefer boring technology. Mark guesses as [UNVERIFIED].</pre>
+    <div class="callout red"><p>Không có chặng này, bạn <strong>không biết 20 giờ có đủ không</strong> cho tới khi hết giờ.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-notes="Artifact theo đúng ba phần. Chỉ vào dòng tổng giờ cuối — đó là chỗ kế hoạch tự kiểm tra chính nó.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan</div>
+  <div class="eyebrow">Worked example — from a real run</div>
+  <h2>The plan artifact</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-copy-label="COPY TEMPLATE"><span class="c">Input: the PRD (slide 14) — vision, user, features, scope.
+Not repeated here. This document only answers HOW, and whether it fits.</span>
+
+<span class="k">PART A — HOW</span>
+ Screens   The Gate — force proof before access
+           The Network — show vetted peers and projects
+           Proof Detail — one-click collaboration request
+ Stack     React (TypeScript) + Tailwind, every value a CSS variable
+           Firebase Auth (Sign in with Google) + Cloud Firestore
+           @google/genai · current Flash model · AI Studio holds the key
+ Data      User(uid, name, proofUrl, tags[])
+           Project(id, ownerUid, title, need, proofUrl)
+           Request(id, projectId, fromUid, status)
+
+<span class="k">PART B — TASKS</span>
+ T1  Gate screen + link validation   5h   —       link accepted or rejected
+ T2  Network list + seed data        4h   T1      8 peers render
+ T3  Gemini tagging call             4h   T1      tags appear on a card
+ T4  Request-to-join flow            3h   T2      button flips to "sent"
+ T5  Publish + demo pass             2h   T1–T4   a stranger opens the URL
+                                    <span class="k">18h of a 20h budget</span>
+
+<span class="c">Cut to fit: F5 "follow a peer" (3h) — the network works without it.</span></pre>
+  </div>
+</section>
+
+<section class="slide turn" data-notes="7 phút. Nhắc: danh sách 'in' quá 5 dòng là chưa cắt đủ.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Plan <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Thực hành 03</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Dán quyết định từ chặng 2 vào prompt Plan, rồi chạy. <strong>Đếm số tính năng nó giữ lại — hơn 5 là chưa cắt đủ, bảo nó cắt tiếp.</strong></p>
+  <div class="done"><b>Xong khi:</b> bạn có tính năng đã cắt, số màn hình, <b>stack</b>, và mô hình dữ liệu.</div>
+  <div class="clock"><div class="n">7</div><div class="u">phút</div></div>
+</section>
+
+<!-- DESIGN divider -->
+<section class="slide divider" data-notes="Stage 3. The stage that most separates a good-looking MVP from a generic one.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 04</div>
   <h2>Design system &amp; UI</h2><div class="rule"></div>
   <p>Tokens before screens. This is the single biggest difference between an MVP that looks designed and one that looks generated.</p>
   <div class="stagerow">
-    <span>Research</span><span>Brainstorm</span><span class="on">Design</span><span>Code</span>
+    <span>Research</span><span>Brainstorm</span><span>Plan</span><span class="on">Design</span><span>Code</span>
     <span>Test</span><span>Eval</span><span>Deploy</span><span>Publish</span>
   </div>
 </section>
 
 <!-- 14 why tokens -->
 <section class="slide" data-notes="Explain: 'make it look nice' has no memory. Tokens are the memory.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
   <div class="eyebrow">Why this order</div>
   <h2>"Make it look nice" has no memory</h2><div class="rule"></div>
   <div class="body">
@@ -384,103 +694,508 @@ NOT DOING: &lt;the 2 things I deliberately cut&gt;</pre>
   </div>
 </section>
 
+<!-- tokens buy consistency, not taste -->
+<section class="slide" data-notes="Slide quan trọng nhất của chặng Design. Nói thẳng: bộ token đúng chuẩn vẫn có thể ra một app trông y hệt mọi app AI khác. Chỉ vào bảng bên trái — đó là màu mặc định model sẽ tự chọn nếu mình không chốt gì.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design</div>
+  <div class="eyebrow">The trap in the previous slide</div>
+  <h2>Tokens buy consistency. They do not buy taste.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card stop"><h3>What you get by default</h3>
+        <p>Indigo <code>#4F46E5</code> · near-white page · <code>#111827</code> text · Inter · radius 12 · a soft grey shadow. Consistent, accessible, and identical to every other app generated this year. The model reached for the average because you gave it nothing to reach for.</p></div>
+      <div class="card go"><h3>What makes it yours</h3>
+        <ul class="check tight">
+          <li>An <b>atmosphere</b> you committed to, in one sentence</li>
+          <li>ONE accent, with a reason, used only where I can click</li>
+          <li>A <b>geometry</b> decision — pill or rectangular, not both</li>
+          <li>A <b>density</b> decision — compact or breathing</li>
+          <li>A list of the defaults you <b>forbade</b></li>
+        </ul></div>
+    </div>
+    <div class="callout"><p>Tokens are the memory. <strong>The principles are the taste.</strong> The next prompt asks for both — most people only ask for the first half.</p></div>
+  </div>
+</section>
+
 <!-- 15 design system prompt -->
 <section class="slide" data-notes="Point at the WCAG line — it forces accessibility, which is usually a scored criterion.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — design system prompt</div>
   <h2>Generate the system, not a screen</h2><div class="rule"></div>
   <div class="body">
-    <pre class="sm">You are a product designer who builds design systems before screens.
+    <script type="text/plain" id="full-design-system">
+You are a product designer who builds design systems before screens.
 
-Product: [one line]. Users: [who]. Should feel: [3 adjectives].
-Platform: mobile-first web.
+Input — the plan (slide 18). The product, the users and
+the screen list are already decided there; do not re-derive them.
 
-<span class="k">Give me tokens, not prose:</span>
-- Colour: bg, surface, text-primary, text-secondary, border, brand,
-  + semantic success / warning / danger. Hex values.
-  <span class="k">State the contrast ratio for every text-on-background pair
-  and confirm each passes WCAG AA.</span>
-- Type: one font stack + exactly 6 sizes in px with their use
-  (display, title, subtitle, body, small, micro) and line-heights.
+Product: The Proof-of-Work Protocol — university students aged 18-22
+must upload verifiable proof of past work (a GitHub repo, a Figma
+file, a slide deck) before the network of other students and their
+projects is revealed to them.
+Users: students entering a competitive job market, building a
+portfolio under time pressure.
+Should feel: serious, dense, earned.
+Anti-feel: must NOT feel playful, and must NOT feel corporate-SaaS.
+Platform: web first, mobile-first layout, built in Google AI Studio
+(React + Tailwind).
+
+Reference aesthetic — follow these PRINCIPLES, do not copy any brand:
+- Content-first darkness: the interface recedes into near-black so
+  the users' actual work is the only source of colour on the screen.
+- A surface ladder, not one flat background: a near-black page, a
+  slightly lighter card, a lighter still interactive surface.
+- ONE functional accent colour, reserved for actions and state only.
+  Never decorative. If it appears somewhere you cannot click or that
+  is not telling me something, it is wrong.
+- Pill and circle geometry on every button.
+- Binary type weights — bold or regular, with one mid weight used
+  sparingly for secondary hierarchy.
+- A compact scale, roughly 10-24px. Density over breathing room.
+- Shadows carry elevation, because 1px borders disappear on dark.
+
+Give me tokens, not prose:
+
+- Colour: page, surface, surface-raised, surface-interactive,
+  text-primary, text-secondary, border, accent, plus semantic
+  success / warning / danger. Hex values.
+  State the contrast ratio for every text-on-background pair and
+  confirm each passes WCAG AA. Dark themes fail this far more often
+  than light ones — compute it, do not assume it.
+- Type: one font stack with a real fallback chain, and exactly 6
+  sizes in px with their use and their line-heights.
 - Spacing: an 8px-based scale, 6 steps.
-- Radius, border width, one shadow.
-- Rules for: button (3 states), input, card, list row.
+- Radius: 5 steps, including a pill value and a circle value.
+- Shadows: 2 levels, tuned for a dark surface.
+- Layout: container max-width, grid columns and gap, three breakpoints
+  with what actually changes at each one, minimum touch target size,
+  and one transition duration. Without these every screen comes back
+  as a centred column with even gaps, which is the look I am trying
+  to avoid.
+- Component rules for: button (3 states, pill geometry), input,
+  card, list row.
+- DO and DON'T: five rules each, specific to this system. For the
+  DON'T list, name the defaults an AI coding agent would reach for
+  if I said nothing — the indigo accent, the near-white page, the
+  uniform 12px radius, the soft grey shadow, the evenly spaced
+  centred column — and forbid each one explicitly.
 
 Constraints: no gradients, max 2 font weights, ONE accent colour.
 
-Output as CSS custom properties I can paste, then one line on why
-you chose the brand colour.</pre>
+Output the whole thing as a DESIGN.md I can drop into the project
+root, with the tokens as CSS custom properties in a :root block so I
+can paste them straight into a build prompt. End with one line on why
+you chose that accent colour.
+</script>
+    <pre class="sm" data-full="#full-design-system">You are a product designer who writes <span class="k">DESIGN.md</span> files that AI agents
+read before generating UI.
+Input: [the plan — <span class="c">slide 18</span>]. Should feel: [3 adjectives].
+<span class="k">Anti-feel: [2 adjectives it must NOT feel].</span> AI Studio, React + Tailwind.
+
+<span class="k">FIRST commit to an aesthetic — 5 principles, each a decision with a
+consequence, not an adjective:</span> light or dark, and why <em>this</em> product ·
+the surface ladder, not one flat background · ONE accent, functional
+only · geometry: pill or rectangular · density: compact or airy.
+
+<span class="k">THEN tokens, not prose:</span>
+- Colour: page, surface, surface-raised, text-primary/secondary, border,
+  accent + success/warning/danger. Hex. <span class="k">Contrast for every
+  text-on-bg pair — compute it, do not assume it.</span>
+- Type: one stack + fallback, 6 sizes with use + line-height.
+  Spacing 8px · radius 5 steps · 2 shadows.
+- <span class="k">LAYOUT: container max-width, grid, 3 breakpoints and what changes
+  at each, min touch target, one transition duration.</span>
+- Components: button (3 states), input, card, list row.
+- <span class="k">DO / DON'T, 5 each. Name the default an AI would reach for — forbid it.</span>
+
+Output as CSS custom properties inside a DESIGN.md. And ask me the
+3 questions that would most change your answer before you start.</pre>
   </div>
 </section>
 
 <!-- 16 screens prompt -->
 <section class="slide" data-notes="'Only these tokens' is the constraint doing the work. And the last line stops silent drift.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Design</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — screens prompt</div>
   <h2>Screens, constrained by the system</h2><div class="rule"></div>
   <div class="body">
     <pre><span class="k">Using ONLY the tokens above</span> — no new colours, no new sizes —
-design the [N] screens of this MVP.
+design <span class="k">the screens listed in the plan</span>. Do not add or rename them.
 
-For each screen:
-- Its single job, in one sentence
+For each screen — its job is already fixed by the plan:
 - The layout as a text wireframe, top to bottom, naming which
   token each block uses
 - The ONE primary action, and what happens after it
 - The empty state and the error state
 
 <span class="k">Then list every place the token set was not enough, and
-propose the smallest addition</span> rather than inventing freely.</pre>
+propose the smallest addition</span> rather than inventing freely.
+Fold those additions back into DESIGN.md so there is still
+<span class="k">one source</span> when I paste it into the build prompt.</pre>
     <div class="callout green"><p>Empty and error states are where generated UIs fall apart — and where a judge or user lands first. Ask for them by name.</p></div>
   </div>
 </section>
 
-<!-- 17 CODE -->
+<!-- THỰC HÀNH 3 -->
+<section class="slide turn" data-notes="9 phút. Nhấn: giữ lại bộ token — lát nữa dán thẳng vào prompt build.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Design <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Thực hành 04</div>
+  <h2>Đến lượt bạn</h2><div class="rule"></div>
+  <p class="task">Chạy prompt design system. <strong>Lưu lại bộ CSS variables</strong> — lát nữa dán thẳng vào prompt build.</p>
+  <div class="done"><b>Xong khi:</b> có bộ token dán được, và spec màn hình đầu kèm <b>empty + error state</b>.</div>
+  <div class="clock"><div class="n">9</div><div class="u">phút</div></div>
+</section>
+
+<!-- CODE -->
 <section class="slide" data-notes="Stage 4. Now the build prompt is easy, because it inherits three artifacts.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
-  <div class="eyebrow">Stage 04 — Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 05 — Code</div>
   <h2>Build in layers, not in one prompt</h2><div class="rule"></div>
   <div class="body">
     <div class="flow">
-      <div class="step"><span class="n">L1</span><h3>Core logic</h3><p>The one thing the app does. Ugly is fine.</p></div>
+      <div class="step"><span class="n">L1</span><h3>Screen 1, with the system</h3><p>Tokens go in the <em>first</em> message. Never "pretty later".</p></div>
       <div class="arw">→</div>
-      <div class="step"><span class="n">L2</span><h3>The system</h3><p>Apply the tokens. Now it looks designed.</p></div>
+      <div class="step"><span class="n">L2</span><h3>The other screens</h3><p>Same tokens, byte for byte.</p></div>
       <div class="arw">→</div>
       <div class="step"><span class="n">L3</span><h3>AI features</h3><p>The part that needs the model.</p></div>
       <div class="arw">→</div>
       <div class="step"><span class="n">L4</span><h3>States</h3><p>Empty, loading, error, accessibility.</p></div>
     </div>
     <div class="callout"><p>Test after each layer. When you ask for everything at once and it breaks, you have no idea which instruction caused it.</p></div>
+    <div class="callout red"><p><strong>Tokens are not a later layer.</strong> Once the agent has committed to a component structure with its own hardcoded values, retrofitting a design system costs more turns than building with it did.</p></div>
   </div>
 </section>
 
 <!-- 18 code prompt -->
 <section class="slide" data-notes="The scope line — no routing, no login, no database — is what keeps the model from building a dashboard.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Code</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
   <div class="eyebrow">Copy this — build prompt</div>
   <h2>The build prompt inherits everything</h2><div class="rule"></div>
   <div class="body">
-    <pre>Build [screen 1] of [product] as a React single-page app, Tailwind.
+    <pre class="sm">Build [screen 1] of [product].
+<span class="k">Stack: [the STACK block from the plan — <span class="c">slide 18</span>]</span>
+<span class="k">Use exactly these design tokens — no colours, sizes or spacing
+outside this set:</span> [paste the CSS custom properties — <span class="c">slide 23</span>]
 
-<span class="k">Use exactly these design tokens — introduce no colours, sizes,
-or spacing outside this set:</span>
-[paste the CSS custom properties from Stage 3]
+<span class="k">How to use them — this part is not optional:</span>
+- :root in index.css, <span class="k">registered in the Tailwind theme</span> so every
+  utility class resolves to a token.
+- <span class="k">No raw hex, no arbitrary values</span> — no bg-[#…], no p-[13px].
+- <span class="k">Write DESIGN.md to the project root and re-read it before
+  every later change I ask for.</span>
 
-This screen's job: [one sentence from the screen spec]
-Primary action: [action] → [what happens]
-Include the empty state and the error state.
-
+Job: [the job the plan gave this screen]. Primary action: [action] →
+[what happens]. Include the empty state and the error state.
 <span class="k">Scope: single screen. No routing, no login, no database.</span>
-Seed with [N] realistic sample items so it is never empty.
-
-Output complete working code. No placeholders, no "add logic here".</pre>
+Seed [N] realistic items and <span class="k">generate the images they need</span>.
+Output complete working code. No placeholders.</pre>
+    <div class="callout red"><p>Without the middle block, "use these tokens" is a wish. The agent writes your CSS variables into a file, then styles the app with its own defaults on top. <strong>That is why the output looks nothing like the system you just designed.</strong></p></div>
   </div>
 </section>
 
-<!-- 19 test -->
+<!-- ví dụ điền thật — build prompt -->
+<section class="slide" data-notes="Nhấn hai điều. Một: prompt này ngắn vì nó THỪA HƯỞNG — token và spec đã có sẵn. Hai: sản phẩm đã đổi tên và đổi đối tượng sau chặng Research. Đó là pipeline đang làm việc, không phải đi lạc.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Worked example — from a real run</div>
+  <h2>The same build prompt, filled in</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-thegate">
+Build "The Gate" screen of The Proof-of-Work Protocol.
+
+Stack, taken from the plan (slide 18):
+- React (TypeScript), single-page, Tailwind, with every value coming
+  from a CSS custom property
+- Firebase Auth (Sign in with Google) + Cloud Firestore
+- @google/genai on a Node backend, the current Flash model, with the
+  API key left in AI Studio's server-side secret — never in client code
+
+For THIS first layer, build the UI and local state only. Do not wire
+up Firebase or the Gemini call yet — those come in the next layer,
+once this screen looks and behaves correctly on its own.
+
+Use exactly these design tokens — introduce no colours, sizes, or
+spacing outside this set:
+
+  /* content-first darkness: the page recedes, the users' work is the
+     only source of colour. One accent, functional only. */
+  --color-bg:#0B0C0E;              --color-surface:#141618;
+  --color-surface-raised:#1C1F22;  --color-surface-interactive:#25292D;
+  --color-text-primary:#F2F4F6;    --color-text-secondary:#9BA3AB;
+  --color-border:#2A2E33;
+  --color-brand:#C6F24E;           --color-on-brand:#0B0C0E;
+  --color-success:#4ADE80;  --color-warning:#FBBF24;  --color-danger:#F87171;
+
+  /* compact scale — density over breathing room */
+  --font-stack:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-weight-regular:400;  --font-weight-bold:700;
+  --text-display:32px;   --lh-display:1.15;
+  --text-title:24px;     --lh-title:1.2;
+  --text-subtitle:18px;  --lh-subtitle:1.35;
+  --text-body:15px;      --lh-body:1.5;
+  --text-small:13px;     --lh-small:1.45;
+  --text-micro:11px;     --lh-micro:1.4;
+
+  --space-1:4px;  --space-2:8px;   --space-3:12px;
+  --space-4:16px; --space-5:24px;  --space-6:40px;
+
+  --radius-sm:6px; --radius:10px; --radius-lg:14px;
+  --radius-pill:999px; --radius-circle:50%;
+  /* shadows carry elevation, because 1px borders disappear on dark */
+  --shadow-1:0 1px 2px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-2:0 12px 32px rgba(0,0,0,.7);
+
+  /* layout — the tokens that stop every screen being a centred column */
+  --container-max:960px;  --grid-gap:var(--space-4);
+  --bp-sm:480px;  --bp-md:768px;  --bp-lg:1024px;
+  --touch-min:44px;  --motion:160ms cubic-bezier(.2,.8,.2,1);
+
+  --btn-default-bg:var(--color-brand);
+  --btn-default-text:var(--color-on-brand);
+  --btn-default-radius:var(--radius-pill);
+  --btn-default-padding:var(--space-3) var(--space-5);
+  --btn-min-height:var(--touch-min);
+  --btn-hover-bg:#D7FF6B;
+  --btn-disabled-bg:var(--color-surface-interactive);
+  --btn-disabled-text:#5C646C;
+  --input-bg:var(--color-surface-raised);
+  --input-border:1px solid var(--color-border);
+  --input-radius:var(--radius);
+  --input-padding:var(--space-3) var(--space-4);
+  --input-focus-outline:2px solid var(--color-brand);
+  --card-bg:var(--color-surface);
+  --card-border:1px solid var(--color-border);
+  --card-radius:var(--radius-lg);  --card-padding:var(--space-5);
+  --card-shadow:var(--shadow-1);
+  --list-row-padding:var(--space-3) var(--space-4);
+
+  /* the gaps the design stage flagged */
+  --size-icon:20px;  --size-avatar:36px;
+  --color-overlay:rgba(0,0,0,.6);
+  --focus-ring:2px solid var(--color-brand);
+
+  /* contrast, computed not assumed — all pass WCAG AA:
+     text-primary   on bg 17.8:1   on surface 16.5:1
+     text-secondary on bg  7.7:1   on surface  7.1:1
+     brand on bg 15.1:1 · on-brand on brand 15.1:1 */
+
+How to use them — this part is not optional:
+- Put them in index.css under :root, and register them in the Tailwind
+  theme so every utility class resolves to a token.
+- No raw hex and no arbitrary values anywhere in the markup: no
+  bg-[#...], no p-[13px], no text-[15px].
+- Write DESIGN.md to the project root containing this token set and
+  the rules above, and re-read it before every later change I ask for.
+
+This screen's job: force the user to submit verifiable proof of past
+work before they can view the network.
+
+Layout, top to bottom:
+- Background --color-bg, container --container-max, padding --space-5
+- Title --text-display / bold / --color-text-primary: "Prove Your Work."
+- Subtitle --text-subtitle / --color-text-secondary, margin-bottom
+  --space-3: "Upload a Figma link, GitHub repo, or slide deck to
+  unlock the network."
+- Upload card: --card-bg / --card-border / --card-radius / --card-shadow
+  / padding --card-padding, containing:
+    Label --text-small / bold: "Portfolio URL"
+    Input --input-bg / --input-border / --input-radius / --input-padding
+    Helper --text-micro / --color-text-secondary:
+      "We verify this link before granting access."
+    Button --btn-default-* / bold / --text-body: "Submit Proof"
+
+Primary action: click "Submit Proof" → loading state → verify the link
+structure → reveal the network view.
+
+Empty state: this is the default; the user cannot proceed without input.
+Error state: input border becomes --color-danger and the helper text
+becomes --color-danger, reading "Invalid URL format or repository is
+private."
+
+Scope: single screen. No routing, no login, no database.
+Seed with 8 realistic verified-peer entries so the revealed network is
+never empty, and generate the avatar and project thumbnail images they
+need — no grey placeholder boxes.
+Accessibility: keyboard reachable, --focus-ring on every focusable
+element, WCAG AA contrast, tap targets at least --touch-min.
+
+Output complete working code. No placeholders, no "add logic here".
+</script>
+    <pre class="sm" data-full="#full-build-thegate">Build <span class="k">"The Gate"</span> screen of <span class="k">The Proof-of-Work Protocol</span>.
+<span class="k">Stack (from the plan):</span> React (TS) + Tailwind, every value a CSS variable.
+<span class="c">Firebase + the Gemini call come later — this layer is UI and state only.</span>
+
+Use exactly these design tokens — no colours, sizes, or spacing
+outside this set:
+  --color-bg:#0B0C0E;  --color-surface:#141618;  --radius-pill:999px;
+  --color-text-primary:#F2F4F6;  --color-brand:#C6F24E;  <span class="c">← the ONE accent</span>
+  --text-display:32px/1.15;  --text-body:15px/1.5;  --touch-min:44px;
+  <span class="c">← full set, layout tokens and contrast ratios in COPY FULL</span>
+
+<span class="k">How to use them:</span> :root in index.css + registered in the Tailwind theme.
+<span class="k">No raw hex, no arbitrary values.</span> Write DESIGN.md and re-read it every time.
+
+<span class="c">Job:</span> force the user to submit verifiable proof before they see the network.
+<span class="c">Action:</span> "Submit Proof" → loading → verify link → reveal network.
+<span class="c">Error:</span> input border --color-danger, "Invalid URL format."
+<span class="k">Scope: single screen. No routing, no login, no database.</span>
+Seed 8 verified-peer entries. Output complete working code.</pre>
+    <div class="callout green"><p>Notice the product changed name and audience after Research. <strong>That is the pipeline working</strong> — not drifting.</p></div>
+  </div>
+</section>
+
+<!-- THỰC HÀNH 4 -->
+<section class="slide" data-notes="Điểm chính: prompt build không đổi hình dạng. Chỉ 4 dòng đổi cho mỗi màn. Đây là lúc khán giả thấy quy trình lặp lại được.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">The next two screens</div>
+  <h2>Same prompt. Four lines change.</h2><div class="rule"></div>
+  <div class="body">
+    <script type="text/plain" id="full-build-screens23">
+Both prompts below reuse the Stage 03 stack and the Stage 04 DESIGN.md.
+Only the four screen-specific lines differ. Build them one at a time,
+testing after each — not both in one message.
+
+
+=========== SCREEN 2 — "The Network" ===========
+
+Build "The Network" screen of The Proof-of-Work Protocol.
+Stack (from the plan): React (TypeScript) + CSS custom properties.
+Firebase + the Gemini call come later — this layer is UI and state only.
+
+Re-read DESIGN.md and use only what is in it. Introduce no colours,
+sizes, or spacing outside that set, and no raw hex or arbitrary values
+in the markup.
+
+This screen's job: display vetted peers and their projects in a
+high-density layout, without distracting navigation structures.
+
+Layout, top to bottom:
+- Background --color-bg
+- Top menu as a single one-row island: --color-surface, bottom border
+  --color-border. No left sidebar, no top search bar.
+  Active tab   --text-body / bold / --color-brand      "Projects"
+  Inactive tab --text-body / regular / --color-text-secondary  "My Profile"
+- Main content area, padding --space-4
+- Section title --text-title / bold / --color-text-primary  "Verified Peers"
+- Project list: grid, gap --space-3
+- Project card (repeated): --card-bg / --card-border / --card-radius /
+  padding --card-padding, containing
+    Role badge   --text-micro / bold / --color-brand   "Requires Developer"
+    Title        --text-subtitle / bold / --color-text-primary
+    Description  --text-body / --color-text-secondary
+    Divider      1px --color-border
+    Proof link   --text-small / --color-text-primary
+
+Primary action: tapping anywhere on a project card opens the Proof
+Detail panel. Single screen — open it in place, do not add routing.
+
+Empty state: one centred card, --text-subtitle / --color-text-secondary,
+reading "No new projects match your skill tier yet."
+Error state: a banner at the top of the content area, background
+--color-danger, text --color-surface, --text-small, reading
+"Failed to sync the network. Refresh the page."
+
+Scope: single screen. No routing, no login, no database.
+Seed with 8 realistic student projects across different skill needs.
+Accessibility: keyboard reachable, --focus-ring on every focusable
+element, WCAG AA contrast, tap targets at least 44px.
+
+Output complete working code. No placeholders.
+
+
+=========== SCREEN 3 — "Proof Detail" ===========
+
+Build the "Proof Detail" view of The Proof-of-Work Protocol.
+Same stack. Re-read DESIGN.md and use only what is in it.
+
+This screen's job: showcase one peer's competence, and make the
+collaboration request a single tap.
+
+Layout, top to bottom:
+- Background --color-bg, top menu identical to The Network
+- Back link --text-small / --color-text-secondary   "← Back to Network"
+- Header: name --text-display / bold / --color-text-primary,
+  metadata --text-small / --color-text-secondary, margin-bottom --space-4
+- Proof section as a card: --card-bg / --card-border / --card-radius /
+  --card-padding, with section title --text-subtitle / bold and
+  body --text-body / --color-text-secondary / --lh-body
+- Action bar, list-row styling: padding --list-row-padding, top border
+  --color-border, margin-top --space-5
+    Status  --text-small / --color-success
+            "Currently accepting technical co-founders"
+    Button  --btn-default-bg / --btn-default-text / --btn-default-radius
+            / --text-body     "Request to Join"
+
+Primary action: pressing "Request to Join" immediately switches the
+button to its disabled state (--btn-disabled-bg, --btn-disabled-text)
+and the label becomes "Request Sent."
+
+Empty state: not applicable — this view is never reached without a
+project payload.
+Error state: --text-micro in --color-warning directly below the proof
+section, reading "We couldn't verify this user's latest commits.
+Proceed with caution."
+
+Scope: single view, opened in place. No routing, no login, no database.
+Accessibility: same rules as the previous screens.
+
+Output complete working code. No placeholders.
+</script>
+    <pre class="sm" data-full="#full-build-screens23"><span class="c">Stack, tokens, scope, accessibility — identical to screen 1.
+Only these four lines change per screen.</span>
+
+<span class="k">SCREEN 2 — "The Network"</span>
+ Job     display vetted peers and their projects in a high-density
+         layout, without distracting navigation
+ Action  tap a project card → open Proof Detail <span class="c">in place, no routing</span>
+ Empty   "No new projects match your skill tier yet."
+ Error   banner --color-danger "Failed to sync the network."
+
+<span class="k">SCREEN 3 — "Proof Detail"</span>
+ Job     showcase one peer's competence, make the request one tap
+ Action  "Request to Join" → button locks, label becomes "Request Sent"
+ Empty   n/a — never reached without a project
+ Error   --color-warning "We couldn't verify this user's commits."
+
+<span class="k">Build them one at a time.</span> Test after each — not both in one message.</pre>
+    <div class="callout green"><p>By screen 3 you are not writing prompts any more, you are <strong>filling in a form you already have</strong>. That is what the first four stages bought you.</p></div>
+  </div>
+</section>
+
+<!-- design QA — the only stage that had no check -->
+<section class="slide" data-notes="Chặng Design là chặng DUY NHẤT trước đây không có bước kiểm. Research có 'xoá ngay', Test có checklist, Eval có rubric — Design thì không, nên không ai biết token có vào được hay không cho tới lúc demo. Gemini đọc ảnh được: chụp màn hình app, dán lại, bắt nó tự soi.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — design QA prompt</div>
+  <h2>Screenshot it back, and make it audit itself</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm">Screenshot attached. Here is my DESIGN.md: [paste].
+
+Audit the screenshot against it, harshly:
+1. Every colour, size, spacing or radius on screen that is <span class="k">NOT in
+   the token set</span>. Name the element and the offending value.
+2. Every DON'T that got violated.
+3. Contrast: any text pair failing WCAG AA. <span class="k">Compute, don't assume.</span>
+4. Layout: where is this just <span class="k">"a centred column with even gaps"</span>?
+   Name the one change that would give it a density hierarchy.
+5. Rate 1–5: does this look <span class="k">designed, or generated?</span> Justify with
+   one specific thing on screen — not an impression.
+
+Then: the ONE prompt I should send AI Studio next to fix the worst.</pre>
+    <div class="callout green"><p>Every other stage has a check — Research has "delete on sight", Test has the checklist, Eval has the rubric. <strong>Design had none</strong>, which is why nobody finds out the tokens never landed until the demo.</p></div>
+  </div>
+</section>
+
+<section class="slide turn" data-notes="13 phút — khối thực hành dài nhất. Facilitator đi hỗ trợ. Nhắc mọi người chạy prompt design QA ít nhất một lần. Ai xong sớm thì bảo publish luôn.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Thực hành 05 — dài nhất</div>
+  <h2>Build đi</h2><div class="rule"></div>
+  <p class="task">Mở <code>ai.dev</code> → Build. Dán prompt build kèm bộ token của bạn. Chạy. Rồi sửa từng lớp một.</p>
+  <div class="done"><b>Xong khi:</b> app chạy được trên <b>máy của bạn</b>, và bạn đã chụp màn hình chạy <b>prompt design QA</b> một lần. Xong sớm thì bấm Publish luôn.</div>
+  <div class="clock"><div class="n">13</div><div class="u">phút</div></div>
+</section>
+
+<!-- test -->
 <section class="slide" data-notes="Stage 5. Reframe: you're not testing for correctness, you're testing for demo survival.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
-  <div class="eyebrow">Stage 05 — Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test</div>
+  <div class="eyebrow">Stage 06 — Test</div>
   <h2>Test for the demo, not for coverage</h2><div class="rule"></div>
   <div class="body">
     <p class="lede">An MVP does not need 80% coverage. It needs to survive four minutes in front of someone who did not build it.</p>
@@ -494,15 +1209,55 @@ Output complete working code. No placeholders, no "add logic here".</pre>
 
 <!-- 20 test prompt -->
 <section class="slide" data-notes="Ordering by 'likely to happen during a live demo' is what makes this list actionable.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Test</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Test <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — test prompt</div>
   <h2>Find what breaks on stage</h2><div class="rule"></div>
   <div class="body">
-    <pre>You are a QA engineer who finds the bugs that embarrass people
+    <script type="text/plain" id="full-test-thegate">
+You are a QA engineer who finds the bugs that embarrass people in
+live demos.
+
+My app, in three lines:
+- What it does: "The Gate" — the entry screen of The Proof-of-Work
+  Protocol. A university student must submit a link to real work
+  (GitHub repo, Figma file, slide deck) before the network of other
+  students and their projects is revealed to them.
+- The one input the user gives: a portfolio URL, typed into a single
+  text field.
+- The one output they get: either the network unlocks, or an inline
+  error explaining why the link was rejected.
+
+Built with: React single-page app, Tailwind driven by a fixed token
+set, running in Google AI Studio. One screen. No login, no database,
+no routing.
+
+What I will demo, step by step:
+1. Open the published .ai.studio link on my phone, on venue wifi.
+2. Paste a real GitHub repo URL into the field.
+3. Press "Submit Proof".
+4. Show the loading state, then the unlocked network view.
+5. Go back and paste a broken link to show the error state.
+
+List 12 things that could break, ordered by how likely they are to
+happen during that exact demo. For each: the trigger, what the user
+sees, and the one-line fix.
+
+Cover at least: empty input · very long input · wrong-language input
+· no network · slow model response · double-click on Submit · mobile
+keyboard covering the button · the model returning something the UI
+does not know how to display.
+
+Then: a 6-item pre-demo checklist I can run in 3 minutes, in the
+order I should run it.
+</script>
+    <pre data-full="#full-test-thegate">You are a QA engineer who finds the bugs that embarrass people
 in live demos.
 
-My app: [paste code, or describe it]
-What I will demo: [the exact sequence, step by step]
+<span class="k">My app, in three lines</span> — no code needed:
+  what it does · the one input · the one output
+  <span class="c">(kèm ảnh chụp màn hình — Gemini đọc được ảnh)</span>
+
+What I will demo, step by step: 1… 2… 3…
 
 List 12 things that could break, <span class="k">ordered by how likely they
 are to happen during the demo</span>. For each: the trigger, what the
@@ -519,8 +1274,8 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
 
 <!-- 21 evaluation -->
 <section class="slide" data-notes="Stage 6. Evaluate against the criteria you'll actually be judged on — not vibes.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
-  <div class="eyebrow">Stage 06 — Evaluation</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation</div>
+  <div class="eyebrow">Stage 07 — Evaluation</div>
   <h2>Score it against the real rubric</h2><div class="rule"></div>
   <div class="body">
     <p class="lede">"Is it good?" is unanswerable. "Does it score on the criteria it will be judged against?" is answerable — and fixable.</p>
@@ -535,14 +1290,52 @@ Then: a 6-item pre-demo checklist I can run in 3 minutes.</pre>
 
 <!-- 22 eval prompt -->
 <section class="slide" data-notes="The last line is the one that produces action instead of a report.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">06 · Evaluation</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Evaluation <span class="tool">Gemini chat</span></div>
   <div class="eyebrow">Copy this — evaluation prompt</div>
   <h2>Make it grade you honestly</h2><div class="rule"></div>
   <div class="body">
-    <pre>Score my MVP against the criteria it will actually be judged on.
+    <script type="text/plain" id="full-eval-thegate">
+Score my MVP against the criteria it will actually be judged on.
+
+Criteria (AI Riser Vietnam 2026):
+- Feasibility 40% — does it work as intended; is the UI intuitive and
+  accessible; are there considerations for disabilities
+- Impact 30% — problem-solution fit; could it become a real business
+  or social project with a stable group of users; scalability
+- Creativity 30% — originality, avoid templates; elegant use of AI
+  and Google technologies
+
+Product: "The Proof-of-Work Protocol" — university students aged 18-22
+must upload verifiable proof of past work (a GitHub repo, a Figma
+file, a slide deck) before they can see or recruit from the network of
+other students' projects. Built in Google AI Studio, React + Tailwind
+driven by a fixed token set, one screen working end to end, published
+to a public URL. Screenshots attached.
+
+What I deliberately did NOT build, and why:
+- No payments — the community pledges support, it does not transact
+- No login, no database — one screen, seeded data, so it always works
+- No support for users under 18 — Decree 13/2023/ND-CP requires
+  verified parental consent, which a solo builder cannot implement in
+  25 hours
+
+For each criterion:
+- A score out of its weight, justified by something specific in the
+  product — not a general impression
+- The single change that would raise that score the most
+- Roughly how long that change takes
+
+Then: I have 8 hours left before the deadline. Give me the ordered
+list of what to do, and what to consciously not do.
+
+Be harsh. A 9/10 I cannot defend to a judge is worth less than a 6/10
+I can fix tonight.
+</script>
+    <pre data-full="#full-eval-thegate">Score my MVP against the criteria it will actually be judged on.
 
 Criteria: [paste the real rubric and its weights]
-Product: [describe it + paste the live link or screenshots]
+Product: [describe it + attach screenshots]
+Deliberately not built: [dòng KHÔNG LÀM từ chặng 2]
 
 For each criterion:
 - A score out of its weight, justified by something <span class="k">specific
@@ -559,9 +1352,9 @@ a 6/10 I can fix tonight.</pre>
 </section>
 
 <!-- 23 deploy -->
-<section class="slide" data-notes="Starter Tier: free, no card. The condition is a never-published account. This trips up most of the room.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">07 · Deploy</div>
-  <div class="eyebrow">Stage 07 — Deploy</div>
+<section class="slide" data-notes="⚠️ KIỂM TRA TRƯỚC BUỔI HỌC: publish thử một app rác bằng tài khoản mới, tuần diễn ra workshop. Luồng Starter Tier / .ai.studio không còn nằm trong tài liệu chính thức của AI Studio (tài liệu hiện tại nói Cloud Run + export GitHub). Nếu luồng đã đổi, sửa slide này TRƯỚC — 40 người kẹt ở phút 70 là kiểu hỏng nặng nhất. Starter Tier: free, no card, điều kiện là tài khoản chưa từng publish.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Deploy <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Stage 08 — Deploy</div>
   <h2>A live URL, free, no credit card</h2><div class="rule"></div>
   <div class="body">
     <div class="flow">
@@ -580,8 +1373,8 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 24 publish artifacts -->
 <section class="slide" data-notes="Two links, and people submit the wrong one. Say it out loud.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
-  <div class="eyebrow">Stage 08 — Publish</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Publish</div>
+  <div class="eyebrow">Stage 09 — Publish</div>
   <h2>Ship the artifacts, not just the app</h2><div class="rule"></div>
   <div class="body">
     <table>
@@ -589,7 +1382,7 @@ a 6/10 I can fix tonight.</pre>
       <tr class="hl"><td><strong>Project link</strong></td><td>Usually the <em>mandatory</em> one — lets a judge open your actual project. Set sharing to Public first.</td></tr>
       <tr><td><strong>Live app URL</strong></td><td>Lets anyone use it without seeing your code. Often worth bonus points.</td></tr>
       <tr><td><strong>Demo video</strong></td><td>The only artifact that is watched all the way through. 60–90 seconds.</td></tr>
-      <tr><td><strong>The written scope</strong></td><td>What you built, and what you deliberately did <em>not</em> build. This is your NOT DOING list from Stage 2.</td></tr>
+      <tr><td><strong>The written scope</strong></td><td>What you built, and what you deliberately did <em>not</em> build. This is your NOT DOING line from Stage 02, plus the cut column from the plan in Stage 03.</td></tr>
     </table>
     <div class="callout red"><p>The project link and the live URL are different things. Submitting one where the other was required is the most common way to lose points for free.</p></div>
   </div>
@@ -597,7 +1390,7 @@ a 6/10 I can fix tonight.</pre>
 
 <!-- 25 demo video -->
 <section class="slide" data-notes="Most demo videos spend 40 seconds on sign-in. Show the magic moment by second 25.">
-  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">08 · Publish</div>
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">09 · Publish</div>
   <div class="eyebrow">The one artifact people watch</div>
   <h2>90 seconds, in this order</h2><div class="rule"></div>
   <div class="body">
@@ -621,14 +1414,15 @@ a 6/10 I can fix tonight.</pre>
       <tr><th>Stage</th><th>Time</th><th>You stop when…</th></tr>
       <tr class="hl"><td><strong>01 Research</strong></td><td>1.5 h</td><td>You can name the segment and what they do today instead</td></tr>
       <tr class="hl"><td><strong>02 Brainstorm</strong></td><td>1 h</td><td>You have written down CHOSEN / BECAUSE / NOT DOING</td></tr>
-      <tr class="hl"><td><strong>03 Design system</strong></td><td>1.5 h</td><td>You have tokens you can paste, and screen specs with states</td></tr>
-      <tr><td><strong>04 Code</strong></td><td>6 h</td><td>The happy path works end to end on a phone</td></tr>
-      <tr><td><strong>05 Test</strong></td><td>1 h</td><td>You have run the pre-demo checklist once</td></tr>
-      <tr><td><strong>06 Evaluation</strong></td><td>1 h</td><td>You have an ordered fix list and did the top two</td></tr>
-      <tr><td><strong>07 Deploy</strong></td><td>0.5 h</td><td>A stranger opened your URL on their phone</td></tr>
-      <tr><td><strong>08 Publish</strong></td><td>2 h</td><td>Video recorded, links submitted, scope written down</td></tr>
+      <tr class="hl"><td><strong>03 Plan</strong></td><td>1 h</td><td>Feature cut, screen list, stack, data model — all on one page</td></tr>
+      <tr class="hl"><td><strong>04 Design system</strong></td><td>1.5 h</td><td>Tokens you can paste, screen specs with states</td></tr>
+      <tr><td><strong>05 Code</strong></td><td>5 h</td><td>The happy path works end to end on a phone</td></tr>
+      <tr><td><strong>06 Test</strong></td><td>1 h</td><td>You have run the pre-demo checklist once</td></tr>
+      <tr><td><strong>07 Evaluation</strong></td><td>1 h</td><td>You have an ordered fix list and did the top two</td></tr>
+      <tr><td><strong>08 Deploy</strong></td><td>0.5 h</td><td>A stranger opened your URL on their phone</td></tr>
+      <tr><td><strong>09 Publish</strong></td><td>2 h</td><td>Video recorded, links submitted, scope written down</td></tr>
     </table>
-    <div class="callout"><p>Stages 1–3 are <strong>a quarter of the time and produce no code</strong>. That is the part that feels wrong and is right.</p></div>
+    <div class="callout"><p>Stages 1–4 are <strong>a third of the time and produce no code</strong>. That is the part that feels wrong and is right.</p></div>
   </div>
 </section>
 
@@ -642,6 +1436,7 @@ a 6/10 I can fix tonight.</pre>
       <tr><th>Skipped</th><th>What it feels like</th><th>What it costs</th></tr>
       <tr><td><strong>Research</strong></td><td>"I already know the problem"</td><td>You build for a segment that doesn't feel the pain</td></tr>
       <tr><td><strong>Brainstorm</strong></td><td>"I had the idea already"</td><td>You build the first idea, which is usually the average one</td></tr>
+      <tr><td><strong>Plan</strong></td><td>"I'll decide as I go"</td><td>Scope grows every session, and the stack is whatever the model guessed</td></tr>
       <tr><td><strong>Design system</strong></td><td>"I'll make it pretty later"</td><td>Four screens that look like four different apps</td></tr>
       <tr class="hl"><td><strong>Evaluation</strong></td><td>"It works, I'm done"</td><td>You polish what you enjoy instead of what is scored</td></tr>
     </table>
@@ -655,7 +1450,7 @@ a 6/10 I can fix tonight.</pre>
   <span class="badge">Your turn</span>
   <h1>Start at stage 01 tonight.</h1>
   <p class="sub">Not the build prompt. Open the research prompt, paste your idea, and let it tell you what you don't know yet. Everything downstream gets easier.</p>
-  <div class="meta"><span>8 STAGES</span><span>8 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
+  <div class="meta"><span>9 STAGES</span><span>10 PROMPTS</span><span>ONE ARTIFACT EACH</span></div>
 </section>
 
 </div></div>
@@ -667,7 +1462,7 @@ a 6/10 I can fix tonight.</pre>
     <button id="next" aria-label="Next slide">NEXT →</button>
     <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
   </div>
-  <div><span id="counter">1 / 28</span></div>
+  <div><span id="counter">1 / 41</span></div>
 </div>
 
 <script>
@@ -700,6 +1495,46 @@ a 6/10 I can fix tonight.</pre>
   // No click-to-advance: the whole point of this deck is that people copy the
   // prompts off the slides, and a stage click handler breaks drag-select.
   // Clickers still work — they emit PageUp/PageDown or arrow keys.
+  // ---- copy buttons on every code block -------------------------------
+  // A slide may show an abridged prompt; data-full points at a hidden full
+  // version, so what lands on the clipboard is always the complete thing.
+  function flash(btn){
+    var o=btn.dataset.label; btn.textContent='ĐÃ COPY ✓'; btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=o;btn.classList.remove('ok')},1400);
+  }
+  function writeClipboard(txt,btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){flash(btn)},function(){legacy(txt,btn)});
+    } else { legacy(txt,btn); }   // file:// is not a secure context — needs this
+  }
+  function legacy(txt,btn){
+    var ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); flash(btn); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref=pre.getAttribute('data-full'), src=ref&&document.querySelector(ref);
+    // capture BEFORE inserting the button, or the button's own text joins the copy
+    var txt=(src?src.textContent.replace(/^\n/,'').replace(/\s+$/,''):pre.innerText).trim();
+    var b=document.createElement('button');
+    b.type='button'; b.className='copybtn';
+    b.dataset.label = pre.getAttribute('data-copy-label') || (src ? 'COPY FULL' : 'COPY');
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label','Copy prompt to clipboard');
+    b.onclick=function(e){ e.stopPropagation(); writeClipboard(txt,b); };
+    pre.appendChild(b);
+    pre._copy=function(){ writeClipboard(txt,b); };
+  });
+  // C copies the current slide's prompt without reaching for the mouse
+  document.addEventListener('keydown',function(e){
+    if((e.key==='c'||e.key==='C') && !e.metaKey && !e.ctrlKey){
+      var p=slides[i].querySelector('pre'); if(p&&p._copy) p._copy();
+    }
+  });
+
   window.addEventListener('resize',fit);
   window.addEventListener('hashchange',function(){
     var n=parseInt((location.hash||'#1').slice(1),10)-1;

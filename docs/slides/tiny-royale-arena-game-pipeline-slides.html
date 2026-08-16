@@ -1,0 +1,1484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiny Royale — Building a 3-Minute Battle Royale in Google AI Studio</title>
+<style>
+/* ============================================================
+   Google deck — tokens measured from Vibe_Coding_Handbook.pptx
+   Self-contained: no webfonts, no CDN, no network requests.
+   ============================================================ */
+:root{
+  --ink:#20344B; --ink-2:#2F4C6F; --muted:#80868B; --line:#DFE3E8; --white:#fff;
+  --cyan:#57CAFF; --blue:#4285F4; --blue-2:#3186FF; --tint:#E8F0FE; --tint-2:#F0F4FA;
+  --red:#EA4335; --yellow:#FBBC04; --green:#34A853; --amber:#E37400; --orange:#F97316;
+  --sans:"Google Sans","Product Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0E1721;font-family:var(--sans);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#canvas{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--white);padding:64px 76px 72px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+.dots{position:absolute;top:34px;left:40px;display:flex;gap:7px}
+.dots i{width:9px;height:9px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:var(--blue)}
+.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}
+.dots i:nth-child(4){background:var(--green)}
+.folio{position:absolute;top:32px;right:44px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+h1{font-size:56px;line-height:1.06;letter-spacing:-.02em;font-weight:700}
+h2{font-size:38px;line-height:1.14;letter-spacing:-.015em;font-weight:700;margin-bottom:8px}
+h3{font-size:20px;font-weight:600;margin-bottom:6px}
+p{font-size:18px;line-height:1.55;color:var(--ink-2)}
+.lede{font-size:22px;line-height:1.5;color:var(--ink-2);max-width:64ch}
+.small{font-size:15px;color:var(--muted);line-height:1.5}
+.rule{height:4px;width:76px;background:var(--cyan);border-radius:2px;margin:16px 0 24px}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.body.top{justify-content:flex-start}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--tint-2);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.card.accent{background:var(--tint);border-color:#C9DDFB}
+.card.warn{background:#FFF6E5;border-color:#F5D98A}
+.card.stop{background:#FDECEA;border-color:#F5B7B1}
+.card.go{background:#E9F7EF;border-color:#A9DFBF}
+.card.dark{background:#16222E;border-color:#2B3E52;color:#DCE6F0}
+.card.dark h3{color:#57CAFF}
+.card.dark p{color:#A9BACB}
+.card h3{color:var(--ink)}
+.card p{font-size:15.5px;line-height:1.5}
+.card .n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;margin-bottom:6px;display:block}
+.card.sm{padding:14px 16px;border-radius:14px}
+.card.sm h3{font-size:16.5px;margin-bottom:3px}
+.card.sm p{font-size:13.5px;line-height:1.4}
+ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul li{position:relative;padding-left:24px;font-size:17px;line-height:1.5;color:var(--ink-2)}
+ul li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+ul.check li::before{content:"✓";background:none;color:var(--green);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.no li::before{content:"✕";background:none;color:var(--red);font-weight:700;top:0;font-size:16px;width:auto;height:auto}
+ul.tight li{font-size:15px;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:400;border-bottom:2px solid var(--line)}
+td{color:var(--ink-2);line-height:1.45}
+td strong{color:var(--ink)}
+tr.hl td{background:var(--tint)}
+table.sm{font-size:14px}
+table.sm th,table.sm td{padding:7px 10px}
+code,.mono{font-family:var(--mono);font-size:.92em;background:var(--tint);padding:2px 6px;border-radius:4px;color:var(--ink-2)}
+pre{position:relative;background:#1B2A3A;color:#DCE6F0;border-radius:14px;padding:18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.52;white-space:pre-wrap}
+.copybtn{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:7px;
+  background:#2B3E52;color:#9FB3C8;border:1px solid #3A5069;cursor:pointer;opacity:.8;
+  transition:opacity .15s,background .15s,color .15s}
+.copybtn:hover{opacity:1;background:#354A61;color:#DCE6F0}
+.copybtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;opacity:1}
+.copybtn.ok{background:#1E7E42;border-color:#2E9E58;color:#fff;opacity:1}
+pre.sm{font-size:11.8px;line-height:1.44;padding:11px 20px}
+pre .k{color:var(--cyan);font-weight:600}
+pre .c{color:#8FA5BC}
+.pill{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--blue);margin-right:6px}
+.flow{display:flex;align-items:stretch;gap:10px}
+.flow .step{flex:1;background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:16px 14px}
+.flow .step .n{font-family:var(--mono);font-size:11.5px;color:var(--blue);letter-spacing:.12em}
+.flow .step h3{font-size:16px;margin:6px 0 4px}
+.flow .step p{font-size:13.5px;line-height:1.4}
+.flow .arw{display:grid;place-items:center;color:var(--cyan);font-size:20px;font-weight:700}
+.callout{border-left:5px solid var(--cyan);background:var(--tint-2);padding:14px 18px;border-radius:0 12px 12px 0}
+.callout.red{border-left-color:var(--red);background:#FDECEA}
+.callout.green{border-left-color:var(--green);background:#E9F7EF}
+.callout.amber{border-left-color:var(--amber);background:#FFF6E5}
+.callout p{font-size:16px}
+.slide.cover{background:radial-gradient(900px 460px at 82% 12%,#EAF3FF 0%,rgba(234,243,255,0) 70%),var(--white);justify-content:center}
+.badge{display:inline-block;align-self:flex-start;padding:8px 18px;border-radius:999px;color:#fff;font-weight:600;font-size:14px;letter-spacing:.04em;margin-bottom:22px;background:linear-gradient(90deg,#4285F4,#57CAFF,#34A853,#FBBC04,#EA4335)}
+.cover h1{max-width:20ch}
+.cover .sub{font-size:21px;color:var(--ink-2);margin-top:18px;max-width:62ch;line-height:1.5}
+.meta{position:absolute;left:76px;bottom:54px;display:flex;gap:30px;font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.06em}
+
+/* stage divider */
+.slide.divider{background:#16222E;justify-content:center}
+.divider h2{color:#fff;font-size:52px}
+.divider .eyebrow{color:var(--cyan)}
+.divider p{color:#A9BACB;font-size:20px;max-width:58ch;margin-top:12px}
+.divider .rule{background:var(--cyan)}
+.divider .dots i{opacity:.85}
+.stagerow{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+.stagerow span{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border:1px solid #2B3E52;border-radius:999px;color:#7E93A8}
+.stagerow span.on{background:var(--cyan);color:#0E1721;border-color:var(--cyan);font-weight:700}
+#notes{position:fixed;right:16px;bottom:56px;width:340px;max-height:44vh;overflow:auto;background:#16222E;color:#C9D6E2;border:1px solid #2B3E52;border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.55;display:none;z-index:7}
+#notes.on{display:block}
+#notes b{color:var(--cyan);display:block;margin-bottom:6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+#hud{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#7C8FA6;font-family:var(--mono);font-size:12px;letter-spacing:.1em;pointer-events:none;z-index:5}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--cyan);width:0;z-index:6;transition:width .25s ease}
+#hud button{pointer-events:auto;background:none;border:1px solid #33475C;color:#7C8FA6;border-radius:7px;padding:5px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em}
+#hud button:hover{color:#DCE6F0;border-color:#5C7A96}
+#hud button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.hud-g{display:flex;gap:9px;align-items:center}
+@media print{
+  body{background:#fff;overflow:visible}
+  #stage{position:static;display:block}
+  #canvas{transform:none!important;width:100%;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;height:720px}
+  #hud,#bar,#notes{display:none}
+}
+.folio .tool{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;
+  background:#fff;border:1px solid #C9DDFB;color:var(--blue);
+  letter-spacing:.1em;font-size:11px;font-weight:600;vertical-align:1px}
+.folio .tool.ai{border-color:#A9DFBF;color:#1E7E42}
+.folio .tool.fb{border-color:#F5D98A;color:#8F5400}
+.cut{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.metric{background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.metric .big{font-family:var(--mono);font-size:27px;font-weight:700;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.metric .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:6px;display:block;line-height:1.35}
+.metric.good .big{color:#1E7E42}
+.metric.dark{background:#16222E;border-color:#2B3E52}
+.metric.dark .big{color:var(--cyan)}
+.metric.dark .lbl{color:#8FA5BC}
+table.sm td.mono{font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<div id="stage"><div id="canvas">
+
+<!-- 01 cover -->
+<section class="slide cover active" data-notes="Tiny Royale. A three-minute top-down battle royale, built in Google AI Studio. One thing gets cut on slide three and it is the biggest thing in the reference game — deal with that honestly and early, because everything after it depends on the cut.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Real-time arena game · 5 stages · 4 layers</span>
+  <h1>Tiny Royale: a three-minute battle royale you can actually finish</h1>
+  <p class="sub">A top-down brawler in the shape of Lil Big Brawl — shrinking zone, loot, bushes, damage numbers — built in AI Studio with the one feature that cannot survive a hackathon removed on purpose.</p>
+  <div class="meta"><span>5 STAGES</span><span>4 LAYERS</span><span>PRESS C TO COPY</span></div>
+</section>
+
+<!-- 02 anatomy of the reference -->
+<section class="slide" data-notes="Read the reference before designing. Everything on this slide is visible in one screenshot or stated on the store page — no guessing. The right column is what you have to reproduce for it to feel like the same game.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · The reference</div>
+  <div class="eyebrow">What Lil Big Brawl actually is</div>
+  <h2>Anatomy of the reference</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card accent">
+        <h3>Stated on the store page</h3>
+        <ul class="tight">
+          <li>Battle royale, <strong>15 fighters</strong>, teams of two</li>
+          <li><strong>Three-minute</strong> rounds — the whole pitch</li>
+          <li>Shrinking battleground</li>
+          <li>Loot: weapons, grenades, shields, drops from kills</li>
+          <li>Long grass and caves for ambush</li>
+          <li>Six hero archetypes with skills</li>
+        </ul>
+      </div>
+      <div class="card dark">
+        <h3>Visible in the screenshot</h3>
+        <ul class="tight">
+          <li>Top-down camera, arena wider than the screen</li>
+          <li>Chibi figures, thick dark outlines, flat saturated fills</li>
+          <li>Name + level + green HP bar over every head</li>
+          <li><strong>Damage numbers</strong> — orange dealt, red taken</li>
+          <li>Muzzle flash, tracers, orange spark ring on hit</li>
+          <li>Canned quick-chat bubbles</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><p><strong>The feel lives in the right column.</strong> Damage numbers and hit sparks are two hours of work and they are most of why the game reads as juicy.</p></div>
+  </div>
+</section>
+
+<!-- 03 using the screenshots -->
+<section class="slide" data-notes="Somebody always asks whether to paste the store screenshots into Gemini. Yes — an image carries palette, proportion and density that no paragraph of mine can. But attach them to extract a written spec, then build from the text and put the images away. Point 6 in the prompt is the one that keeps you honest.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · The reference</div>
+  <div class="eyebrow">Should you attach the store screenshots?</div>
+  <h2>Use the screenshots. Don't copy them.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card go">
+        <h3>Why attaching them helps</h3>
+        <ul class="tight check">
+          <li>Gemini reads images well — palette, proportion and density come back far more accurate than from prose</li>
+          <li>You get <strong>real hex values</strong>, not my guess at "grass green"</li>
+          <li>Head-to-body ratio and outline weight are almost impossible to specify in words</li>
+          <li>It shows you what the HUD leaves <em>empty</em>, which is the hard part</li>
+        </ul>
+      </div>
+      <div class="card stop">
+        <h3>Why "make it look like this" is the wrong ask</h3>
+        <ul class="tight no">
+          <li>Store screenshots are the developer's copyrighted assets</li>
+          <li>"Clone this" produces a derivative, and judges recognise a reskin</li>
+          <li>Their character designs and logo are their IP, not genre convention</li>
+          <li>You end up with their game, slightly worse — which scores badly on originality</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout green"><p><strong>The method that gets you both:</strong> attach the images → ask for a <em>measurable spec</em> → close the images → build from the text. This is how designers have always used reference, and the written spec is what goes into AI Studio anyway.</p></div>
+  </div>
+</section>
+
+<!-- 04 the extraction prompt -->
+<section class="slide" data-notes="Paste this into Gemini chat with three or four screenshots attached. Its output becomes the raw material for your DESIGN.md in stage two. Item 6 is not decoration — it is the line between reference and reskin, and asking the model to draw it for you is cheap.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · The reference <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — attach 3–4 screenshots</div>
+  <h2>Turn a screenshot into a spec</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-ref">You are an art director. Attached are screenshots of a game I am NOT
+cloning. Extract a measurable spec I can build my OWN game from.
+Describe the craft, not the game.
+
+1. <span class="k">PALETTE</span> - every distinct colour as a hex, grouped: terrain, UI,
+   health, damage numbers, effects. Say which is the accent, and why it
+   stays legible against the terrain colours.
+2. <span class="k">PROPORTIONS</span> - character height as a fraction of screen height.
+   Head-to-body ratio. Outline thickness relative to character size.
+3. <span class="k">HUD MAP</span> - what sits in each corner, and what is deliberately
+   left empty. Empty space is a decision; name it.
+4. <span class="k">READABILITY</span> - at a glance, what tells the player their health,
+   their enemy, and where the danger is? Rank by how fast each reads.
+5. <span class="k">FLOATING TEXT</span> - size, colour, motion path and lifetime of the
+   damage numbers. These are most of the game's felt impact.
+6. <span class="k">WHAT I MUST NOT COPY</span> - name what is specific to their IP:
+   character designs, logo, mascots, and any colour combination that
+   is recognisably theirs rather than genre convention.
+
+Output a token list plus five rules. I will build from your text and
+will not show these images to a code model.</pre>
+  </div>
+</section>
+
+<!-- 05 the cut -->
+<section class="slide" data-notes="This is the most important slide in the deck, and it should come before anyone gets excited. Real-time multiplayer is the headline feature of the reference game and it is the one thing you must not attempt. Say why, and say what you do instead.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · The reference</div>
+  <div class="eyebrow">Decide this before you prompt anything</div>
+  <h2>Cut the multiplayer. All of it.</h2><div class="rule"></div>
+  <div class="body">
+    <div class="callout red"><p><strong>Fifteen real players in a three-minute match</strong> needs authoritative servers, state sync, lag compensation, matchmaking and anti-cheat. That is a team and a budget, not a prompt. An AI model will happily generate something that looks like netcode and does not work, and you will not find out until demo day.</p></div>
+    <div class="cut">
+      <div class="card stop">
+        <h3>Not building</h3>
+        <ul class="tight no">
+          <li>Real-time networking of any kind</li>
+          <li>Matchmaking, lobbies, parties</li>
+          <li>Server-authoritative state</li>
+          <li>Accounts, ranks, leaderboards</li>
+          <li>Chat between real humans</li>
+        </ul>
+      </div>
+      <div class="card go">
+        <h3>Building instead — reads identically</h3>
+        <ul class="tight check">
+          <li>One human, <strong>14 bots</strong>, same 15-fighter match</li>
+          <li>Same three-minute round, same shrinking zone</li>
+          <li>Same loot, bushes, damage numbers, hit feel</li>
+          <li>Quick-chat bubbles fired by bot AI</li>
+          <li>Runs offline, so the venue wifi cannot kill it</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout green"><p><strong>A judge watching a demo cannot tell.</strong> They see a crowded arena, a closing circle and a win screen. Bots buy you the entire pitch for a fraction of the risk — and they are the honest engineering answer, not a compromise.</p></div>
+  </div>
+</section>
+
+<!-- 04 the loop -->
+<section class="slide" data-notes="One match, start to finish. If any of these five beats is missing the game does not read as a battle royale. Notice the zone is what creates the ending — without it a match never resolves.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · The game</div>
+  <div class="eyebrow">The product in one line</div>
+  <h2>Three minutes, fifteen in, one out</h2><div class="rule"></div>
+  <div class="body">
+    <div class="flow">
+      <div class="step"><span class="n">0:00</span><h3>Drop</h3><p>15 fighters, a pistol each, a wide arena.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">0:20</span><h3>Loot</h3><p>Better guns, shields and grenades on the ground.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">1:00</span><h3>Squeeze</h3><p>The zone closes. Bushes hide you. Standing outside hurts.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">2:30</span><h3>Brawl</h3><p>Nowhere to run. Skills come off cooldown.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><span class="n">3:00</span><h3>Win</h3><p>Last one standing, or most kills.</p></div>
+    </div>
+    <div class="callout amber"><p><strong>The zone is not decoration — it is the clock.</strong> It is what guarantees a match ends inside three minutes without a timer just cutting things off, and it is the cheapest tension in game design.</p></div>
+    <div class="callout"><p><strong>Controls, mobile-first:</strong> left thumb moves, the gun auto-fires at the nearest enemy in range, two buttons on the right for the hero skill and a grenade. Nothing else. That is what "easy to control" means.</p></div>
+  </div>
+</section>
+
+<!-- 05 pipeline -->
+<section class="slide" data-notes="Same five-stage pipeline as any AI Studio build. Thinking in Gemini chat, building in AI Studio. The difference for a real-time game is entirely in stage three.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The pipeline</div>
+  <h2>Five milestones, two tools</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card sm accent"><span class="n">01 · Gemini chat</span><h3>Ideation &amp; cut</h3><p>The 5-line PRD, and the multiplayer decision written down.</p></div>
+      <div class="card sm accent"><span class="n">02 · Gemini chat</span><h3>Blueprint &amp; tokens</h3><p>Arena spec, entity model, DESIGN.md.</p></div>
+      <div class="card sm go"><span class="n">03 · AI Studio</span><h3>4-layer build</h3><p>Arena → combat → match → depth.</p></div>
+      <div class="card sm accent"><span class="n">04 · Gemini chat</span><h3>Test &amp; evaluation</h3><p>Frame-rate chaos script and a rubric.</p></div>
+      <div class="card sm dark"><span class="n">05 · AI Studio</span><h3>Deploy &amp; publish</h3><p>Public link and a 90-second video.</p></div>
+      <div class="card sm warn"><span class="n">Look</span><h3>Chibi arcade</h3><p>Thick ink outlines, flat saturated fills, no gradients.</p></div>
+    </div>
+    <div class="callout green"><p><strong>All art is drawn in canvas code.</strong> No sprite sheets, no image files, no asset pipeline — which removes the single most common reason a generated game shows broken images.</p></div>
+  </div>
+</section>
+
+<!-- 06 artifact chain -->
+<section class="slide" data-notes="The contract between stages. The extra row here versus a normal app is the entity model — for a real-time game, deciding what an entity is before you code saves a rewrite at layer three.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">00 · Overview</div>
+  <div class="eyebrow">The artifact chain</div>
+  <h2>Every stage hands something to the next</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Stage</th><th>Tool</th><th>Artifact it must produce</th><th>Feeds</th></tr>
+      <tr class="hl"><td><strong>01 · Ideation</strong></td><td>Gemini chat</td><td>5-line PRD + the written multiplayer cut</td><td>Stage 02</td></tr>
+      <tr><td><strong>02 · Blueprint</strong></td><td>Gemini chat</td><td>Arena layout, <strong>entity model</strong>, <code>DESIGN.md</code></td><td>Stage 03</td></tr>
+      <tr class="hl"><td><strong>03 · Build</strong></td><td>AI Studio</td><td>A playable match, accepted layer by layer</td><td>Stage 04</td></tr>
+      <tr><td><strong>04 · Test</strong></td><td>Gemini chat</td><td>Frame budget results + rubric + fix list</td><td>Final pass</td></tr>
+      <tr class="hl"><td><strong>05 · Deploy</strong></td><td>AI Studio</td><td>Public HTTPS link + 90-second demo</td><td>Judges</td></tr>
+    </table>
+    <div class="callout red"><p><strong>The entity model is the one that bites.</strong> Decide in stage 2 that a fighter, a bullet and a pickup are all one flat struct with a <code>kind</code> field. Discovering that at layer 3 means rewriting layers 1 and 2.</p></div>
+  </div>
+</section>
+
+<!-- 07 stage 01 divider -->
+<section class="slide divider" data-notes="Stage one. One prompt, and it must end with the cut written down as a decision, not a maybe.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 01</div>
+  <h2>Ideation &amp; the cut</h2><div class="rule"></div>
+  <p>The five-line record, the three heroes you actually ship, and one line that says multiplayer is out — so nobody reopens it in week two.</p>
+  <div class="stagerow">
+    <span class="on">01 Ideation</span><span>02 Blueprint</span><span>03 Code</span><span>04 Test</span><span>05 Deploy</span>
+  </div>
+</section>
+
+<!-- 08 stage 01 prompt -->
+<section class="slide" data-notes="Paste into Gemini chat. Point four is the one that matters — you are asking the model to argue against your own scope, which is the cheapest red team you will ever run.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Ideation <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — Stage 1</div>
+  <h2>Scope the brawler honestly</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-s1">You are a game designer who has shipped mobile arena shooters. Be blunt.
+
+Concept: "Tiny Royale" - a top-down battle royale in the shape of Lil Big
+Brawl. 15 fighters, one arena, a shrinking zone, loot, a three-minute
+round. Built solo in Google AI Studio. NO NETWORKING: one human plus 14
+bots. That decision is already made - do not reopen it.
+
+1. <span class="k">THE 5-LINE DECISION RECORD</span> - exactly five lines, no prose:
+   CHOSEN CONCEPT / TARGET PLAYER / WHY THIS WINS /
+   WILL FAIL IF / OUT OF SCOPE
+
+2. <span class="k">THREE HEROES</span>, not six. For each: fantasy in one sentence, a
+   movement and health profile, one skill with a cooldown, and why a
+   player picks it. They must beat each other in a loop.
+
+3. <span class="k">THE LOOT TABLE</span> - four weapons and two items. For each: damage,
+   fire rate, range, and the situation where it is the right pick.
+
+4. <span class="k">ARGUE WITH ME.</span> Name the one feature on this list most likely to
+   eat a week and return the least fun, and tell me to cut it.
+
+5. <span class="k">THE BOT PROBLEM</span> - what makes bots feel alive rather than like
+   targets, in a game where the player will see them for 3 minutes?
+
+Do not write an introduction. Start at heading 1.</pre>
+  </div>
+</section>
+
+<!-- 09 stage 01 artifact -->
+<section class="slide" data-notes="What you should have after stage one. Three heroes, not six — six archetypes is the reference game's number and it is four more than you can balance.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">01 · Ideation</div>
+  <div class="eyebrow">The artifact</div>
+  <h2>Three heroes and a written cut</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card accent">
+        <h3>The 5-line record</h3>
+        <ul class="tight">
+          <li><strong>Concept:</strong> 3-minute solo battle royale, 1 human + 14 bots</li>
+          <li><strong>Player:</strong> mobile, landscape, one thumb, no tutorial</li>
+          <li><strong>Why it wins:</strong> a full BR arc in the length of a lift ride</li>
+          <li><strong>Will fail if:</strong> the frame rate dips, or bots feel like cardboard</li>
+          <li><strong>Out of scope:</strong> networking, accounts, ranks, six heroes</li>
+        </ul>
+      </div>
+      <div class="card dark">
+        <h3>Ship three heroes</h3>
+        <ul class="tight">
+          <li><strong>Ranger</strong> — average everything. Skill: <em>dash</em>, 6s. The default.</li>
+          <li><strong>Tank</strong> — slow, double health, short range. Skill: <em>shield</em>, 10s. Wins the last circle.</li>
+          <li><strong>Assassin</strong> — fast, fragile, huge burst. Skill: <em>cloak</em>, 12s. Wins the ambush.</li>
+        </ul>
+        <p style="margin-top:8px"><strong>The loop:</strong> Tank beats Ranger in the open, Ranger beats Assassin at range, Assassin beats Tank from a bush.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 stage 02 divider -->
+<section class="slide divider" data-notes="Stage two. For a real-time game this stage carries one extra job: the entity model.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 02</div>
+  <h2>Blueprint, entities &amp; tokens</h2><div class="rule"></div>
+  <p>The arena, the entity model every later layer depends on, and <code>DESIGN.md</code> — including how the canvas is allowed to get its colours.</p>
+  <div class="stagerow">
+    <span>01 Ideation</span><span class="on">02 Blueprint</span><span>03 Code</span><span>04 Test</span><span>05 Deploy</span>
+  </div>
+</section>
+
+<!-- 11 stage 02 prompt -->
+<section class="slide" data-notes="The clause people never write is the last one — a canvas game bypasses your entire design system unless you say how the canvas reads tokens. Otherwise you get a token file and 200 hardcoded colour strings in the draw calls.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Blueprint <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — Stage 2</div>
+  <h2>Entity model &amp; DESIGN.md</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-s2">You are a game architect. Using the Tiny Royale PRD above:
+
+1. <span class="k">ENTITY MODEL</span> - one flat TypeScript type for everything in the
+   world, with a `kind` field: fighter | bullet | pickup | zone.
+   Fixed-size arrays, reused, no allocation per frame. Say which fields
+   each kind uses. This model must survive all four layers.
+
+2. <span class="k">ARENA</span> - 2000x1400 units. Hand-written layout: grass, a river on
+   one edge, rock clusters, ~12 bush clumps, 14 pickup spawn points.
+   Give me the coordinates as a plain array I can paste into code.
+
+3. <span class="k">MATCH TIMELINE</span> - the second the zone starts closing, how many
+   shrink steps, the radius at each, and the damage per second outside.
+
+4. <span class="k">DESIGN.md</span> - a token file for a chibi arcade look: thick ink
+   outlines, flat saturated fills, no gradients, no drop shadows.
+   Smallest font 14px. Every button >= 56px.
+
+5. <span class="k">HOW TOKENS REACH THE CANVAS</span> - write this into DESIGN.md as a rule:
+   - tokens live in :root in index.css, registered in the Tailwind theme
+   - no raw hex in any component file
+   - the canvas reads tokens ONCE at startup via getComputedStyle into a
+     cached palette object, and the drawing code never contains a colour
+     string. A canvas game bypasses the design system unless you say this.
+
+Output DESIGN.md as one fenced block I can paste as a file.</pre>
+  </div>
+</section>
+
+<!-- 12 stage 02 artifact -->
+<section class="slide" data-notes="The two artifacts side by side. The entity model on the right is deliberately boring — flat, fixed, reused. Boring is what holds 60 frames a second.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">02 · Blueprint</div>
+  <div class="eyebrow">The artifact</div>
+  <h2>Tokens, and one flat entity</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card dark">
+        <h3>DESIGN.md — the tokens</h3>
+        <pre class="sm" style="background:#0F172A" data-copy-label="COPY TOKENS">:root{
+  --color-grass:#57A94B;
+  --color-grass-2:#4A9440;
+  --color-water:#3C7FD0;
+  --color-rock:#7C8B99;
+  --color-bush:#3B7A38;
+  --color-ink:#16181D;
+  --color-hp:#5BD75B;
+  --color-dmg-out:#FF9020;
+  --color-dmg-in:#E23B3B;
+  --color-zone:#B44BE8;
+  --color-ui:#1D2129;
+  --color-on-ui:#F2F5F8;
+  --text-hud:14px; --text-body:16px;
+  --radius:12px;   --touch-min:56px;
+  --outline-w:3px;
+}</pre>
+      </div>
+      <div class="card accent">
+        <h3>One entity type, reused forever</h3>
+        <pre class="sm" style="background:#12213A">type Kind = 'fighter' | 'bullet'
+          | 'pickup';
+
+interface Entity {
+  kind: Kind;   alive: boolean;
+  x: number;    y: number;
+  vx: number;   vy: number;
+  radius: number;
+  hp: number;   team: number;
+  facing: number;
+  ttl: number;   // bullets
+  data: number;  // hero / weapon id
+}</pre>
+        <p style="margin-top:8px"><strong>Fixed pool, reused.</strong> No <code>new</code> in the loop, no garbage collector pause mid-brawl.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 stage 03 divider -->
+<section class="slide divider" data-notes="Stage three. For a real-time game there is one contract that matters more than every other instruction combined, and it is on the next slide.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 03</div>
+  <h2>The four-layer build</h2><div class="rule"></div>
+  <p>Arena → combat → match → depth. Each layer accepted in the live preview before the next is pasted.</p>
+  <div class="stagerow">
+    <span>01 Ideation</span><span>02 Blueprint</span><span class="on">03 Code</span><span>04 Test</span><span>05 Deploy</span>
+  </div>
+</section>
+
+<!-- 14 the performance contract -->
+<section class="slide" data-notes="This is the slide to slow down on. A React app that re-renders sixty times a second is not slow, it is broken — it will stutter on a phone and you cannot fix it later without rewriting everything. Put this block in every single layer prompt, not just layer one.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">The one contract that decides everything</div>
+  <h2>React must not know the game is running</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-perf">=== THE PERFORMANCE CONTRACT - REPEAT IN EVERY LAYER PROMPT ===
+This is a real-time game, not a page. Get this wrong and nothing works.
+
+- ALL moving state - positions, velocities, health, cooldowns, camera -
+  lives in useRef objects and is mutated in place. Never in useState.
+- ONE requestAnimationFrame loop, started in a useEffect with an empty
+  dependency array and cancelled in its cleanup.
+- NEVER call a setState function inside that loop. Not once.
+  useState is only for what a human changes between frames: pause,
+  hero select, the end-of-match screen.
+- Fixed timestep: accumulate elapsed ms, step the simulation in fixed
+  1/60s increments, clamp the accumulator to 250ms so a backgrounded
+  tab cannot spiral. Identical behaviour on a 60Hz and a 144Hz screen.
+- Render to ONE canvas. Entities are never DOM nodes.
+- Size the canvas backing store to width * devicePixelRatio.</pre>
+    <div class="callout red"><p><strong>Why it must be repeated:</strong> layer 3 adds bots and layer 4 adds particles. Those are exactly the prompts where a model reaches for <code>useState</code> — and by then you have a stutter with no obvious cause.</p></div>
+  </div>
+</section>
+
+<!-- 15 verified -->
+<section class="slide" data-notes="I ran the layer 1 prompt on the next slide through Gemini before putting it on this deck. These are the actual results, from grepping the output — not an impression.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Measured, not assumed</div>
+  <h2>The Layer 1 prompt was tested</h2><div class="rule"></div>
+  <div class="body">
+    <div class="metrics">
+      <div class="metric good"><div class="big">0</div><span class="lbl">setState calls<br>inside the loop</span></div>
+      <div class="metric good"><div class="big">9 : 0</div><span class="lbl">useRef vs useState<br>useState never imported</span></div>
+      <div class="metric dark"><div class="big">16</div><span class="lbl">Files, a real<br>module project</span></div>
+      <div class="metric good"><div class="big">0</div><span class="lbl">Forbidden features<br>bullets, bots, zone, loot</span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card go"><h3>It got the hard parts right</h3><ul class="tight check"><li>Fixed timestep with the 250ms clamp</li><li><code>cancelAnimationFrame</code> in the cleanup</li><li><code>devicePixelRatio</code> scaling</li><li>Pointer Events, so mouse and touch share a path</li><li>Every hex confined to <code>:root</code> — including the canvas palette</li></ul></div>
+      <div class="card warn"><h3>What the test cannot tell you</h3><ul class="tight"><li>Whether it actually holds 60fps on a real phone</li><li>Whether the joystick feels good under a thumb</li><li>Whether the arena is fun to walk around</li></ul><p style="margin-top:8px">Those need a device and a person. Grep proves structure, never feel.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 layer map -->
+<section class="slide" data-notes="Note where the game becomes a game — end of layer 3. If you run out of time, you ship layer 3 and it is still a complete product. Layer 4 is depth, not completion.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">The four layers</div>
+  <h2>What each layer is allowed to touch</h2><div class="rule"></div>
+  <div class="body">
+    <table class="sm">
+      <tr><th>Layer</th><th>Builds</th><th>Explicitly forbidden</th><th>Accepted when</th></tr>
+      <tr class="hl"><td><strong>1 · Arena</strong></td><td>Canvas loop, terrain, camera, joystick, HUD shell</td><td>Bullets, bots, zone, loot, sound</td><td>You can walk around at 60fps</td></tr>
+      <tr><td><strong>2 · Combat</strong></td><td>Auto-fire, bullets, damage, HP, sparks, damage numbers</td><td>Bots with AI, the zone, loot</td><td>A dummy can be killed and it feels good</td></tr>
+      <tr class="hl"><td><strong>3 · Match</strong></td><td>14 bots, shrinking zone, win and lose, restart</td><td>Heroes, skills, pickups, juice</td><td><strong>A full 3-minute match resolves</strong></td></tr>
+      <tr><td><strong>4 · Depth</strong></td><td>3 heroes, skills, loot, bushes, quick chat, screenshake</td><td>Any change to the loop's shape</td><td>Three heroes play differently</td></tr>
+    </table>
+    <div class="callout green"><p><strong>End of layer 3 is a shippable game.</strong> Order the layers so the thing is finishable at every step — never so that the fun arrives last.</p></div>
+  </div>
+</section>
+
+<!-- 17 layer 1 prompt -->
+<section class="slide" data-notes="This is the exact prompt I tested. The scope fence is aggressive on purpose — a model handed an arena game will build the shooting unless told, five different ways, not to.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — Layer 1 · verified</div>
+  <h2>Layer 1: the arena and the loop</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-l1">Build LAYER 1 ONLY of "Tiny Royale", a top-down 3-minute battle-royale
+arena game for mobile, landscape. Single player vs bots. No network.
+
+<span class="k">=== TARGET RUNTIME ===</span>
+Multi-file React + TypeScript + Tailwind, real ES module imports.
+No CDN tags, no external fonts, no remote images, no sprite sheets.
+Runs with the network off. All art is drawn in canvas code.
+
+<span class="k">=== SCOPE FENCE - READ THIS TWICE ===</span>
+Layer 1 is the arena, the camera and movement. Nothing fights.
+DO NOT build, or stub in passing: shooting, bullets, damage, health
+loss, enemies, bots, AI, the shrinking zone, loot, pickups, weapons,
+heroes, skills, particles, sound, menus, match start or match end.
+Exactly one character exists: the player. Nothing else moves.
+If you are writing a Bullet type or an enemy array, you have left
+Layer 1. Stop and delete it.
+
+<span class="k">=== THE PERFORMANCE CONTRACT - THIS IS THE WHOLE LAYER ===</span>
+<span class="c">[the full block from the previous slide goes here]</span>
+
+<span class="k">=== THE WORLD ===</span>
+Arena 2000x1400, bigger than the screen. Grass, a river, rock
+clusters, ~12 inert bush clumps. Hard edges. Camera follows the
+player, lerp ~0.12, clamped to the arena.
+
+<span class="c">... player, joystick, HUD, tokens, 7-point self-check in COPY FULL</span></pre>
+  </div>
+</section>
+
+<!-- 18 layer 1 acceptance -->
+<section class="slide" data-notes="Sixty seconds of checking that saves you a rewrite. The devtools one is the only way to catch the mistake that matters, and it takes ten seconds.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Before you paste Layer 2</div>
+  <h2>Accept or reject — 60 seconds</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card go">
+        <h3>Accept if</h3>
+        <ul class="tight check">
+          <li>The character moves smoothly on WASD and on a dragged joystick</li>
+          <li>The camera follows without jitter and stops at the arena edge</li>
+          <li><strong>React DevTools shows no re-render while you move</strong></li>
+          <li>Search the code: <code>useState</code> appears zero times, or only for pause</li>
+          <li>Hex codes appear only in <code>index.css</code> — including the canvas palette</li>
+        </ul>
+      </div>
+      <div class="card stop">
+        <h3>Reject and re-prompt if</h3>
+        <ul class="tight no">
+          <li>Anything shoots, spawns or takes damage</li>
+          <li>Position is held in <code>useState</code> — this is the fatal one</li>
+          <li>There is no fixed timestep, just <code>deltaTime</code> straight from rAF</li>
+          <li>Entities are <code>&lt;div&gt;</code>s instead of canvas draws</li>
+          <li>The canvas is blurry on a phone — no <code>devicePixelRatio</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout red"><p><strong>Position in <code>useState</code> is not a style problem.</strong> Every later layer builds on the loop's shape. Fix it now or rewrite everything at layer 3.</p></div>
+  </div>
+</section>
+
+<!-- 19 layer 2 prompt -->
+<section class="slide" data-notes="Layer 2 is where the game gets its feel. The damage numbers and the hit spark are the cheapest juice in the whole build and the most visible in a demo video.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — Layer 2</div>
+  <h2>Layer 2: shooting, and how it feels</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-l2">Add LAYER 2 ONLY to Tiny Royale. Re-read DESIGN.md and obey it.
+Repeat the performance contract - it still applies to everything below.
+
+<span class="k">=== SCOPE FENCE ===</span>
+Do NOT build bot AI, the shrinking zone, loot, pickups, heroes or
+skills. Add ONE stationary practice dummy that respawns 2s after it
+dies. That is the only new fighter. Do not restyle Layer 1.
+
+<span class="k">=== 1. SHOOTING ===</span>
+Auto-fire at the nearest fighter in range and line of sight. No aim
+control - this is a one-thumb game. Bullets come from a fixed pool of
+256, reused, never allocated in the loop. Circle collision; on hit,
+apply damage then despawn.
+
+<span class="k">=== 2. THE FEEL - THIS IS THE POINT OF THE LAYER ===</span>
+- A damage number rises and fades from the hit point: --color-dmg-out
+  when the player deals it, --color-dmg-in when the player takes it.
+- An orange spark ring flashes on the hit fighter for ~120ms.
+- Muzzle flash at the barrel, a short tracer behind each bullet.
+- The victim flinches back a few units. Nothing else knockbacks.
+- Damage numbers and sparks come from fixed pools too.
+
+<span class="k">=== 3. HEALTH ===</span>
+Every fighter has a canvas HP bar above its head, plus name and level.
+At 0 HP: a burst, the body fades over 400ms, then the slot is freed.
+The player's HP drives the HUD bar - throttled, never per frame.</pre>
+  </div>
+</section>
+
+<!-- 20 layer 3 prompt -->
+<section class="slide" data-notes="End of this layer you have a real game. The bot AI is deliberately a four-state machine — anything cleverer is invisible in a three-minute match and costs you a week.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — Layer 3</div>
+  <h2>Layer 3: fourteen bots and a closing circle</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-l3">Add LAYER 3 ONLY to Tiny Royale: the match. Repeat the performance
+contract. After this layer the game is complete and playable.
+
+<span class="k">=== SCOPE FENCE ===</span>
+Do NOT build heroes, skills, loot, pickups, bush concealment or
+quick chat. Every fighter has the same stats and the same gun.
+
+<span class="k">=== 1. FOURTEEN BOTS - A FOUR-STATE MACHINE, NOTHING CLEVERER ===</span>
+WANDER: walk to a random point, repath on arrival.
+SEEK: nearest fighter within 400 units - close to firing range.
+FIGHT: in range, strafe sideways and let auto-fire work.
+FLEE: below 30% HP, run from the nearest threat for 3 seconds.
+Bots re-evaluate every 300ms, NOT every frame, staggered so all 14
+never think on one frame. Each gets a 150-350ms reaction delay so they
+are not inhumanly precise. Bots take zone damage and can die to it.
+
+<span class="k">=== 2. THE ZONE ===</span>
+Closes from 0:45 in four steps, ending at ~15% of the arena by 2:40.
+A --color-zone boundary with the outside dimmed. Outside costs 3 HP/s
+at first, rising each step: briefly survivable, fatal to camp in.
+
+<span class="k">=== 3. MATCH FLOW ===</span>
+A 3:00 countdown and a live "N ALIVE" counter in the DOM HUD, updated
+a few times a second - never per frame. Ends when one remains or time
+runs out (most kills wins), then a result screen with placement,
+kills, damage and a PLAY AGAIN that resets every pool explicitly.</pre>
+  </div>
+</section>
+
+<!-- 21 layer 4 prompt -->
+<section class="slide" data-notes="Layer 4 is the difference between a tech demo and something a person wants to replay. Screenshake is three lines of code and it is the single highest return on effort in this entire deck.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Copy this — Layer 4</div>
+  <h2>Layer 4: heroes, loot and juice</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-l4">Add LAYER 4 ONLY to Tiny Royale: depth and polish. Repeat the
+performance contract. Do not change the shape of the game loop.
+
+<span class="k">=== 1. THREE HEROES, PICKED BEFORE THE MATCH ===</span>
+Ranger: baseline. Skill DASH, 6s - 200 units instantly, brief i-frames.
+Tank: 0.75x speed, 2x health, short range. SHIELD, 10s - absorbs 400.
+Assassin: 1.3x speed, 0.6x health, high burst. CLOAK, 12s - invisible
+      to bots for 3s, breaks on firing.
+One skill button, bottom-right, >= --touch-min, radial cooldown.
+Keyboard: Space. A hero select screen before the match, three cards.
+
+<span class="k">=== 2. LOOT ===</span>
+14 spawn points. Weapons: SMG, shotgun, sniper - each visibly changes
+damage, fire rate and range. Items: shield potion, grenade. Walk over
+to pick up. Dead fighters drop what they carried.
+
+<span class="k">=== 3. BUSHES BECOME REAL ===</span>
+A fighter inside a bush is not targeted by bots more than 150 units
+away, and renders semi-transparent. This is what makes Assassin work.
+
+<span class="k">=== 4. JUICE - CHEAP, AND MOST OF WHY IT FEELS GOOD ===</span>
+Screenshake on kills and grenades - offset the camera a few units for
+~150ms. A short hit-stop on a kill. Quick-chat bubbles above bots
+("I'm under siege!", "let me help you!") on real triggers, not random.
+Kill feed, top-right, last three events, fading.
+NO gradients, NO drop shadows, NO new colours outside DESIGN.md.</pre>
+  </div>
+</section>
+
+<!-- 22 repair prompts -->
+<section class="slide" data-notes="Keep this open while building. The first one is the failure specific to real-time games and it is the one you will hit.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">03 · Code <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">When it goes wrong</div>
+  <h2>Four repair prompts</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card sm stop"><span class="n">It stutters</span><h3>State in the loop</h3><p>"The game re-renders every frame. Move all positions, velocities, health and cooldowns into useRef, mutate them in the rAF loop, and keep useState only for pause, hero select and the result screen."</p></div>
+      <div class="card sm warn"><span class="n">It slows down over time</span><h3>Allocation per frame</h3><p>"Bullets and damage numbers are allocated with new or push each frame. Use fixed-size pools with an alive flag, reused. Nothing is allocated inside the loop."</p></div>
+      <div class="card sm stop"><span class="n">Bots feel robotic</span><h3>No reaction delay</h3><p>"Bots aim instantly and all think on the same frame. Add a 150–350ms reaction delay, stagger their 300ms re-evaluation, and make them strafe while firing."</p></div>
+      <div class="card sm warn"><span class="n">It looks flat</span><h3>Missing juice</h3><p>"Kills have no weight. Add ~150ms screenshake, a brief hit-stop, and a spark burst on death — using only DESIGN.md tokens and existing pools."</p></div>
+    </div>
+    <div class="callout"><p><strong>Name the violated rule, not your disappointment.</strong> "It feels laggy" gets you a different lag; "position is in useState, the contract says useRef" gets you a fix.</p></div>
+  </div>
+</section>
+
+<!-- 23 stage 04 divider -->
+<section class="slide divider" data-notes="Stage four. For a real-time game, testing is mostly about the frame budget — everything else is secondary.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 04</div>
+  <h2>Test &amp; evaluation</h2><div class="rule"></div>
+  <p>The frame budget under load, the match that has to resolve every time, and a rubric score you can argue with before a judge does.</p>
+  <div class="stagerow">
+    <span>01 Ideation</span><span>02 Blueprint</span><span>03 Code</span><span class="on">04 Test</span><span>05 Deploy</span>
+  </div>
+</section>
+
+<!-- 24 test prompt -->
+<section class="slide" data-notes="Item 2 is the one that catches the bug that ends your demo — a match that never resolves because the last two bots wander apart forever. The zone should prevent it, but only if the zone damage is actually lethal.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Test <span class="tool">Gemini chat</span></div>
+  <div class="eyebrow">Copy this — Stage 4</div>
+  <h2>Frame budget &amp; rubric audit</h2><div class="rule"></div>
+  <div class="body">
+    <pre class="sm" data-full="#full-b-s4">You are a game QA engineer and a hackathon judge. Here is my Tiny Royale code.
+
+<span class="k">PART A - THE CHAOS SCRIPT.</span> Pass or fail, plus the exact fix:
+1. Profile the busiest moment - 15 fighters alive, bullets flying.
+   Does any frame exceed 16ms, and what is on the stack?
+2. Play 10 matches to completion. Does every one resolve inside 3:00,
+   or can two survivors wander apart and stalemate?
+3. Background the tab 30s and return. Does the accumulator clamp hold,
+   or does the sim fast-forward?
+4. Any new, push, map, filter or object literal inside update or
+   render? List every one with file and line.
+5. Kill the player at 0:10 and at 2:59. Is the placement right both?
+6. PLAY AGAIN five times without reloading. Any state leaking - stale
+   bullets, wrong count, growing memory?
+7. Landscape phone, 844x390. Is the joystick under a thumb and the
+   skill button reachable without shifting grip?
+8. Any raw hex outside index.css, including canvas draw code?
+
+<span class="k">PART B - SCORE IT OUT OF 100</span> and justify every deduction:
+- Game feel: does a kill land with weight? (30)
+- Bots: do they read as opponents or as targets? (25)
+- Performance: does it hold 60fps at peak? (25)
+- Visual consistency: tokens honoured, no font under 14px? (20)
+
+End with the three fixes with the best score-per-hour, in order.</pre>
+  </div>
+</section>
+
+<!-- 25 budget -->
+<section class="slide" data-notes="Be honest about hours. This is bigger than a static app because it is a real-time game, and the recommendation line is the one to say out loud.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">04 · Test</div>
+  <div class="eyebrow">The honest cost</div>
+  <h2>What this actually takes</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card">
+        <table class="sm">
+          <tr><th>Layer</th><th>Delivers</th><th>h</th></tr>
+          <tr><td class="mono">L1</td><td>Arena, camera, joystick, loop</td><td class="mono">14</td></tr>
+          <tr><td class="mono">L2</td><td>Combat, damage, the feel</td><td class="mono">16</td></tr>
+          <tr class="hl"><td class="mono">L3</td><td>Bots, zone, match flow</td><td class="mono">20</td></tr>
+          <tr><td class="mono">L4</td><td>Heroes, loot, bushes, juice</td><td class="mono">18</td></tr>
+          <tr><td class="mono">—</td><td>Canvas art, states, mobile, a11y</td><td class="mono">14</td></tr>
+          <tr><td class="mono">—</td><td>Test pass and deploy</td><td class="mono">6</td></tr>
+          <tr class="hl"><td colspan="2"><strong>Total</strong></td><td class="mono"><strong>88h</strong></td></tr>
+        </table>
+      </div>
+      <div class="card go">
+        <h3>If you have less than 88 hours</h3>
+        <ul class="tight check">
+          <li><strong>Ship layers 1–3 only — about 60h.</strong> One hero, one gun, no loot. It is a complete, winnable, replayable game.</li>
+          <li>Then add heroes before loot. Three heroes change how it plays; loot mostly changes numbers.</li>
+          <li>Add screenshake and hit-stop no matter how little time is left. Two hours, and it is most of the demo.</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Never cut:</strong> the zone. Without it matches do not end, and a battle royale that does not resolve is not a game.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 26 stage 05 divider -->
+<section class="slide divider" data-notes="Stage five. Deploy the day before, and record the video from the deployed URL.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Stage 05</div>
+  <h2>Deploy &amp; publish</h2><div class="rule"></div>
+  <p>A public HTTPS link from AI Studio, and ninety seconds that show a match resolving rather than describing one.</p>
+  <div class="stagerow">
+    <span>01 Ideation</span><span>02 Blueprint</span><span>03 Code</span><span>04 Test</span><span class="on">05 Deploy</span>
+  </div>
+</section>
+
+<!-- 27 deploy -->
+<section class="slide" data-notes="The video has to contain one full match arc. A montage of pretty moments reads as a tech demo; one match with a win at the end reads as a game.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div><div class="folio">05 · Deploy <span class="tool ai">AI Studio</span></div>
+  <div class="eyebrow">Ship it</div>
+  <h2>One link, ninety seconds, one match</h2><div class="rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card go">
+        <h3>Deploy</h3>
+        <ul class="tight check">
+          <li>AI Studio Build → <strong>Deploy</strong> → public HTTPS link</li>
+          <li>Open it on a real phone, in landscape, and play a full match</li>
+          <li>Turn the wifi off and reload — it must still play</li>
+          <li>Deploy the day before the demo, not the morning of</li>
+        </ul>
+      </div>
+      <div class="card dark">
+        <h3>The 90 seconds — one match, uncut</h3>
+        <ul class="tight">
+          <li><strong>0:00–0:10</strong> "Battle royale takes 30 minutes. This one takes three."</li>
+          <li><strong>0:10–0:30</strong> Drop in. 15 alive. Move, auto-fire, first kill, damage numbers.</li>
+          <li><strong>0:30–0:55</strong> The zone closes. Grab a shotgun. Hide in a bush.</li>
+          <li><strong>0:55–1:20</strong> Final circle, four alive. Skill on cooldown. Win.</li>
+          <li><strong>1:20–1:30</strong> Result screen, then the live URL on a phone.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 close -->
+<section class="slide cover" data-notes="Close on the two decisions that carried the whole build: cut the multiplayer on day one, and keep React out of the game loop. Everything else was ordinary work.">
+  <div class="dots"><i></i><i></i><i></i><i></i></div>
+  <span class="badge">Two decisions, one game</span>
+  <h1>Cut the netcode. Keep React out of the loop.</h1>
+  <p class="sub">Fourteen bots buy you the entire pitch for a fraction of the risk, and a fixed-timestep loop over refs is the difference between a game and a slideshow. The rest is four prompts and a test pass.</p>
+  <div class="meta"><span>LIL BRAWL</span><span>88H · OR 60H FOR L1–L3</span><span>PRESS C TO COPY</span></div>
+</section>
+
+</div></div>
+
+<div id="notes"><b>Presenter notes</b><span id="notes-body"></span></div>
+
+<div id="hud">
+  <div class="hud-g">
+    <button id="prev" aria-label="Previous slide">← PREV</button>
+    <button id="next" aria-label="Next slide">NEXT →</button>
+    <button id="notesbtn" aria-label="Toggle presenter notes">NOTES (N)</button>
+  </div>
+  <div><span id="counter">1 / 30</span></div>
+</div>
+<div id="bar"></div>
+
+<!-- =========================================================================
+     Hidden full-fidelity prompt payloads for clipboard copy.
+     The on-slide code block is the readable excerpt; these are what get copied.
+     ========================================================================= -->
+
+<script type="text/plain" id="full-b-s1">
+You are a game designer who has shipped mobile arena shooters. Be blunt.
+
+Concept: "Tiny Royale" - a top-down battle royale in the shape of Lil Big Brawl.
+15 fighters, one arena, a shrinking zone, loot on the ground, a three-minute
+round. Built solo in Google AI Studio.
+
+NO NETWORKING: one human plus 14 bots. That decision is already made because
+real-time multiplayer needs authoritative servers, state sync, lag
+compensation and matchmaking, which is a team and a budget rather than a
+prompt. Do not reopen it. Design as well as you can inside that constraint.
+
+Give me:
+
+1. THE 5-LINE DECISION RECORD - exactly five lines, no prose:
+   CHOSEN CONCEPT:
+   TARGET PLAYER:
+   WHY THIS WINS:
+   WILL FAIL IF:
+   OUT OF SCOPE:
+
+2. THREE HEROES, not six. For each give:
+   - one sentence of fantasy
+   - a movement and health profile relative to a baseline of 1.0
+   - one active skill with a cooldown in seconds
+   - the reason a player would pick it over the other two
+   They must beat each other in a loop. No hero may be simply best. State the
+   loop explicitly: who beats whom, and in what situation.
+
+3. THE LOOT TABLE - four weapons and two items. For each: damage, fire rate,
+   effective range, and the one situation where it is the right pick. If two
+   weapons are right in the same situation, replace one.
+
+4. ARGUE WITH ME. Name the single feature on this list most likely to eat a
+   week of work and return the least fun, and tell me to cut it. Be specific
+   about what I lose by cutting it, so I can decide.
+
+5. THE BOT PROBLEM - in a three-minute match the player sees a bot for a few
+   seconds at a time. What makes bots read as opponents rather than as
+   targets, given that budget? Give me four concrete behaviours, ranked by
+   how much they change the perception per hour of work.
+
+Do not write an introduction. Start at heading 1.
+</script>
+
+<script type="text/plain" id="full-b-ref">
+You are an art director. Attached are screenshots of a game I am NOT cloning.
+Extract a measurable spec I can build my OWN game from. Describe the craft,
+not the game.
+
+1. PALETTE - every distinct colour as a hex, grouped: terrain, UI, health,
+   damage numbers, effects. Say which one is the accent, and why it stays
+   legible against all of the terrain colours it has to sit on.
+
+2. PROPORTIONS - character height as a fraction of screen height. Head-to-body
+   ratio. Outline thickness relative to character size. Give me numbers I can
+   put in a constants file, not adjectives.
+
+3. HUD MAP - what sits in each corner, what is anchored to the character, and
+   what is deliberately left empty. Empty space is a decision; name it and say
+   what it is protecting.
+
+4. READABILITY - at a glance, what tells the player their own health, who the
+   enemy is, and where the danger is? Rank these by how fast each one reads,
+   and say which channel carries it: colour, position, motion or size.
+
+5. FLOATING TEXT - the size, colour, motion path and lifetime of the damage
+   numbers. Say whether damage dealt and damage taken are distinguished, and
+   how. These are most of the game's felt impact per hour of work.
+
+6. WHAT I MUST NOT COPY - name what is specific to their intellectual
+   property rather than genre convention: character designs, logo, mascots,
+   named abilities, and any colour combination that is recognisably theirs.
+   Be strict here. I want reference, not a reskin.
+
+Output a token list plus five rules. I will build from your written spec and
+will not show these images to a code model.
+</script>
+
+<script type="text/plain" id="full-b-s2">
+You are a game architect. Using the Tiny Royale PRD above, produce the blueprint.
+
+1. ENTITY MODEL - one flat TypeScript type for everything that lives in the
+   world, with a `kind` field: fighter | bullet | pickup | zone.
+   - fixed-size arrays, allocated once at startup and reused
+   - an `alive` boolean rather than splicing arrays
+   - no allocation of any kind per frame
+   State exactly which fields each kind uses and which it ignores.
+   This model must survive all four build layers without changing shape, so
+   include the fields layers 3 and 4 will need (team, hero id, weapon id,
+   cooldown timers) even though layer 1 will not read them.
+
+2. ARENA - 2000 x 1400 world units. A hand-written fixed layout:
+   - a grass field
+   - a river along one edge, impassable
+   - rock clusters as hard obstacles
+   - about 12 bush clumps
+   - 14 pickup spawn points, spread so no corner is starved
+   Give me the coordinates as a plain TypeScript array I can paste directly
+   into a constants file. Do not generate the layout procedurally.
+
+3. MATCH TIMELINE - the exact second the zone begins closing, how many shrink
+   steps, the centre and radius at each step, the seconds each shrink takes,
+   and the damage per second for standing outside at each step. The final
+   circle must force a confrontation before 3:00.
+
+4. DESIGN.md - a token file for a chibi arcade look: thick ink outlines, flat
+   saturated fills, no gradients, no drop shadows, no bevels.
+   Include colour, type scale, spacing, radius, outline width, touch minimum.
+   Smallest font size is 14px. Every button is at least 56px square.
+   State the computed contrast ratio of HUD text on the UI panel colour, and
+   confirm it passes WCAG AA.
+
+5. HOW TOKENS REACH THE CANVAS - write this into DESIGN.md as a rule, not a
+   suggestion. This is the clause that a canvas game needs and a normal web
+   app does not:
+   - tokens are declared once in :root in index.css
+   - they are registered in the Tailwind theme so every utility class in the
+     DOM resolves to a token
+   - the canvas reads the tokens ONCE at startup via getComputedStyle into a
+     cached palette object, and the drawing code never contains a colour
+     string literal
+   - no raw hex in any component file, and none in any draw call
+   Without this rule a canvas game bypasses the design system entirely: you
+   get a beautiful token file and two hundred hardcoded colours in the
+   rendering code.
+
+Output DESIGN.md as a single fenced block I can paste in as a file.
+</script>
+
+<script type="text/plain" id="full-b-perf">
+=== THE PERFORMANCE CONTRACT - REPEAT THIS IN EVERY LAYER PROMPT ===
+This is a real-time game, not a page. Get this wrong and nothing later works.
+
+- ALL moving state - positions, velocities, health, cooldowns, camera, timers
+  - lives in useRef objects and is mutated in place. Never in useState.
+- ONE requestAnimationFrame loop drives everything. It is started in a
+  useEffect with an empty dependency array and cancelled in its cleanup.
+- NEVER call a setState function inside that loop. Not once. useState is only
+  for things a human changes between frames: pause, hero select, and the
+  end-of-match screen.
+- Fixed timestep: accumulate real elapsed milliseconds and step the simulation
+  in fixed 1/60s increments, so the game behaves identically on a 60Hz and a
+  144Hz display. Clamp the accumulator to 250ms so a backgrounded tab cannot
+  spiral into a thousand catch-up steps on return.
+- Render to a single <canvas> with a 2D context. Entities are NEVER DOM nodes.
+- Size the canvas backing store to width * devicePixelRatio and scale the
+  context, so it is sharp on phones.
+- Nothing is allocated inside the loop: no `new`, no object literals, no push,
+  map or filter. Use fixed-size pools with an `alive` flag and reuse slots.
+</script>
+
+<script type="text/plain" id="full-b-l1">
+Build LAYER 1 ONLY of "Tiny Royale", a top-down 3-minute battle-royale arena
+game for mobile, played in landscape. Single player versus bots. No network.
+
+=== TARGET RUNTIME ===
+Multi-file React + TypeScript with Tailwind, real ES module imports.
+Do NOT emit a single index.html loading React, Babel or Tailwind from a CDN.
+No external fonts, no remote images, no sprite sheets to download.
+It must run with the network switched off. All art is drawn in canvas code.
+
+=== SCOPE FENCE - READ THIS TWICE ===
+Layer 1 is the arena, the camera and the player's movement. Nothing fights.
+DO NOT build, and do not stub in passing: shooting, bullets, damage, health
+loss, enemies, bots, AI, the shrinking zone, loot, pickups, weapons, heroes,
+skills, particles, sound, menus, match start or match end.
+There is exactly one character on screen: the player. Nothing else moves.
+If you are writing a Bullet type or an enemy array, you have left Layer 1.
+Stop and delete it.
+
+=== THE PERFORMANCE CONTRACT - THIS IS THE WHOLE LAYER ===
+This is a real-time game, not a page. Get this wrong and nothing later works.
+- ALL moving state - player x, y, velocity, facing, camera x, y - lives in
+  useRef objects and is mutated in place. Never in useState.
+- ONE requestAnimationFrame loop drives everything, started in a useEffect
+  with an empty dependency array and cancelled in its cleanup.
+- NEVER call a setState function inside that loop. Not once. useState is only
+  for things a human changes between frames, and Layer 1 has none of those.
+- Fixed timestep: accumulate real elapsed ms and step the simulation in fixed
+  1/60s increments, so the game runs identically on a 60Hz and a 144Hz screen.
+  Clamp accumulated time to 250ms so a backgrounded tab cannot spiral.
+- Render to a single <canvas> with ctx. Do NOT render entities as DOM nodes.
+- The canvas backing store is sized to width*devicePixelRatio and scaled, so
+  it is sharp on phones.
+
+=== THE WORLD ===
+- Arena 2000 x 1400 world units, bigger than the screen on purpose.
+- Terrain drawn procedurally from a fixed hand-written layout: a grass field,
+  a river along one edge, a few rock clusters, and about 12 bush clumps.
+- Bushes are drawn but do nothing yet.
+- The arena has hard edges. The player cannot walk outside it.
+- Camera follows the player, smoothed by lerp with a factor around 0.12, and
+  clamps so it never shows past the arena edge.
+
+=== THE PLAYER ===
+- A chibi character: big round head, small body, thick dark outline, drawn
+  with canvas arcs and rects. No image files.
+- Moves in 8 directions, constant speed, and faces the direction of travel.
+- Collides with rocks and with the arena edge. Circle collision is fine.
+
+=== CONTROLS - TOUCH IS THE PRIMARY INPUT ===
+- A virtual joystick in the bottom-left: it appears where the thumb lands
+  anywhere in the left half of the screen, and the knob is clamped to a fixed
+  radius. Use Pointer Events so mouse and touch share one code path.
+- WASD and arrow keys also move the player, for judges on a laptop.
+- The game must be fully playable with a keyboard alone.
+
+=== HUD SHELL - STATIC IN THIS LAYER ===
+Top-left: the player's name and a green health bar showing full health.
+Top-right: a placeholder reading "15 ALIVE" and a placeholder timer "3:00".
+Neither updates in Layer 1. They are layout only.
+The HUD is DOM positioned over the canvas, not drawn inside it.
+
+=== DESIGN TOKENS - AND HOW THEY MUST BE CONSUMED ===
+Declare these once in index.css under :root, and register them in the Tailwind
+theme so every utility class resolves to a token. The canvas reads them once
+at startup via getComputedStyle and caches them in a palette object - the
+canvas must never contain a hardcoded colour string either.
+
+  --color-grass:#57A94B;     --color-grass-2:#4A9440;
+  --color-water:#3C7FD0;     --color-rock:#7C8B99;
+  --color-bush:#3B7A38;      --color-sand:#D9C48A;
+  --color-ink:#16181D;       --color-hp:#5BD75B;
+  --color-hp-bg:#2B2F36;     --color-ui:#1D2129;
+  --color-ui-2:#2A303B;      --color-on-ui:#F2F5F8;
+  --color-accent:#FF9020;
+  --text-hud:14px;  --text-body:16px;  --text-title:22px;
+  --space-1:8px; --space-2:16px; --space-3:24px;
+  --radius:12px;  --touch-min:56px;  --outline-w:3px;
+
+Hard rules, not preferences:
+- No raw hex in any component file, and none in the canvas drawing code.
+- No arbitrary Tailwind values: no bg-[#57A94B], no text-[10px].
+- Smallest font is 14px. Every button is at least --touch-min square.
+
+Also write these tokens and these rules into a file called DESIGN.md at the
+project root, and re-read that file before every later change I ask for.
+Layers 2, 3 and 4 will tell you to re-read it, so it has to exist.
+
+=== BEFORE YOU ANSWER, CHECK YOURSELF ===
+1. Zero CDN script tags, zero external fonts, zero remote assets.
+2. Zero raw hex outside index.css, including inside the canvas code.
+3. No setState is called anywhere inside the animation loop.
+4. The loop is cancelled on unmount and the fixed timestep is clamped.
+5. No bullets, enemies, bots, zone, loot, heroes, sound or menus exist.
+6. The player is movable by keyboard alone, and by touch joystick.
+7. Layout holds in landscape at 844x390 and at 1280x720.
+State each of the 7 as PASS or FAIL, then list the files you created.
+</script>
+
+<script type="text/plain" id="full-b-l2">
+Add LAYER 2 ONLY to Tiny Royale. Re-read DESIGN.md first and obey it.
+
+=== THE PERFORMANCE CONTRACT STILL APPLIES ===
+All new state - bullets, damage numbers, hit flashes, health - lives in
+useRef pools and is mutated in the existing requestAnimationFrame loop.
+No setState inside the loop. Nothing allocated inside the loop: fixed-size
+pools with an `alive` flag, reused. No new rAF loop - extend the existing one.
+
+=== SCOPE FENCE ===
+Do NOT build bot AI, the shrinking zone, loot, pickups, heroes or skills.
+Add ONE stationary practice dummy that respawns 2 seconds after it dies. That
+is the only new fighter in this layer. Do not restyle or rewrite Layer 1.
+
+=== 1. SHOOTING ===
+- The gun auto-fires at the nearest fighter within range and line of sight.
+  There is no aim control. This is a one-thumb game.
+- Fire rate is a constant. Firing does not interrupt movement.
+- Bullets come from a fixed pool of 256, reused, never allocated in the loop.
+  Each has position, velocity, time-to-live and an owner id.
+- Circle collision against fighters. On hit: apply damage, then despawn.
+- Bullets despawn on rocks and at the arena edge.
+
+=== 2. THE FEEL - THIS IS THE POINT OF THE LAYER ===
+This layer is not about damage arithmetic, it is about impact.
+- A damage number rises and fades from the hit point over ~700ms:
+  --color-dmg-out when the player deals it, --color-dmg-in when the player
+  takes it. Numbers come from a fixed pool too.
+- An orange spark ring flashes on the hit fighter for about 120ms.
+- A muzzle flash at the barrel, and a short tracer trailing each bullet.
+- The victim flinches back a few units on hit. Nothing else has knockback.
+- None of this uses a colour that is not already in DESIGN.md.
+
+=== 3. HEALTH AND DEATH ===
+- Every fighter has an HP bar above its head drawn in canvas, with its name
+  and level, matching the reference: a thin dark track and a green fill.
+- At zero HP: a burst of sparks, the body fades over 400ms, then the slot is
+  freed back to the pool.
+- The player's own health also drives the DOM HUD bar from Layer 1, which now
+  becomes live. That is the one place a React state update is acceptable, and
+  it must be throttled to at most a few times a second - never per frame.
+
+=== 4. SELF-CHECK - state PASS or FAIL for each ===
+1. No setState is called inside the animation loop.
+2. Nothing is allocated inside the loop - no new, push, map, filter.
+3. Bullets, damage numbers and sparks all come from fixed pools.
+4. No bot AI, zone, loot, hero or skill exists anywhere.
+5. Zero raw hex was added, including in the canvas draw code.
+6. Layer 1 files were extended, not rewritten. List every file you changed.
+</script>
+
+<script type="text/plain" id="full-b-l3">
+Add LAYER 3 ONLY to Tiny Royale: the match. After this layer the game is
+complete and playable start to finish.
+
+=== THE PERFORMANCE CONTRACT STILL APPLIES ===
+Fourteen bots must not cost fourteen times the work. All bot state lives in
+the same fixed entity pool, mutated in the existing loop. No setState in the
+loop. Nothing allocated per frame.
+
+=== SCOPE FENCE ===
+Do NOT build heroes, skills, loot, pickups, bush concealment or quick chat.
+Every fighter has the same stats and the same gun in this layer.
+
+=== 1. FOURTEEN BOTS - A FOUR-STATE MACHINE, NOTHING CLEVERER ===
+WANDER: walk toward a random reachable point; pick a new one on arrival.
+SEEK:   a fighter is within 400 units - move toward it to get into range.
+FIGHT:  in range - strafe sideways and let auto-fire do the shooting.
+FLEE:   below 30% health - run away from the nearest threat for 3 seconds.
+
+- Bots re-evaluate their state every 300ms, NOT every frame, and their timers
+  are staggered at startup so all 14 never think on the same frame.
+- Give each bot a reaction delay between 150 and 350ms before it responds to
+  a new threat, so they are not inhumanly precise.
+- Bots avoid rocks and the river. They take zone damage exactly like the
+  player - a bot that camps outside the circle must die to it.
+- Bots must not path perfectly. A little wandering is what makes them read as
+  players rather than as turrets.
+
+=== 2. THE ZONE ===
+- Starts closing at 0:45. Four shrink steps, ending at roughly 15% of the
+  arena area by 2:40, with the final circle placed so it forces contact.
+- Drawn as a --color-zone boundary with the area outside dimmed.
+- Standing outside costs 3 HP per second at the first step, rising with each
+  step. It must be briefly survivable and fatal to camp in.
+- A warning appears in the HUD a few seconds before each shrink.
+
+=== 3. MATCH FLOW ===
+- A 3:00 countdown and a live "N ALIVE" counter, both in the DOM HUD, updated
+  at most a few times per second - never per frame.
+- The match ends when one fighter remains, or when time runs out, in which
+  case the most kills wins.
+- A result screen: placement, kills, damage dealt, time survived, and a PLAY
+  AGAIN button that fully resets all pools and timers without a page reload.
+- Stale state between matches is the most likely bug here. Reset every pool
+  explicitly rather than relying on re-initialisation.
+
+=== 4. SELF-CHECK - state PASS or FAIL for each ===
+1. Ten simulated matches all resolve within 3:00. None stalemate.
+2. No setState inside the loop; HUD updates are throttled.
+3. Bot thinking is staggered, not all on one frame.
+4. Bots take zone damage and can die to it.
+5. PLAY AGAIN five times leaks no state and grows no memory.
+6. No hero, skill, loot or pickup exists yet.
+</script>
+
+<script type="text/plain" id="full-b-l4">
+Add LAYER 4 ONLY to Tiny Royale: depth and polish. Repeat the performance
+contract. Do not change the shape of the game loop or the entity model.
+
+=== 1. THREE HEROES, PICKED BEFORE THE MATCH ===
+Ranger:   baseline speed and health. Skill DASH, 6s cooldown - travel 200
+          units instantly with brief invulnerability.
+Tank:     0.75x speed, 2x health, shorter weapon range. Skill SHIELD, 10s -
+          absorbs 400 damage for 3 seconds.
+Assassin: 1.3x speed, 0.6x health, high burst damage. Skill CLOAK, 12s -
+          invisible to bots for 3 seconds, breaks early on firing.
+
+- One skill button, bottom-right, at least --touch-min square, with a radial
+  cooldown sweep. Keyboard binding: Space.
+- A hero select screen before the match: three cards, each showing the
+  fantasy in one line and the three stats. This screen may use useState -
+  it is not inside the loop.
+- Bots are assigned heroes randomly and actually use their skills.
+
+=== 2. LOOT ===
+- 14 spawn points from the blueprint. Weapons: SMG, shotgun, sniper. Each
+  visibly changes damage, fire rate and range - a shotgun must feel like a
+  shotgun, not a recoloured pistol.
+- Items: shield potion (instant), grenade (thrown, area damage).
+- Walk over a pickup to take it. Dead fighters drop what they were carrying.
+- The current weapon and item show in the HUD.
+
+=== 3. BUSHES BECOME REAL ===
+- A fighter standing in a bush is not targeted by bots more than 150 units
+  away, and renders semi-transparent.
+- This is the mechanic that makes Assassin viable, so tune it so an ambush is
+  possible but camping is not rewarded.
+
+=== 4. JUICE - CHEAP, AND MOST OF WHY IT FEELS GOOD ===
+- Screenshake on kills and grenade blasts: offset the camera a few units for
+  about 150ms, decaying. Never more than that - it becomes nauseating fast.
+- A short hit-stop on a kill: freeze the simulation for about 60ms.
+- Quick-chat bubbles above bots ("I'm under siege!", "let me help you!") fired
+  on real triggers - low health, a kill, the zone closing - never at random.
+- A kill feed in the top-right showing the last three events, fading out.
+- NO gradients, NO drop shadows, NO new colours outside DESIGN.md.
+
+=== 5. SELF-CHECK - state PASS or FAIL for each ===
+1. The three heroes measurably differ in speed, health and range.
+2. Skills work for bots as well as for the player.
+3. Screenshake and hit-stop do not break the fixed timestep.
+4. No setState inside the loop; hero select and results are outside it.
+5. Zero raw hex added, including in canvas draw code and in new particles.
+6. A full match still holds 60fps with 15 fighters and loot on the ground.
+</script>
+
+<script type="text/plain" id="full-b-s4">
+You are a game QA engineer and a hackathon judge. Here is my Tiny Royale code.
+
+PART A - THE CHAOS SCRIPT. For each item, pass or fail, plus the exact fix:
+1. Record a performance profile of the busiest moment - 15 fighters alive,
+   bullets in flight, the zone closing. Does any frame exceed 16ms, and if so
+   what is on the stack?
+2. Play 10 matches to completion. Does every one resolve inside 3:00, or can
+   two survivors wander apart and stalemate forever? This is the bug that
+   ends a live demo.
+3. Background the tab for 30 seconds and return. Does the accumulator clamp
+   hold, or does the simulation fast-forward through everything it missed?
+4. Check for allocation inside the loop: any new, push, map, filter or object
+   literal inside update or render. List every one with file and line.
+5. Kill the player at 0:10 and again at 2:59. Does the result screen show the
+   correct placement in both cases?
+6. Press PLAY AGAIN five times without reloading. Is any state leaking between
+   matches - stale bullets, a wrong alive count, growing memory?
+7. Landscape phone at 844x390. Does the joystick fall under a thumb, and is
+   the skill button reachable without shifting grip?
+8. Search for raw hex outside index.css, including inside the canvas drawing
+   code. List every one with its file and line.
+
+PART B - SCORE IT OUT OF 100 and justify every deduction:
+- Game feel: does a kill land with weight - shake, hit-stop, damage numbers,
+  a death that reads clearly? (30)
+- Bots: do they read as opponents or as targets? Name the specific behaviour
+  that gives them away. (25)
+- Performance: does it hold 60fps at peak load on a mid-range phone? (25)
+- Visual consistency: tokens honoured everywhere, nothing under 14px, no
+  colour outside DESIGN.md? (20)
+
+End with the three fixes that buy the most score per hour of work, in order,
+naming the file and the change. Do not pad the score.
+</script>
+<!-- =========================================================================
+     Interactive Deck Navigation & Clipboard Copy JavaScript Runtime
+     ========================================================================= -->
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var i = 0;
+  var canvas = document.getElementById('canvas');
+  var notes = document.getElementById('notes');
+  var nbody = document.getElementById('notes-body');
+  var counter = document.getElementById('counter');
+  var bar = document.getElementById('bar');
+
+  function show(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function(s, k){
+      s.classList.toggle('active', k === i);
+    });
+    if(counter) counter.textContent = (i + 1) + ' / ' + slides.length;
+    if(bar) bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    if(nbody) nbody.textContent = slides[i].getAttribute('data-notes') || '—';
+    location.hash = i + 1;
+  }
+
+  function fit(){
+    var s = Math.min((window.innerWidth - 24) / 1280, (window.innerHeight - 54) / 720);
+    canvas.style.transform = 'scale(' + s + ')';
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){
+      e.preventDefault(); show(i + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){
+      e.preventDefault(); show(i - 1);
+    } else if(e.key === 'Home'){
+      show(0);
+    } else if(e.key === 'End'){
+      show(slides.length - 1);
+    } else if(e.key === 'n' || e.key === 'N'){
+      if(notes) notes.classList.toggle('on');
+    }
+  });
+
+  var nextBtn = document.getElementById('next');
+  var prevBtn = document.getElementById('prev');
+  var notesBtn = document.getElementById('notesbtn');
+
+  if(nextBtn) nextBtn.onclick = function(){ show(i + 1); };
+  if(prevBtn) prevBtn.onclick = function(){ show(i - 1); };
+  if(notesBtn) notesBtn.onclick = function(){ if(notes) notes.classList.toggle('on'); };
+
+  function flash(btn){
+    var o = btn.dataset.label;
+    btn.textContent = 'COPIED ✓';
+    btn.classList.add('ok');
+    setTimeout(function(){
+      btn.textContent = o;
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+
+  function writeClipboard(txt, btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(function(){ flash(btn); }, function(){ legacy(txt, btn); });
+    } else {
+      legacy(txt, btn);
+    }
+  }
+
+  function legacy(txt, btn){
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      flash(btn);
+    } catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  document.querySelectorAll('pre').forEach(function(pre){
+    var ref = pre.getAttribute('data-full');
+    var src = ref && document.querySelector(ref);
+    var txt = (src ? src.textContent.replace(/^\n/, '').replace(/\s+$/, '') : pre.innerText).trim();
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'copybtn';
+    b.dataset.label = pre.getAttribute('data-copy-label') || (src ? 'COPY FULL' : 'COPY');
+    b.textContent = b.dataset.label;
+    b.setAttribute('aria-label', 'Copy prompt to clipboard');
+    b.onclick = function(e){
+      e.stopPropagation();
+      writeClipboard(txt, b);
+    };
+    pre.appendChild(b);
+    pre._copy = function(){ writeClipboard(txt, b); };
+  });
+
+  document.addEventListener('keydown', function(e){
+    if((e.key === 'c' || e.key === 'C') && !e.metaKey && !e.ctrlKey){
+      var p = slides[i].querySelector('pre');
+      if(p && p._copy) p._copy();
+    }
+  });
+
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function(){
+    var n = parseInt((location.hash || '#1').slice(1), 10) - 1;
+    if(!isNaN(n) && n !== i) show(n);
+  });
+
+  fit();
+  show(parseInt((location.hash || '#1').slice(1), 10) - 1 || 0);
+})();
+</script>
+
+</body>
+</html>
